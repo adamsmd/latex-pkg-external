@@ -77,11 +77,6 @@
     %
     % Also, the use of `\unexpanded` might have changed any `#1` that
     % occur in `#2` or `#3` to `##1`, so we indirect through a `\def`.
-    %
-    % Finally, we use `\scantokens` in case the use code needs to play
-    % with the catcodes.  The `\relax` at the end ensures that
-    % `\scantokens` does not insert an extra space at the end.
-    % See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
 
     % Run the user specified preamble
     \expandafter\def\csname external@preamble\endcsname{#2}
@@ -167,10 +162,18 @@
   \immediate\closeout\external@file
 }
 
+\RequirePackage{pdftexcmds}
+
 % TODO: run options (e.g., -shell-escape)
 \newcommand{\externalRun}[1]{%
   % Compile file
   \immediate\typeout{Running external: #1.tex}%
+  \ifcase\pdfshellescape% TODO: use check from `shellesc` package
+    \GenericError{}{You must enable "-shell-escape"}{}{}
+  \or
+  \or
+    \GenericError{}{You must enable "-shell-escape"}{}{}
+  \fi
   \immediate\write18{pdflatex -shell-escape -halt-on-error -interaction=batchmode #1.tex}%
   % TODO: check for errors
 }
