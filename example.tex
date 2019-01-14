@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{ltxdoc}
 
 \usepackage{external}
 
@@ -6,22 +6,29 @@
 \tcbuselibrary{listingsutf8}
 %\tcbset{sidebyside=true}
 
+\newcommand{\showfile}[1]{
+  \begin{tcolorbox}[title=\texttt{#1}]
+  \verbatiminput{#1}
+  \end{tcolorbox}
+}
+
 \def\RULE{\rule{0.2em}{7pt}\llap{\rule[8pt]{0.2em}{2pt}}}
 
 \begin{document}
 
+\title{TODO: Title}
+\author{TODO: Author}
+\maketitle
+
+\begin{abstract}
+TODO: Abstract
+\end{abstract}
+
 \section{Introduction}
 
-\section{Examples}
+\subsection{Notation}
 
-\begin{tcblisting}{}
-\RULE%
-\external{example-inline-together}{\usepackage{amsmath}}{$\int$}%
-\RULE
-\end{tcblisting}
-
-% NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
-
+This documentation uses |\RULE| to define the following:
 
 These examples use guide lines like the following (TODO):
 
@@ -29,13 +36,39 @@ These examples use guide lines like the following (TODO):
 \RULE M\RULE
 \end{tcblisting}
 
+We use |\iint| which is |amsmath| only but we do not load |\usepackage{amsmath}| in the master document.
+
+\section{Simple Usage}
+
+\begin{tcblisting}{}
+\RULE
+\external{example-inline-simple}
+  {\usepackage{amsmath}}
+  {$\iint x$}%
+\RULE
+\end{tcblisting}
+
+NOTE: If you want to include display math in \cmd{\external} use the incantation: |\[ \external{$\displaystyle ...$} \]|
+
+\begin{tcblisting}{}
+\[
+\RULE
+\external{example-inline-display}
+  {\usepackage{amsmath}}
+  {$\displaystyle\iint x$}%
+\RULE
+\]
+\end{tcblisting}
+
+\section{Separate Commands}
+
 First two are blank
 
 \begin{tcblisting}{}
-\RULE%
-\ExternalWrite{example-inline-separate}%
-  {\usepackage{amsmath}}%
-  {$\int$}%
+\RULE
+\ExternalWrite{example-inline-separate}
+  {\usepackage{amsmath}}
+  {$\iint$}%
 \RULE
 
 \RULE\ExternalRun{example-inline-separate}\RULE
@@ -43,19 +76,13 @@ First two are blank
 \RULE\ExternalRead{example-inline-separate}\RULE
 \end{tcblisting}
 
-\section{Standalone}
+\section{Standalone Source Files}
 
 First is blank
 
-\newcommand{\showfile}[1]{%
-  \begin{tcolorbox}[title=\texttt{#1}]
-  \verbatiminput{#1}
-  \end{tcolorbox}%
-}
-
 \showfile{example-standalone-simple.tex}
 
-Note: be careful if you rename such a file, as you will also want to change the argument to \verb|ExternalCode|.
+Note: be careful if you rename such a file, as you will also want to change the argument to \cmd{ExternalCode}.
 
 \begin{tcblisting}{}
 \RULE\ExternalRun{example-standalone-simple}\RULE
@@ -63,7 +90,7 @@ Note: be careful if you rename such a file, as you will also want to change the 
 \RULE\ExternalRead{example-standalone-simple}\RULE
 \end{tcblisting}
 
-\section{New commands}
+\section{New}
 
 TODO:
 \newcounter{external}[table]
@@ -71,33 +98,32 @@ TODO:
 \begin{tcblisting}{}
 \newexternal{\ext}{\stepcounter{external}}{\usepackage{amsmath}}
 
-\RULE\ext{example-inline-new-\arabic{external}}{$\int$}\RULE
-
 \RULE\ext{example-inline-new-\arabic{external}}{$\iint$}\RULE
+
+\RULE\ext{example-inline-new-\arabic{external}}{$\iiint$}\RULE
 \end{tcblisting}
 
-% TODO: \newexternal*
 \begin{tcblisting}{}
-\newexternal*{\extS}{\stepcounter{external}}%
-  {example-inline-new-\arabic{external}}%
+\newexternal*{\extS}{\stepcounter{external}}
+  {example-inline-new-\arabic{external}}
   {\usepackage{amsmath}}
 
-\RULE\extS{$\int$}\RULE
-
 \RULE\extS{$\iint$}\RULE
+
+\RULE\extS{$\iiint$}\RULE
 \end{tcblisting}
 
 \section{Problems}
 
 \subsection{Hashes}
 
-% Known problem: #1
-% Known workaround: ##1
+Known problem: |#1|
+Known workaround: |##1|
 
 \begin{tcblisting}{}
-\external{example-inline-hash}%
-  {\def\foo#1{abc#1def}}%
-  {\foo{xyz}}
+\external{example-inline-hash}
+  {\def\parens#1{(#1)}}
+  {\parens{x}}
 \end{tcblisting}
 
 Note double hash if standalone
@@ -109,33 +135,38 @@ Note double hash if standalone
 \ExternalRead{example-standalone-hash}
 \end{tcblisting}
 
-\subsection{catcodes}
+\subsection{Catcodes}
 
-% Known problem: catcode in body (e.g., \DeclareFont...)
-% Known workarounds: \scantokens
+Suppose you want to manually |\vDash| (\external{example-inline-vdash}{\usepackage{amssymb}}{$\vDash$})
 
-% We use `\scantokens` because \DeclareFontShape plays with the
-% catcodes and this code is being passed as the argument of another
-% command.
-%
-% The `\relax` at the end ensures that `\scantokens` does not
-% insert an extra space at the end.
-% See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
+Known problem: catcode in body (e.g., |\DeclareFont|, etc.)
+Known workarounds: |\scantokens|
+
+We use |\scantokens| because |\DeclareFontShape| plays with the
+catcodes and this code is being passed as the argument of another
+command.
+
+The |\relax| at the end ensures that |\scantokens| does not
+insert an extra space at the end.
+See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
 
 \begin{tcblisting}{}
-\external{example-inline-catcode}{
-  \DeclareFontFamily{U}{fselch}{}
-  \scantokens{%
-    \DeclareFontShape{U}{fselch}{m}{n}%
-      {<-> s * [13] fselch10}{}\relax}
-  \usepackage{pifont}}{%
-  \Pisymbol{fselch}{1}}
+\RULE
+\external{example-inline-catcode}
+  {\DeclareFontFamily{U}{msa}{}
+   \scantokens{\DeclareFontShape{U}{msa}{m}{n}
+     {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
+   \usepackage{pifont}}
+  {\Pisymbol{msa}{15}}%
+\RULE
 \end{tcblisting}
 
 \showfile{example-standalone-catcode.tex}
+
 \begin{tcblisting}{}
-\ExternalRun{example-standalone-catcode}
-\ExternalRead{example-standalone-catcode}
+\RULE\ExternalRun{example-standalone-catcode}\RULE
+
+\RULE\ExternalRead{example-standalone-catcode}\RULE
 \end{tcblisting}
 
 \end{document}

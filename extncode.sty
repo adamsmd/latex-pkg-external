@@ -9,58 +9,43 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{extncode}[2019/01/05 v0.1 Externally Rendered LaTeX]
 
-% ARGS: dim-file preamble body
-\newcommand{\ExternalCode}[3]{%
-  \unexpanded{%
-    \documentclass{article}
+% ARGS: dim-file preamble pre-savebox box pre-usebox
+\newcommand{\ExternalCode}[4]{%
+  \unexpanded{% todo: spaces?
+    % Note that since the user code supplied in arguments to
+    % `\ExternalCode might assume `@` is `other`, we avoid calling
+    % `\makeatletter` until after the user code is used.
 
-    % Run the user specified preamble
-    %
-    % Note that since the user code supplied in #2 or #3 might assume
-    % `@` is `other`, we avoid calling `\makeatletter` until after the
-    % user code is used.
-    %
-    % Also, the use of `\unexpanded` might double any hashes (`#`) in
-    % `#2` or % `#3` (e.g., `#1` becomes `##1`), so we eliminate the
+    % We keep a (default one inch) margin (that we then trim) to allow
+    % symbols to draw outsize their box.  The user can use `#2` to set
+    % it to something else.
+    \expandafter\newlength\csname external@TOP\endcsname
+    \expandafter\newlength\csname external@BOTTOM\endcsname
+    \expandafter\newlength\csname external@LEFT\endcsname
+    \expandafter\newlength\csname external@RIGHT\endcsname
+
+    \expandafter\setlength\csname external@TOP\endcsname{1in}
+    \expandafter\setlength\csname external@BOTTOM\endcsname{1in}
+    \expandafter\setlength\csname external@LEFT\endcsname{1in}
+    \expandafter\setlength\csname external@RIGHT\endcsname{1in}
+
+    % Note that the use of `\unexpanded` might double any hashes (`#`)
+    % in `#2` or % `#3` (e.g., `#1` becomes `##1`), so we eliminate the
     % extra hash (`#`) by indirecting through a `\def`.
-    \expandafter\def\csname external@preamble\endcsname{#2}
-    \csname external@preamble\endcsname
+
+    % Run the user specified preamble, which must include the
+    % `\documentclass` command.
+    \expandafter\def\csname external@code\endcsname{#2}
+    \csname external@code\endcsname
 
     \begin{document}
 
-    % Save the symbols into the box \external@box
-    \expandafter\def\csname external@body\endcsname{#3}
-    \expandafter\newsavebox\csname external@box\endcsname
-    \expandafter\savebox\csname external@box\endcsname{\csname external@body\endcsname}
-
-    \makeatletter
-
-    % For the sake of debugging, print the dimentions of the symbol in \external@box
-    \typeout{*** width=\the\wd\external@box, height=\the\ht\external@box, depth=\the\dp\external@box}
-
-    % Save the dimentions of the symbol in \external@box
-    \newwrite\external@dimfile
-    \immediate\openout\external@dimfile=#1
-    % TODO: save margins
-    % We have no guarantee that the `.dim` file will be read when `@` is a letter so we use `\csname`
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@TOP\endcsname}{1in}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@BOTTOM\endcsname}{1in}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@LEFT\endcsname}{1in}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@RIGHT\endcsname}{1in}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@WIDTH\endcsname}{\the\wd\external@box}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@HEIGHT\endcsname}{\the\ht\external@box}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@DEPTH\endcsname}{\the\dp\external@box}\relax}
-    \immediate\closeout\external@dimfile
-
-    % Set the text area to perfectly fit the symbol stored in \external@box,
-    % and set the page to have a one inch margin around the symbol.
-
+    % Setup the page to be blank with no margin or headers.
+    % The user can use `#3` to set these to something else.
     \pagestyle{empty}
-
     \setlength{\parindent}{0pt}
-    \setlength{\parskip}{0pt}
-    \renewcommand{\baselinestretch}{1.0}
-
+    %\setlength{\parskip}{0pt}
+    %\renewcommand{\baselinestretch}{1.0}
     \topmargin=0pt
     \headheight=0pt
     \headsep=0pt
@@ -72,26 +57,57 @@
     \evensidemargin=0pt
     \topskip=0pt
 
-    % We keep a one inch margin (that we then trim)
-    % to allow symbols to draw outsize their box
-    \hoffset=0pt % NOTE: includes +1in offset
-    \voffset=0pt % NOTE: includes +1in offset
-    \ifdefined\pdfpagewidth
-    \pdfpagewidth=\dimexpr\wd\external@box+2in
-    \pdfpageheight=\dimexpr\ht\external@box+\dp\external@box+2in
-    \else
-    \pagewidth=\dimexpr\wd\external@box+2in
-    \pageheight=\dimexpr\ht\external@box+\dp\external@box+2in
-    \fi
-    \paperwidth=\dimexpr\wd\external@box+2in
-    \paperheight=\dimexpr\ht\external@box+\dp\external@box+2in
+    % Allow the user to run body code before the actual box
+    \expandafter\def\csname external@code\endcsname{#3}
+    \csname external@code\endcsname
 
-    \textwidth=\wd\external@box               % TODO: alignment problem
+    % Save the content into the box \external@box
+    \expandafter\def\csname external@code\endcsname{#4}
+    \expandafter\newsavebox\csname external@box\endcsname
+    \expandafter\savebox\csname external@box\endcsname{\csname external@code\endcsname}
+
+    \makeatletter
+
+    % Set the text area to perfectly fit the symbol stored in
+    % `\external@box` with the specified amount of space around the box.
+
+    % Note that `\hoffset` and `\voffset` automatically add a one inch
+    % offset that we have to subtract out.
+    \hoffset=\dimexpr\external@LEFT-1in
+    \voffset=\dimexpr\external@TOP-1in
+    \paperwidth=\dimexpr\external@LEFT+\wd\external@box+\external@RIGHT
+    \paperheight=\dimexpr\external@TOP+\ht\external@box+\dp\external@box+\external@BOTTOM
+    \ifdefined\pdfpagewidth
+    \pdfpagewidth=\paperwidth
+    \pdfpageheight=\paperheight
+    \else
+    \pagewidth=\paperwidth
+    \pageheight=\paperheight
+    \fi
+
+    \textwidth=\wd\external@box %todo:
     \textheight=\dimexpr\ht\external@box+\dp\external@box
-    \hsize=\wd\external@box                   % Paragraph width
+    \hsize=\wd\external@box                          % Paragraph width
     \vsize=\dimexpr\ht\external@box+\dp\external@box % Column height
+
+    % Allow the user to run body code before the actual box
+    \expandafter\def\csname external@code\endcsname{#3}
+    \csname external@code\endcsname
 
     % Finally, render the \external@box
     \usebox{\external@box}
+
+    % Save the dimentions of the symbol in `\external@box`
+    \newwrite\external@dimfile
+    \immediate\openout\external@dimfile="#1"
+    % Note that we have no guarantee that the `.dim` file will be read when `@` is a letter so we use `\csname`
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@TOP\endcsname}{\the\external@TOP}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@BOTTOM\endcsname}{\the\external@BOTTOM}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@LEFT\endcsname}{\the\external@LEFT}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@RIGHT\endcsname}{\the\external@RIGHT}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@WIDTH\endcsname}{\the\wd\external@box}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@HEIGHT\endcsname}{\the\ht\external@box}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@DEPTH\endcsname}{\the\dp\external@box}\relax}
+    \immediate\closeout\external@dimfile
 
     \end{document}}}

@@ -85,12 +85,13 @@
 % NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
 
 
+% TODO: pre-savebox pre-usebox
 % ARGS: filename preamble body
 \newcommand{\ExternalWrite}[3]{%
   \typeout{Writing to external: \unexpanded{#1}}%
   % Write to file
   \immediate\openout\external@file=#1.tex%
-  \immediate\write\external@file{\ExternalCode{#1.dim}{#2}{#3}}%
+  \immediate\write\external@file{\ExternalCode{#1.dim}{\documentclass{article}#2}{}{#3}{}}%
   \immediate\closeout\external@file
 }
 
@@ -124,7 +125,6 @@
 \newcommand{\external@includegraphics}[5]{\includegraphics[trim=#1 #2 #3 #4]{#5}}
 
 \newcommand{\external}[4][]{\ExternalWrite{#2}{#3}{#4}\ExternalRun{#2}\ExternalRead{#2}}
-
 
 % TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `\unexpanded`
 
