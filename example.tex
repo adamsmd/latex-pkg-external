@@ -1,0 +1,106 @@
+\documentclass{article}
+
+\usepackage{external}
+%\usepackage{showexpl}
+\usepackage{tcolorbox}
+\tcbuselibrary{listingsutf8}
+
+\def\RULE{\rule{0.2em}{1em}}
+
+\begin{document}
+
+\section{Introduction}
+
+\section{Examples}
+
+\RULE M\RULE \rule{0.2em}{7pt}hXAIk
+
+M\RULE\externalWrite{example-external-1}{\usepackage{amsmath}}{$\int$}\RULE M (blank)
+
+% NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
+
+M\externalRun{example-external-1}M (blank)
+
+M\externalRead{example-external-1}M
+
+M\external{example-external-2}{\usepackage{amsmath}}{$\int$}M
+
+M\externalRun{example-standalone}M (blank)
+
+M\externalRead{example-standalone}M
+
+% TODO: \newexternal
+\newexternal{\ex}{}{\usepackage{amsmath}}
+M\ex{extample-newexternal-1}{$\int$}M
+
+% TODO: \newexternal*
+\newcounter{external}[table]
+\newexternal*{\Ex}{\stepcounter{external}}{example-newexternal*-\arabic{external}}{\usepackage{amsmath}}
+
+M\Ex{$\int$}M
+M\Ex{$\iint$}M
+
+\section{Problems}
+
+% Known problem: #1
+% Known workaround: ##1
+
+\external{example-hash-inline}{\def\foo#1{abc#1def}}{\foo{xyz}}
+
+% TODO:
+%\RequirePackage{external}
+%\externalCode{example-standalone}{\usepackage{amsmath}}{$\int$}
+
+\externalRun{example-hash-standalone} % Note: needs double hash
+\externalRead{example-hash-standalone}
+
+\begin{tcblisting}{}
+my example $f$
+\end{tcblisting}
+
+%\begin{LTXexample}
+%$1+1=2$
+%\end{LTXexample}
+
+% Known problem: catcode in body (e.g., \DeclareFont...)
+% Known workarounds: \scantokens
+
+
+\external{example-catcode-inline}{
+  \DeclareFontFamily{U}{fselch}{}
+  % We use `\scantokens` because \DeclareFontShape plays with the
+  % catcodes and this code is being passed as the argument of another
+  % command.
+  %
+  % The `\relax` at the end ensures that `\scantokens` does not
+  % insert an extra space at the end.
+  % See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
+  \scantokens{\DeclareFontShape{U}{fselch}{m}{n}{<-> s * [13] fselch10}{}\relax}
+  \usepackage{pifont}}{%
+  \Pisymbol{fselch}{1}}
+
+\externalRun{example-catcode-standalone} % Note: needs double hash
+\externalRead{example-catcode-standalone}
+
+%\edef\asdf{\unexpanded{\foo}}
+%\show\asdf
+%
+%\unexpanded{\typeout{foooooo}}
+%
+%\tracingcommands=2
+%\tracingonline=1
+%\tracingmacros=2
+%
+%\externalWrite{test}{}{quux##1}
+%
+%\expandafter\def\expandafter\result\expandafter{\xexternal{bazz##1}}
+%\expandafter\def\expandafter\results\expandafter{\externalCode{}{bazz##1}{}}
+%
+%%\typeout{\xexternal{bazz}}
+%\typeout{\meaning\result}
+%%\show\results
+%\typeout{\unexpanded{---##1}}
+%%\show\result
+%%\xexternal{\unexpanded{\foo #1}}
+
+\end{document}

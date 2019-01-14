@@ -1,18 +1,19 @@
-% TODO: this is my first package
+% A package for rendering LaTeX code using a separate document
 %
 % (c) Michael D. Adams <https://michaeldadams.org>
 %
 %% This program can be redistributed and/or modified under the terms
 %% of the LaTeX Project Public License Distributed from CTAN archives
-%% in directory macros/latex/base/lppl.txt.
+%% in directory macros/latex/base/lppl.txt .
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{external}[2019/01/05 v0.1.0 Externally Rendered LaTeX]
+\ProvidesPackage{external}[2019/01/05 v0.1 Externally Rendered LaTeX]
 
 \RequirePackage{graphicx}
 \RequirePackage{keyval}
 \RequirePackage{kvoptions}
 \RequirePackage{suffix}
+\RequirePackage{pdftexcmds}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Options
@@ -54,31 +55,32 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% TODO: option for what command to use for `pdflatex`
 % TODO: document that arguments may need to use ##1 instead of #1
-
 % TODO: options for extentions (e.g., .dim, .tex, .pdf)
 % TODO: options for debugging
 % TODO: options for class (e.g., article) (pagestyle?)
 % TODO: options for math
 % TODO: options for display math
 % TODO: allow user code to change \baselinestretch
-
 % TODO: check and error if files not exist
 % TODO: argument to specify margins
 % NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
 
 % ARGS: file preamble body
 \newcommand{\externalCode}[3]{%
-  \unexpanded{% NB: we stop and restart `\unexpand` at `#1`
+  \unexpanded{%
     \documentclass{article}
-    % Note that since the user code supplied in #2 or #3 might assume
-    % `@` is `other` we avoid calling `\makeatletter` until after the
-    % user code is used.
-    %
-    % Also, the use of `\unexpanded` might have changed any `#1` that
-    % occur in `#2` or `#3` to `##1`, so we indirect through a `\def`.
 
     % Run the user specified preamble
+    %
+    % Note that since the user code supplied in #2 or #3 might assume
+    % `@` is `other`, we avoid calling `\makeatletter` until after the
+    % user code is used.
+    %
+    % Also, the use of `\unexpanded` might double any hashes (`#`) in
+    % `#2` or % `#3` (e.g., `#1` becomes `##1`), so we eliminate the
+    % extra hash (`#`) by indirecting through a `\def`.
     \expandafter\def\csname external@preamble\endcsname{#2}
     \csname external@preamble\endcsname
 
@@ -162,8 +164,7 @@
   \immediate\closeout\external@file
 }
 
-\RequirePackage{pdftexcmds}
-
+% TODO: use the `shellesc` package
 % TODO: run options (e.g., -shell-escape)
 \newcommand{\externalRun}[1]{%
   % Compile file
@@ -194,10 +195,16 @@
 
 \newcommand{\external}[4][]{\externalWrite{#2}{#3}{#4}\externalRun{#2}\externalRead{#2}}
 
-% ARGS: name preamble
-\newcommand{\newexternal}[2]{
+% keys:
+%  action
+%  file
+
+% TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `\unexpanded`
+
+% ARGS: name action preamble
+\newcommand{\newexternal}[3]{
   % ARGS: file code
-  \newcommand{#1}[2]{\external{##1}{#2}{##2}}}
+  \newcommand{#1}[2]{#2\external{##1}{#3}{##2}}}
 
 % ARGS: name action fileNameCmd preamble
 \WithSuffix\newcommand{\newexternal}*[4]{%
@@ -207,10 +214,10 @@
     \edef\external@filename{{#3}}%
     \expandafter\external\external@filename{#4}{##1}}}
 
-% Example:
-% \newcounter[\tableNum]{\noteNum}
-% \newexternal{\eAMS}{\externalFile}{\usepackage{ams}}
-% \eAMS{...}
+%\verbatiminput{...}
+%\newcommand\xexternal[1]{%
+%  \unexpanded{+++#1}%
+%}
 
 \endinput
 %%
