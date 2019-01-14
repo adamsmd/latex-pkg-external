@@ -1,13 +1,8 @@
 \RequirePackage{external}
 \ExternalCode{example-standalone-catcode.dim}{
   \DeclareFontFamily{U}{fselch}{}
-  % We use `\scantokens` because \DeclareFontShape plays with the
-  % catcodes and this code is being passed as the argument of another
-  % command.
-  %
-  % The `\relax` at the end ensures that `\scantokens` does not
-  % insert an extra space at the end.
-  % See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
-  \scantokens{\DeclareFontShape{U}{fselch}{m}{n}{<-> s * [13] fselch10}{}\relax}
+  \scantokens{%
+    \DeclareFontShape{U}{fselch}{m}{n}%
+    {<-> s * [13] fselch10}{}\relax}
   \usepackage{pifont}}{%
   \Pisymbol{fselch}{1}}
