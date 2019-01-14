@@ -1,11 +1,12 @@
 \documentclass{article}
 
 \usepackage{external}
-%\usepackage{showexpl}
+
 \usepackage{tcolorbox}
 \tcbuselibrary{listingsutf8}
+%\tcbset{sidebyside=true}
 
-\def\RULE{\rule{0.2em}{1em}}
+\def\RULE{\rule{0.2em}{7pt}\llap{\rule[8pt]{0.2em}{2pt}}}
 
 \begin{document}
 
@@ -13,58 +14,86 @@
 
 \section{Examples}
 
-\RULE M\RULE \rule{0.2em}{7pt}hXAIk
-
-M\RULE\externalWrite{example-inline-1}{\usepackage{amsmath}}{$\int$}\RULE M (blank)
+\begin{tcblisting}{}
+\RULE%
+\external{example-inline-together}{\usepackage{amsmath}}{$\int$}%
+\RULE
+\end{tcblisting}
 
 % NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
 
-M\externalRun{example-inline-1}M (blank)
 
-M\externalRead{example-inline-1}M
+These examples use guide lines like the following (TODO):
 
-M\external{example-inline-2}{\usepackage{amsmath}}{$\int$}M
+\begin{tcblisting}{}
+\RULE M\RULE
+\end{tcblisting}
 
-M\externalRun{example-standalone}M (blank)
+First two are blank
 
-M\externalRead{example-standalone}M
+\begin{tcblisting}{}
+\RULE%
+\externalWrite{example-inline-separate}%
+  {\usepackage{amsmath}}%
+  {$\int$}%
+\RULE
+
+\RULE\externalRun{example-inline-separate}\RULE
+
+\RULE\externalRead{example-inline-separate}\RULE
+\end{tcblisting}
+
+\section{Standalone}
+
+First is blank
+
+TODO: externalRun -> ExternalRun
+
+\newcommand{\showfile}[1]{%
+  \begin{tcolorbox}[title=\texttt{#1}]
+  \verbatiminput{#1}
+  \end{tcolorbox}%
+}
+
+\showfile{example-standalone-simple.tex}
+
+Note: be careful if you rename such a file, as you will also want to change the argument to \verb|ExternalCode|.
+
+\begin{tcblisting}{}
+\RULE\externalRun{example-standalone-simple}\RULE
+
+\RULE\externalRead{example-standalone-simple}\RULE
+\end{tcblisting}
+
+\section{New commands}
 
 % TODO: \newexternal
 \newexternal{\ex}{}{\usepackage{amsmath}}
-M\ex{example-inline-newexternal-1}{$\int$}M
+\RULE\ex{example-inline-newexternal-1}{$\int$}\RULE
 
 % TODO: \newexternal*
 \newcounter{external}[table]
 \newexternal*{\Ex}{\stepcounter{external}}{example-inline-newexternal*-\arabic{external}}{\usepackage{amsmath}}
 
-M\Ex{$\int$}M
-M\Ex{$\iint$}M
+\RULE\Ex{$\int$}\RULE
+\RULE\Ex{$\iint$}\RULE
 
 \section{Problems}
+
+\subsection{Hashes}
 
 % Known problem: #1
 % Known workaround: ##1
 
 \external{example-inline-hash}{\def\foo#1{abc#1def}}{\foo{xyz}}
 
-% TODO:
-%\RequirePackage{external}
-%\externalCode{example-standalone}{\usepackage{amsmath}}{$\int$}
-
 \externalRun{example-standalone-hash} % Note: needs double hash
 \externalRead{example-standalone-hash}
 
-\begin{tcblisting}{}
-my example $f$
-\end{tcblisting}
-
-%\begin{LTXexample}
-%$1+1=2$
-%\end{LTXexample}
+\subsection{catcodes}
 
 % Known problem: catcode in body (e.g., \DeclareFont...)
 % Known workarounds: \scantokens
-
 
 \external{example-inline-catcode}{
   \DeclareFontFamily{U}{fselch}{}
@@ -81,26 +110,5 @@ my example $f$
 
 \externalRun{example-standalone-catcode} % Note: needs double hash
 \externalRead{example-standalone-catcode}
-
-%\edef\asdf{\unexpanded{\foo}}
-%\show\asdf
-%
-%\unexpanded{\typeout{foooooo}}
-%
-%\tracingcommands=2
-%\tracingonline=1
-%\tracingmacros=2
-%
-%\externalWrite{test}{}{quux##1}
-%
-%\expandafter\def\expandafter\result\expandafter{\xexternal{bazz##1}}
-%\expandafter\def\expandafter\results\expandafter{\externalCode{}{bazz##1}{}}
-%
-%%\typeout{\xexternal{bazz}}
-%\typeout{\meaning\result}
-%%\show\results
-%\typeout{\unexpanded{---##1}}
-%%\show\result
-%%\xexternal{\unexpanded{\foo #1}}
 
 \end{document}
