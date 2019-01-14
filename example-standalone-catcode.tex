@@ -1,8 +1,7 @@
 \RequirePackage{external}
-\ExternalCode{example-standalone-catcode.dim}{
-  \DeclareFontFamily{U}{fselch}{}
-  \scantokens{%
-    \DeclareFontShape{U}{fselch}{m}{n}%
-    {<-> s * [13] fselch10}{}\relax}
-  \usepackage{pifont}}{%
-  \Pisymbol{fselch}{1}}
+\ExternalCode{example-standalone-catcode.dim}
+  {\DeclareFontFamily{U}{msa}{}
+   \scantokens{\DeclareFontShape{U}{msa}{m}{n}
+     {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
+   \usepackage{pifont}}
+  {\Pisymbol{msa}{15}}
