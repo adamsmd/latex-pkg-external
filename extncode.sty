@@ -1,0 +1,97 @@
+% A package for rendering LaTeX code using a separate document
+%
+% (c) Michael D. Adams <https://michaeldadams.org>
+%
+%% This program can be redistributed and/or modified under the terms
+%% of the LaTeX Project Public License Distributed from CTAN archives
+%% in directory macros/latex/base/lppl.txt .
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{extncode}[2019/01/05 v0.1 Externally Rendered LaTeX]
+
+% ARGS: file preamble body
+\newcommand{\externalCode}[3]{%
+  \unexpanded{%
+    \documentclass{article}
+
+    % Run the user specified preamble
+    %
+    % Note that since the user code supplied in #2 or #3 might assume
+    % `@` is `other`, we avoid calling `\makeatletter` until after the
+    % user code is used.
+    %
+    % Also, the use of `\unexpanded` might double any hashes (`#`) in
+    % `#2` or % `#3` (e.g., `#1` becomes `##1`), so we eliminate the
+    % extra hash (`#`) by indirecting through a `\def`.
+    \expandafter\def\csname external@preamble\endcsname{#2}
+    \csname external@preamble\endcsname
+
+    \begin{document}
+
+    % Save the symbols into the box \external@box
+    \expandafter\def\csname external@body\endcsname{#3}
+    \expandafter\newsavebox\csname external@box\endcsname
+    \expandafter\savebox\csname external@box\endcsname{\csname external@body\endcsname}
+
+    \makeatletter
+
+    % For the sake of debugging, print the dimentions of the symbol in \external@box
+    \typeout{*** width=\the\wd\external@box, height=\the\ht\external@box, depth=\the\dp\external@box}
+
+    % Save the dimentions of the symbol in \external@box
+    \newwrite\external@dimfile
+    \immediate\openout\external@dimfile=#1.dim
+    % TODO: save margins
+    % We have no guarantee that the `.dim` file will be read when `@` is a letter so we use `\csname`
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@TOP\endcsname}{1in}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@BOTTOM\endcsname}{1in}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@LEFT\endcsname}{1in}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@RIGHT\endcsname}{1in}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@WIDTH\endcsname}{\the\wd\external@box}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@HEIGHT\endcsname}{\the\ht\external@box}\relax}
+    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@DEPTH\endcsname}{\the\dp\external@box}\relax}
+    \immediate\closeout\external@dimfile
+
+    % Set the text area to perfectly fit the symbol stored in \external@box,
+    % and set the page to have a one inch margin around the symbol.
+
+    \pagestyle{empty}
+
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{0pt}
+    \renewcommand{\baselinestretch}{1.0}
+
+    \topmargin=0pt
+    \headheight=0pt
+    \headsep=0pt
+    \marginparsep=0pt
+    \marginparwidth=0pt
+    \footskip=0pt
+    \marginparpush=0pt
+    \oddsidemargin=0pt
+    \evensidemargin=0pt
+    \topskip=0pt
+
+    % We keep a one inch margin (that we then trim)
+    % to allow symbols to draw outsize their box
+    \hoffset=0pt % NOTE: includes +1in offset
+    \voffset=0pt % NOTE: includes +1in offset
+    \ifdefined\pdfpagewidth
+    \pdfpagewidth=\dimexpr\wd\external@box+2in
+    \pdfpageheight=\dimexpr\ht\external@box+\dp\external@box+2in
+    \else
+    \pagewidth=\dimexpr\wd\external@box+2in
+    \pageheight=\dimexpr\ht\external@box+\dp\external@box+2in
+    \fi
+    \paperwidth=\dimexpr\wd\external@box+2in
+    \paperheight=\dimexpr\ht\external@box+\dp\external@box+2in
+
+    \textwidth=\wd\external@box               % TODO: alignment problem
+    \textheight=\dimexpr\ht\external@box+\dp\external@box
+    \hsize=\wd\external@box                   % Paragraph width
+    \vsize=\dimexpr\ht\external@box+\dp\external@box % Column height
+
+    % Finally, render the \external@box
+    \usebox{\external@box}
+
+    \end{document}}}
