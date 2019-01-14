@@ -12,7 +12,7 @@
   \end{tcolorbox}
 }
 
-\def\RULE{\rule{0.2em}{7pt}\llap{\rule[8pt]{0.2em}{2pt}}}
+\def\GAGE{\rule{0.2em}{7pt}\llap{\rule[8pt]{0.2em}{2pt}}}
 
 \begin{document}
 
@@ -26,37 +26,52 @@ TODO: Abstract
 
 \section{Introduction}
 
+We use |\iint| which is |amsmath| only but we do not load |\usepackage{amsmath}| in the master document.
+
 \subsection{Notation}
 
-This documentation uses |\RULE| to define the following:
-
-These examples use guide lines like the following (TODO):
+This documentation surrounds each example with |\GAGE| to print a gauge
+for measuring with height and width of that example.
+The bottom bar starts at the baseline and goes up 7 points.
+The top bar extends up to 10 points above the baseline.
+For example we might see something like the following.
 
 \begin{tcblisting}{}
-\RULE M\RULE
+\GAGE M\GAGE
 \end{tcblisting}
 
-We use |\iint| which is |amsmath| only but we do not load |\usepackage{amsmath}| in the master document.
+
+%\typeout{***** \expandafter\the\csname external@TOP\endcsname}
+%\externaltest{example-inline-test}{}{foo}
+%\typeout{***** \expandafter\the\csname external@top\endcsname}
 
 \section{Simple Usage}
 
+The common use case is quite simple.
+You just call \cmd{\external}\marg{filename}\marg{preamble}\marg{body}
+where \meta{filename} ...
+
 \begin{tcblisting}{}
-\RULE
-\external{example-inline-simple}
+\GAGE
+\external[file=example-inline-simple]
   {\usepackage{amsmath}}
   {$\iint x$}%
-\RULE
+\GAGE
 \end{tcblisting}
 
-NOTE: If you want to include display math in \cmd{\external} use the incantation: |\[ \external{$\displaystyle ...$} \]|
+-------------
+
+--------------
+
+NOTE: If you want to include display math in \cmd{\external} use the incantation: |\[ \external{$\displaystyle...$} \]|
 
 \begin{tcblisting}{}
 \[
-\RULE
-\external{example-inline-display}
+\GAGE
+\external[file=example-inline-display]
   {\usepackage{amsmath}}
   {$\displaystyle\iint x$}%
-\RULE
+\GAGE
 \]
 \end{tcblisting}
 
@@ -65,15 +80,15 @@ NOTE: If you want to include display math in \cmd{\external} use the incantation
 First two are blank
 
 \begin{tcblisting}{}
-\RULE
-\ExternalWrite{example-inline-separate}
+\GAGE
+\ExternalWrite[file=example-inline-separate,top=2in]
   {\usepackage{amsmath}}
   {$\iint$}%
-\RULE
+\GAGE
 
-\RULE\ExternalRun{example-inline-separate}\RULE
+\GAGE\ExternalRun[file=example-inline-separate]\GAGE
 
-\RULE\ExternalRead{example-inline-separate}\RULE
+\GAGE\ExternalRead[file=example-inline-separate]\GAGE
 \end{tcblisting}
 
 \section{Standalone Source Files}
@@ -85,9 +100,9 @@ First is blank
 Note: be careful if you rename such a file, as you will also want to change the argument to \cmd{ExternalCode}.
 
 \begin{tcblisting}{}
-\RULE\ExternalRun{example-standalone-simple}\RULE
+\GAGE\ExternalRun[file=example-standalone-simple]\GAGE
 
-\RULE\ExternalRead{example-standalone-simple}\RULE
+\GAGE\ExternalRead[file=example-standalone-simple]\GAGE
 \end{tcblisting}
 
 \section{New}
@@ -98,9 +113,9 @@ TODO:
 \begin{tcblisting}{}
 \newexternal{\ext}{\stepcounter{external}}{\usepackage{amsmath}}
 
-\RULE\ext{example-inline-new-\arabic{external}}{$\iint$}\RULE
+\GAGE\ext{example-inline-new-\arabic{external}}{$\iint$}\GAGE
 
-\RULE\ext{example-inline-new-\arabic{external}}{$\iiint$}\RULE
+\GAGE\ext{example-inline-new-\arabic{external}}{$\iiint$}\GAGE
 \end{tcblisting}
 
 \begin{tcblisting}{}
@@ -108,9 +123,9 @@ TODO:
   {example-inline-new-\arabic{external}}
   {\usepackage{amsmath}}
 
-\RULE\extS{$\iint$}\RULE
+\GAGE\extS{$\iint$}\GAGE
 
-\RULE\extS{$\iiint$}\RULE
+\GAGE\extS{$\iiint$}\GAGE
 \end{tcblisting}
 
 \section{Problems}
@@ -121,7 +136,7 @@ Known problem: |#1|
 Known workaround: |##1|
 
 \begin{tcblisting}{}
-\external{example-inline-hash}
+\external[file=example-inline-hash]
   {\def\parens#1{(#1)}}
   {\parens{x}}
 \end{tcblisting}
@@ -131,13 +146,13 @@ Note double hash if standalone
 \showfile{example-standalone-hash.tex}
 
 \begin{tcblisting}{}
-\ExternalRun{example-standalone-hash}
-\ExternalRead{example-standalone-hash}
+\ExternalRun[file=example-standalone-hash]
+\ExternalRead[file=example-standalone-hash]
 \end{tcblisting}
 
 \subsection{Catcodes}
 
-Suppose you want to manually |\vDash| (\external{example-inline-vdash}{\usepackage{amssymb}}{$\vDash$})
+Suppose you want to manually |\vDash| (\external[file=example-inline-vdash]{\usepackage{amssymb}}{$\vDash$})
 
 Known problem: catcode in body (e.g., |\DeclareFont|, etc.)
 Known workarounds: |\scantokens|
@@ -151,22 +166,22 @@ insert an extra space at the end.
 See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
 
 \begin{tcblisting}{}
-\RULE
-\external{example-inline-catcode}
+\GAGE
+\external[file=example-inline-catcode]
   {\DeclareFontFamily{U}{msa}{}
    \scantokens{\DeclareFontShape{U}{msa}{m}{n}
      {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
    \usepackage{pifont}}
   {\Pisymbol{msa}{15}}%
-\RULE
+\GAGE
 \end{tcblisting}
 
 \showfile{example-standalone-catcode.tex}
 
 \begin{tcblisting}{}
-\RULE\ExternalRun{example-standalone-catcode}\RULE
+\GAGE\ExternalRun[file=example-standalone-catcode]\GAGE
 
-\RULE\ExternalRead{example-standalone-catcode}\RULE
+\GAGE\ExternalRead[file=example-standalone-catcode]\GAGE
 \end{tcblisting}
 
 \end{document}

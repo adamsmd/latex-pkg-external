@@ -21,21 +21,34 @@
 % Options
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newlength{\external@top}
-\newlength{\external@bottom}
-\newlength{\external@left}
-\newlength{\external@right}
+\newcommand{\stringkey}[2]{\expandafter\def\csname external@#1\endcsname{#2}\define@key{external}{#1}{\expandafter\def\csname external@#1\endcsname{##1}}}
 
-% Default values for options
-\setlength{\external@top}{1in}
-\setlength{\external@bottom}{1in}
-\setlength{\external@left}{1in}
-\setlength{\external@right}{1in}
+\stringkey{file}{}\let\external@file\empty
+\stringkey{latex}{pdflatex}
+\stringkey{pre-savebox}{}
+\stringkey{pre-usebox}{}
 
-\define@key{external}{top}{\setlength{\external@top}{#1}}
-\define@key{external}{bottom}{\setlength{\external@bottom}{#1}}
-\define@key{external}{left}{\setlength{\external@left}{#1}}
-\define@key{external}{right}{\setlength{\external@right}{#1}}
+\newcommand{\lengthkey}[2]{\expandafter\newlength\csname external@#1\endcsname\expandafter\setlength\csname external@#1\endcsname{#2}\define@key{external}{#1}{\expandafter\setlength\csname external@#1\endcsname{##1}}}
+
+% - margins
+\lengthkey{top}{1in}
+\lengthkey{bottom}{1in}
+\lengthkey{left}{1in}
+\lengthkey{right}{1in}
+
+% KEYS:
+% - latex
+% - options
+
+% keys:
+% - action
+% - file
+% - dim, tex, pdf
+
+% - preamble
+% - display math (math=false,true,inline,display)
+% - display math
+% - document class
 
 \ProcessKeyvalOptions*
 
@@ -53,24 +66,9 @@
 \newlength{\external@DEPTH}
 
 % Stream that `\externalWrite` writes to
-\newwrite\external@file
+\newwrite\external@filehandle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% KEYS:
-% - latex
-% - options
-
-% keys:
-%  action
-%  file
-% - dim, tex, pdf
-
-% - class
-% - pagestyle
-% - math
-% - display math
-% - margins
 
 % TODO: option for what command to use for `pdflatex`
 % TODO: document that arguments may need to use ##1 instead of #1
@@ -85,46 +83,79 @@
 % NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
 
 
-% TODO: pre-savebox pre-usebox
+% TODO: filename pre-savebox pre-usebox
 % ARGS: filename preamble body
-\newcommand{\ExternalWrite}[3]{%
-  \typeout{Writing to external: \unexpanded{#1}}%
+\newcommand{\ExternalWrite}[3][]{\setkeys{external}{#1}\ExternalWrite@{#2}{#3}}
+
+\newcommand{\ExternalWrite@}[2]{%
+%\show{\external@file}
+%\immediate\GenericError{}{No file specified in ExternalWrite}
+  \ifx\external@file\empty
+    \GenericError{}{No file specified in {ExternalWrite}}{}{}
+  \else
+  \fi
   % Write to file
-  \immediate\openout\external@file=#1.tex%
-  \immediate\write\external@file{\ExternalCode{#1.dim}{\documentclass{article}#2}{}{#3}{}}%
-  \immediate\closeout\external@file
+  \immediate\openout\external@filehandle="\external@file.tex"%
+  \edef\external@code{%
+    \unexpanded{\ExternalCode}%
+    {\external@file.dim}%
+    {\unexpanded{\expandafter\setlength\csname external@TOP\endcsname}{\the\external@top}%
+     \unexpanded{\expandafter\setlength\csname external@BOTTOM\endcsname}{\the\external@bottom}%
+     \unexpanded{\expandafter\setlength\csname external@LEFT\endcsname}{\the\external@left}%
+     \unexpanded{\expandafter\setlength\csname external@RIGHT\endcsname}{\the\external@right}%
+     \unexpanded{\documentclass{article}}%
+     \unexpanded{#1}}%
+    \unexpanded{{}}%
+    \unexpanded{{#2}}%
+    \unexpanded{{}}}%
+  \immediate\write\external@filehandle{\external@code}%
+  \immediate\closeout\external@filehandle
 }
 
 % TODO: use the `shellesc` package
 % TODO: run options (e.g., -shell-escape)
-\newcommand{\ExternalRun}[1]{%
+\newcommand{\ExternalRun}[1][]{\setkeys{external}{#1}\ExternalRun@}
+\newcommand{\ExternalRun@}{%
   % Compile file
-  \immediate\typeout{Running external: #1.tex}%
+  \ifx\external@file\empty
+    \GenericError{}{No file specified in {ExternalRun}}{}{}
+  \else
+  \fi
+  \immediate\typeout{Running external: \external@file}%
   \ifcase\pdfshellescape% TODO: use check from `shellesc` package
     \GenericError{}{You must enable "-shell-escape"}{}{}
   \or
   \or
     \GenericError{}{You must enable "-shell-escape"}{}{}
-  \fi
-  \immediate\write18{pdflatex -shell-escape -halt-on-error -interaction=batchmode #1.tex}%
+    \fi
+  \immediate\write18{pdflatex -shell-escape -halt-on-error -interaction=batchmode \external@file.tex}%
   % TODO: check for errors
 }
 
 % TODO: includegraphics options
-\newcommand{\ExternalRead}[1]{%
+\newcommand{\ExternalRead}[1][]{\setkeys{external}{#1}\ExternalRead@{}}
+\newcommand{\ExternalRead@}{%
   % Load the dimentions of the symbol
-  \input{#1.dim}%
+  \input{\external@file.dim}%
   % Use \raisebox to model the symbol's depth
   \raisebox{-\external@DEPTH}{%
     % Due to trouble with including a space after a command, we cannot use:
     %   \includegraphics[trim=\the\external@left \the\external@bottom \the\external@right \the\external@top]{#1.pdf}
     % So, instead we indirect through another command
-    \external@includegraphics{\the\external@LEFT}{\the\external@BOTTOM}{\the\external@RIGHT}{\the\external@TOP}{#1.pdf}}%
+    \external@includegraphics{\the\external@LEFT}{\the\external@BOTTOM}{\the\external@RIGHT}{\the\external@TOP}{\external@file.pdf}}%
 }
 
 \newcommand{\external@includegraphics}[5]{\includegraphics[trim=#1 #2 #3 #4]{#5}}
 
-\newcommand{\external}[4][]{\ExternalWrite{#2}{#3}{#4}\ExternalRun{#2}\ExternalRead{#2}}
+\newcommand{\external}[3][]{%
+  \setkeys{external}{#1}%
+  \ExternalWrite@{#2}{#3}%
+  \ExternalRun@%
+  \ExternalRead@}
+
+\newcommand{\externaltest}[4][]{\expandafter\setlength\csname external@top\endcsname{2in}\external[#1]{#2}{#3}{#4}}
+
+\newcommand{\mathexternal}[4][]{\external[#1]{#2}{#3}{$#4$}}
 
 % TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `\unexpanded`
 
@@ -133,16 +164,14 @@
   % ARGS: file code
   \newcommand{#1}[2]{%
     #2%
-    \edef\external@filename{{##1}}%
-    \expandafter\external\external@filename{#3}{##2}}}
+    \external[file=##1]{#3}{##2}}}
 
 % ARGS: name action fileNameCmd preamble
 \WithSuffix\newcommand{\newexternal}*[4]{%
   % ARGS: code
   \newcommand{#1}[1]{%
     #2%
-    \edef\external@filename{{#3}}%
-    \expandafter\external\external@filename{#4}{##1}}}
+    \external[file=#3]{#4}{##1}}}
 
 %\verbatiminput{...}
 %\newcommand\xexternal[1]{%

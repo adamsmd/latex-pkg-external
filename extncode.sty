@@ -10,12 +10,12 @@
 \ProvidesPackage{extncode}[2019/01/05 v0.1 Externally Rendered LaTeX]
 
 % ARGS: dim-file preamble pre-savebox box pre-usebox
-\newcommand{\ExternalCode}[4]{%
+\newcommand{\ExternalCode}[5]{%
   \unexpanded{% todo: spaces?
     % Note that since the user code supplied in arguments to
     % `\ExternalCode might assume `@` is `other`, we avoid calling
     % `\makeatletter` until after the user code is used.
-
+    %
     % We keep a (default one inch) margin (that we then trim) to allow
     % symbols to draw outsize their box.  The user can use `#2` to set
     % it to something else.
@@ -91,7 +91,7 @@
     \vsize=\dimexpr\ht\external@box+\dp\external@box % Column height
 
     % Allow the user to run body code before the actual box
-    \expandafter\def\csname external@code\endcsname{#3}
+    \expandafter\def\csname external@code\endcsname{#5}
     \csname external@code\endcsname
 
     % Finally, render the \external@box
