@@ -9,8 +9,8 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{extncode}[2019/01/05 v0.1 Externally Rendered LaTeX]
 
-% ARGS: file preamble body
-\newcommand{\externalCode}[3]{%
+% ARGS: dim-file preamble body
+\newcommand{\ExternalCode}[3]{%
   \unexpanded{%
     \documentclass{article}
 
@@ -40,7 +40,7 @@
 
     % Save the dimentions of the symbol in \external@box
     \newwrite\external@dimfile
-    \immediate\openout\external@dimfile=#1.dim
+    \immediate\openout\external@dimfile=#1
     % TODO: save margins
     % We have no guarantee that the `.dim` file will be read when `@` is a letter so we use `\csname`
     \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@TOP\endcsname}{1in}\relax}

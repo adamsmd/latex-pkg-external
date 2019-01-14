@@ -15,15 +15,15 @@
 
 \RULE M\RULE \rule{0.2em}{7pt}hXAIk
 
-M\RULE\externalWrite{example-external-1}{\usepackage{amsmath}}{$\int$}\RULE M (blank)
+M\RULE\externalWrite{example-inline-1}{\usepackage{amsmath}}{$\int$}\RULE M (blank)
 
 % NOTE: If you want to include display math in `\external` use the incantation: \[ \external{$\displaystyle ...$} \]
 
-M\externalRun{example-external-1}M (blank)
+M\externalRun{example-inline-1}M (blank)
 
-M\externalRead{example-external-1}M
+M\externalRead{example-inline-1}M
 
-M\external{example-external-2}{\usepackage{amsmath}}{$\int$}M
+M\external{example-inline-2}{\usepackage{amsmath}}{$\int$}M
 
 M\externalRun{example-standalone}M (blank)
 
@@ -31,11 +31,11 @@ M\externalRead{example-standalone}M
 
 % TODO: \newexternal
 \newexternal{\ex}{}{\usepackage{amsmath}}
-M\ex{extample-newexternal-1}{$\int$}M
+M\ex{example-inline-newexternal-1}{$\int$}M
 
 % TODO: \newexternal*
 \newcounter{external}[table]
-\newexternal*{\Ex}{\stepcounter{external}}{example-newexternal*-\arabic{external}}{\usepackage{amsmath}}
+\newexternal*{\Ex}{\stepcounter{external}}{example-inline-newexternal*-\arabic{external}}{\usepackage{amsmath}}
 
 M\Ex{$\int$}M
 M\Ex{$\iint$}M
@@ -45,14 +45,14 @@ M\Ex{$\iint$}M
 % Known problem: #1
 % Known workaround: ##1
 
-\external{example-hash-inline}{\def\foo#1{abc#1def}}{\foo{xyz}}
+\external{example-inline-hash}{\def\foo#1{abc#1def}}{\foo{xyz}}
 
 % TODO:
 %\RequirePackage{external}
 %\externalCode{example-standalone}{\usepackage{amsmath}}{$\int$}
 
-\externalRun{example-hash-standalone} % Note: needs double hash
-\externalRead{example-hash-standalone}
+\externalRun{example-standalone-hash} % Note: needs double hash
+\externalRead{example-standalone-hash}
 
 \begin{tcblisting}{}
 my example $f$
@@ -66,7 +66,7 @@ my example $f$
 % Known workarounds: \scantokens
 
 
-\external{example-catcode-inline}{
+\external{example-inline-catcode}{
   \DeclareFontFamily{U}{fselch}{}
   % We use `\scantokens` because \DeclareFontShape plays with the
   % catcodes and this code is being passed as the argument of another
@@ -79,8 +79,8 @@ my example $f$
   \usepackage{pifont}}{%
   \Pisymbol{fselch}{1}}
 
-\externalRun{example-catcode-standalone} % Note: needs double hash
-\externalRead{example-catcode-standalone}
+\externalRun{example-standalone-catcode} % Note: needs double hash
+\externalRead{example-standalone-catcode}
 
 %\edef\asdf{\unexpanded{\foo}}
 %\show\asdf

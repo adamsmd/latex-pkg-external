@@ -90,7 +90,7 @@
   \typeout{Writing to external: \unexpanded{#1}}%
   % Write to file
   \immediate\openout\external@file=#1.tex%
-  \immediate\write\external@file{\externalCode{#1}{#2}{#3}}%
+  \immediate\write\external@file{\ExternalCode{#1.dim}{#2}{#3}}%
   \immediate\closeout\external@file
 }
 
