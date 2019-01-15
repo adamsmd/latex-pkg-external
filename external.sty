@@ -24,9 +24,14 @@
 \newcommand{\stringkey}[2]{\expandafter\def\csname external@#1\endcsname{#2}\define@key{external}{#1}{\expandafter\def\csname external@#1\endcsname{##1}}}
 
 \stringkey{file}{}\let\external@file\empty
-\stringkey{latex}{pdflatex}
+\stringkey{latex}{auto}
+\stringkey{preamble}{} % TODO: wrap?
 \stringkey{pre-savebox}{}
 \stringkey{pre-usebox}{}
+
+\stringkey{dimention-extention}{dim}
+\stringkey{tex-extension}{tex}
+\stringkey{pdf-extension}{pdf}
 
 \newcommand{\lengthkey}[2]{\expandafter\newlength\csname external@#1\endcsname\expandafter\setlength\csname external@#1\endcsname{#2}\define@key{external}{#1}{\expandafter\setlength\csname external@#1\endcsname{##1}}}
 
@@ -36,19 +41,16 @@
 \lengthkey{left}{1in}
 \lengthkey{right}{1in}
 
-% KEYS:
-% - latex
-% - options
+\stringkey{math}{false} % true, inline, display
+\stringkey{documentclass}{article} % empty
+\stringkey{documentclass-options}{}
 
 % keys:
 % - action
-% - file
-% - dim, tex, pdf
-
 % - preamble
-% - display math (math=false,true,inline,display)
-% - display math
-% - document class
+% - expand
+
+% TODO: extncode.sty -> external.code.sty
 
 \ProcessKeyvalOptions*
 
@@ -70,9 +72,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% TODO: option for what command to use for `pdflatex`
 % TODO: document that arguments may need to use ##1 instead of #1
-% TODO: options for extentions (e.g., .dim, .tex, .pdf)
 % TODO: options for debugging
 % TODO: options for class (e.g., article) (pagestyle?)
 % TODO: options for math
@@ -85,9 +85,9 @@
 
 % TODO: filename pre-savebox pre-usebox
 % ARGS: filename preamble body
-\newcommand{\ExternalWrite}[3][]{\setkeys{external}{#1}\ExternalWrite@{#2}{#3}}
+\newcommand{\ExternalWrite}[3][]{\setkeys{external}{#1}\ExternalWrite@{#2}{}{#3}{}}
 
-\newcommand{\ExternalWrite@}[2]{%
+\newcommand{\ExternalWrite@}[4]{%
 %\show{\external@file}
 %\immediate\GenericError{}{No file specified in ExternalWrite}
   \ifx\external@file\empty
@@ -105,9 +105,9 @@
      \unexpanded{\expandafter\setlength\csname external@RIGHT\endcsname}{\the\external@right}%
      \unexpanded{\documentclass{article}}%
      \unexpanded{#1}}%
-    \unexpanded{{}}%
     \unexpanded{{#2}}%
-    \unexpanded{{}}}%
+    \unexpanded{{#3}}%
+    \unexpanded{{#4}}}%
   \immediate\write\external@filehandle{\external@code}%
   \immediate\closeout\external@filehandle
 }
@@ -149,7 +149,7 @@
 
 \newcommand{\external}[3][]{%
   \setkeys{external}{#1}%
-  \ExternalWrite@{#2}{#3}%
+  \ExternalWrite@{#2}{}{#3}{}%
   \ExternalRun@%
   \ExternalRead@}
 

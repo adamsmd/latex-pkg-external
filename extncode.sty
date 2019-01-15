@@ -11,7 +11,7 @@
 
 % ARGS: dim-file preamble pre-savebox box pre-usebox
 \newcommand{\ExternalCode}[5]{%
-  \unexpanded{% todo: spaces?
+  \unexpanded{%
     % Note that since the user code supplied in arguments to
     % `\ExternalCode might assume `@` is `other`, we avoid calling
     % `\makeatletter` until after the user code is used.
@@ -44,18 +44,17 @@
     % The user can use `#3` to set these to something else.
     \pagestyle{empty}
     \setlength{\parindent}{0pt}
-    %\setlength{\parskip}{0pt}
-    %\renewcommand{\baselinestretch}{1.0}
-    \topmargin=0pt
-    \headheight=0pt
-    \headsep=0pt
-    \marginparsep=0pt
-    \marginparwidth=0pt
-    \footskip=0pt
-    \marginparpush=0pt
-    \oddsidemargin=0pt
-    \evensidemargin=0pt
-    \topskip=0pt
+    \topskip=0pt        % Extra space before baseline of first line on page
+
+    \topmargin=0pt      % Distance between \voffset and top of header
+    \headheight=0pt     % Height of header
+    \headsep=0pt        % Distance between header and text area
+    \footskip=0pt       % Distance between bottom of text area and bottom of footer
+    \oddsidemargin=0pt  % Distance between \hoffset and text area
+    \evensidemargin=0pt % Distance between \hoffset and text area
+    %\marginparsep=0pt  % Distance between text area and margin notes
+    %\marginparwidth=0pt% Width of margin notes
+    %\marginparpush=0pt % Vertical space between margin notes
 
     % Allow the user to run body code before the actual box
     \expandafter\def\csname external@code\endcsname{#3}
@@ -85,10 +84,10 @@
     \pageheight=\paperheight
     \fi
 
-    \textwidth=\wd\external@box %todo:
-    \textheight=\dimexpr\ht\external@box+\dp\external@box
-    \hsize=\wd\external@box                          % Paragraph width
-    \vsize=\dimexpr\ht\external@box+\dp\external@box % Column height
+    \textwidth=\wd\external@box                           % Width of text area
+    \textheight=\dimexpr\ht\external@box+\dp\external@box % Height of text area
+    \hsize=\wd\external@box                               % Paragraph width
+    \vsize=\dimexpr\ht\external@box+\dp\external@box      % Column height
 
     % Allow the user to run body code before the actual box
     \expandafter\def\csname external@code\endcsname{#5}
