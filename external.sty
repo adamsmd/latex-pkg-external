@@ -146,14 +146,14 @@
   \ifx\empty\external@file
     \PackageError{external}{In \noexpand\ExternalRun, no input TeX file specified}{}%
   \fi
-  \ifcase\pdfshellescape
+  \ifcase\pdf@shellescape
     \PackageError{external}{In \noexpand\ExternalRun,
-      shell escape (i.e., \noexpand\write18) not enabled.
+      shell escape (i.e., \noexpand\write18) is not enabled.
       Maybe add `-shell-escape` to the command line options}{}%
   \or
   \or
     \PackageError{external}{In \noexpand\ExternalRun,
-      shell escape (i.e., \noexpand\write18) not enabled.
+      shell escape (i.e., \noexpand\write18) is not enabled.
       Maybe add `-shell-escape` to the command line options}{}%
   \fi
   \IfFileExists{\external@file\csname external@file/tex\endcsname}
