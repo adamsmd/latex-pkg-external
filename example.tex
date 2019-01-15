@@ -41,10 +41,6 @@ For example we might see something like the following.
 \end{tcblisting}
 
 
-%\typeout{***** \expandafter\the\csname external@TOP\endcsname}
-%\externaltest{example-inline-test}{}{foo}
-%\typeout{***** \expandafter\the\csname external@top\endcsname}
-
 \section{Simple Usage}
 
 The common use case is quite simple.
@@ -53,36 +49,30 @@ where \meta{filename} ...
 
 \begin{tcblisting}{}
 \GAGE
-\external[file=example-inline-simple]
-  {\usepackage{amsmath}}
+\external[file=example-inline-simple,preamble={\usepackage{amsmath}}]
   {$\iint x$}%
 \GAGE
 \end{tcblisting}
-
--------------
-
---------------
 
 NOTE: If you want to include display math in \cmd{\external} use the incantation: |\[ \external{$\displaystyle...$} \]|
 
 \begin{tcblisting}{}
 \[
 \GAGE
-\external[file=example-inline-display]
-  {\usepackage{amsmath}}
-  {$\displaystyle\iint x$}%
+\external[file=example-inline-display,preamble={\usepackage{amsmath}}]
+         {$\displaystyle\iint x$}%
 \GAGE
 \]
 \end{tcblisting}
 
+% TODO: weave separate commands to earlier test?
 \section{Separate Commands}
 
 First two are blank
 
 \begin{tcblisting}{}
 \GAGE
-\ExternalWrite[file=example-inline-separate,top=2in]
-  {\usepackage{amsmath}}
+\ExternalWrite[file=example-inline-separate,preamble={\usepackage{amsmath}}]
   {$\iint$}%
 \GAGE
 
@@ -111,22 +101,26 @@ TODO:
 \newcounter{external}[table]
 
 \begin{tcblisting}{}
-\newexternal{\ext}{\stepcounter{external}}{\usepackage{amsmath}}
+\newexternal[preamble={\usepackage{amsmath}}]{\ext}{\stepcounter{external}}{}
 
-\GAGE\ext{example-inline-new-\arabic{external}}{$\iint$}\GAGE
+\GAGE\ext[file=example-inline-new-\arabic{external}]{$\iint$}\GAGE
 
-\GAGE\ext{example-inline-new-\arabic{external}}{$\iiint$}\GAGE
+\GAGE\ext[file=example-inline-new-\arabic{external}]{$\iiint$}\GAGE
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\newexternal*{\extS}{\stepcounter{external}}
-  {example-inline-new-\arabic{external}}
-  {\usepackage{amsmath}}
+\newexternal[file=example-inline-new-\arabic{external},preamble={\usepackage{amsmath}}]{\extS}{\stepcounter{external}}{}
 
 \GAGE\extS{$\iint$}\GAGE
 
 \GAGE\extS{$\iiint$}\GAGE
 \end{tcblisting}
+
+\section{Options}
+
+TODO
+
+% TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `\unexpanded`
 
 \section{Problems}
 
@@ -136,8 +130,7 @@ Known problem: |#1|
 Known workaround: |##1|
 
 \begin{tcblisting}{}
-\external[file=example-inline-hash]
-  {\def\parens#1{(#1)}}
+\external[file=example-inline-hash,preamble={\def\parens##1{(##1)}}]
   {\parens{x}}
 \end{tcblisting}
 
@@ -152,7 +145,7 @@ Note double hash if standalone
 
 \subsection{Catcodes}
 
-Suppose you want to manually |\vDash| (\external[file=example-inline-vdash]{\usepackage{amssymb}}{$\vDash$})
+Suppose you want to manually |\vDash| (\external[file=example-inline-vdash,preamble={\usepackage{amssymb}}]{$\vDash$})
 
 Known problem: catcode in body (e.g., |\DeclareFont|, etc.)
 Known workarounds: |\scantokens|
@@ -167,11 +160,12 @@ See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinech
 
 \begin{tcblisting}{}
 \GAGE
-\external[file=example-inline-catcode]
-  {\DeclareFontFamily{U}{msa}{}
-   \scantokens{\DeclareFontShape{U}{msa}{m}{n}
-     {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
-   \usepackage{pifont}}
+\external[file=example-inline-catcode,
+  preamble={
+    \DeclareFontFamily{U}{msa}{}
+      \scantokens{\DeclareFontShape{U}{msa}{m}{n}
+        {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
+      \usepackage{pifont}}]
   {\Pisymbol{msa}{15}}%
 \GAGE
 \end{tcblisting}
