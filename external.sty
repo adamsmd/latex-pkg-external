@@ -38,26 +38,30 @@
 \stringkey{file/dim}{.dim}
 \stringkey{file/tex}{.tex}
 \stringkey{file/pdf}{.pdf}
-\stringkey{latex}{} % blank = auto
-\stringkey{latex/options}{-halt-on-error -interaction=batchmode}
+
+\stringkey{documentclass}{article} % empty = do not add documentclass
+\stringkey{documentclass/options}{}
 \stringkey{preamble}{}
 \stringkey{pre-savebox}{}
 \stringkey{pre-usebox}{}
 
+\stringkey{math}{false}
+\def\external@math@false{false}
+\def\external@math@true{true}
+\def\external@math@inline{inline}
+\def\external@math@display{display}
+
+\stringkey{latex}{} % blank = auto
+\stringkey{latex/options}{-halt-on-error -interaction=batchmode}
 
 \lengthkey{top}{1in}
 \lengthkey{bottom}{1in}
 \lengthkey{left}{1in}
 \lengthkey{right}{1in}
 
-\stringkey{math}{false} % true, inline, display TODO
-\stringkey{documentclass}{article} % empty = do not add documentclass
-\stringkey{documentclass/options}{}
-
 \stringkey{includegraphics/options}{}
 
 % keys:
-% - preamble
 % - expand
 
 % TODO: extncode.sty -> external.code.sty
@@ -84,15 +88,26 @@
 % Low-level Commands
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%% \ExternalWrite
+
 % ARGS: options body
 \newcommand{\ExternalWrite}[2][]{{\setkeys{external}{#1}\ExternalWrite@{#2}}}
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
+  % Error checking
   \ifx\empty\external@file
     \PackageError{external}{In \noexpand\ExternalWrite, no output TeX file specified}{}%
   \fi
-  \immediate\openout\external@filehandle="\external@file\csname external@file/tex\endcsname"%
-  % We use \edef to control what to expand in the arguments of \ExternalCode
+  % Handling `math` option
+  \ifx     \external@math@false  \external@math\def\external@body{#1}%
+  \else\ifx\external@math@true   \external@math\def\external@body{$#1$}%
+  \else\ifx\external@math@inline \external@math\def\external@body{$#1$}%
+  \else\ifx\external@math@display\external@math\def\external@body{$\displaystyle#1$}%
+  \else\PackageError{external}{In \noexpand\ExternalRead,
+    unknown math option (must be "true", "false", "inline", or "display"):
+    \external@math}{}%
+  \fi\fi\fi\fi
+  % Use \edef to control what to expand in the arguments of \ExternalCode
   \edef\external@code{%
     \unexpanded{\ExternalCode}%
     {\external@file.dim}%
@@ -108,19 +123,26 @@
      \fi
      \expandafter\unexpanded\expandafter{\external@preamble}}%
     {\csname external@pre-savebox\endcsname}%
-    \unexpanded{{#1}}%
+    {\expandafter\unexpanded\expandafter{\external@body}}%
     {\csname external@pre-usebox\endcsname}}%
+  %%%% Core code
+  \immediate\openout\external@filehandle="\external@file\csname external@file/tex\endcsname"%
   \immediate\write\external@filehandle{\external@code}%
   \immediate\closeout\external@filehandle
+  %%%% End core code
+  % Sanity checking (warnings)
   \IfFileExists{\external@file\csname external@file/tex\endcsname}
     {}
     {\PackageWarning{external}{In \noexpand\ExternalWrite, output TeX file does not exist:
         \external@file\csname external@file/tex\endcsname}}%
 }
 
+%%%%%%%% \ExternalRun
+
 % ARGS: options
 \newcommand{\ExternalRun}[1][]{{\setkeys{external}{#1}\ExternalRun@}}
 \newcommand{\ExternalRun@}{{%
+  % Error checking
   \ifx\empty\external@file
     \PackageError{external}{In \noexpand\ExternalRun, no input TeX file specified}{}%
   \fi
@@ -138,6 +160,7 @@
     {}
     {\PackageError{external}{In \noexpand\ExternalRun, input TeX file does not exist:
         \external@file\csname external@file/tex\endcsname}{}}%
+  % Determine what latex command to use
   \ifx\empty\external@latex
     \ifluatex     \def\external@latexcmd{lualatex}%
     \else\ifxetex \def\external@latexcmd{xelatex}%
@@ -149,9 +172,12 @@
   \else
     \let\external@latexcmd{\external@latex}
   \fi
+  %%%% Core code
   \ShellEscape{\external@latexcmd\space
     \csname external@latex/options\endcsname\space%
     \external@file\csname external@file/tex\endcsname}%
+  %%%% End core code
+  % Sanity checking (warnings)
   \IfFileExists{\external@file\csname external@file/pdf\endcsname}
     {}
     {\PackageWarning{external}{In \noexpand\ExternalRun, output PDF file does not exist:
@@ -162,31 +188,43 @@
         \external@file\csname external@file/dim\endcsname}}%
 }}
 
+%%%%%%%% \ExternalRead
+
 % ARGS: options
-\newcommand{\ExternalRead}[1][]{{\setkeys{external}{#1}\ExternalRead@{}}}
+\newcommand{\ExternalRead}[1][]{{\setkeys{external}{#1}\ExternalRead@}}
 \newcommand{\ExternalRead@}{%
+  % Handling the `math` option
+  \ifx     \external@math@false  \external@math\ExternalRead@@
+  \else\ifx\external@math@true   \external@math\ExternalRead@@
+  \else\ifx\external@math@inline \external@math\ExternalRead@@
+  \else\ifx\external@math@display\external@math\[\ExternalRead@@\]
+  \else\PackageError{external}{In \noexpand\ExternalRead,
+    unknown math option (must be "true", "false", "inline", or "display"):
+    \external@math}{}%
+  \fi\fi\fi\fi}
+\newcommand{\ExternalRead@@}{%
+  % Error checking
   \ifx\empty\external@file
     \PackageError{external}{In \ExternalRead, no input PDF file specified}{}%
   \fi
   \IfFileExists{\external@file\csname external@file/pdf\endcsname}
     {}
     {\PackageError{external}{In \noexpand\ExternalRead, input PDF file does not exist:
-        \external@file\csname external@file/pdf\endcsname}}%
+        \external@file\csname external@file/pdf\endcsname}{}}%
   \IfFileExists{\external@file\csname external@file/dim\endcsname}
     {}
     {\PackageError{external}{In \noexpand\ExternalRun, input dimension file does not exist:
-        \external@file\csname external@file/dim\endcsname}}%
-  % Load the dimentions of the symbol
-  \input{\external@file.dim}%
-  % Use \raisebox to model the symbol's depth
-  \raisebox{-\external@DEPTH}{%
+        \external@file\csname external@file/dim\endcsname}{}}%
+  %%%% Core code
+  \input{\external@file.dim}% Load the dimensions of the symbol
+  \raisebox{-\external@DEPTH}{% Use \raisebox to model the symbol's depth
     % Due to trouble with including a space after a command, we cannot use:
     %
     %   \includegraphics[
     %     trim=\the\external@left \the\external@bottom
     %          \the\external@right \the\external@top]{#1.pdf}
     %
-    % So, instead we indirect through another command
+    % So, instead we indirect through another command.
     %
     % Also we need to expand \external@includegraphics/options before
     % \includegraphics parses its argument.
@@ -199,6 +237,7 @@
       {\the\external@RIGHT}
       {\the\external@TOP}
       {\external@file.pdf}}%
+  %%%% End core code
 }
 
 \newcommand{\external@includegraphics}[6]{\includegraphics[trim=#2 #3 #4 #5,#1]{#6}}
@@ -207,12 +246,16 @@
 % High-level Commands
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%% \external
+
 % ARGS: options body
 \newcommand{\external}[2][]{{%
   \setkeys{external}{#1}%
   \ExternalWrite@{#2}%
   \ExternalRun@%
   \ExternalRead@}}
+
+%%%%%%%% \newexternal
 
 % ARGS: options name pre-action post-action
 \newcommand{\newexternal}[4][]{
@@ -221,6 +264,12 @@
     #3%
     \external[#1,##1]{##2}%
     #4}}
+
+%%%%%%%% \externalkeys
+
+\newcommand{\externalkeys}[1]{\setkeys{external}{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
 %%

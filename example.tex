@@ -40,7 +40,6 @@ For example we might see something like the following.
 \GAGE M\GAGE
 \end{tcblisting}
 
-
 \section{Simple Usage}
 
 The common use case is quite simple.
@@ -64,6 +63,41 @@ NOTE: If you want to include display math in \cmd{\external} use the incantation
 \GAGE
 \]
 \end{tcblisting}
+
+\begin{tcblisting}{}
+\GAGE
+\external[file=example-inline-math-true,preamble={\usepackage{amsmath}},math=true]
+         {\iint x}%
+\GAGE
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\GAGE
+\external[file=example-inline-math-false,preamble={\usepackage{amsmath}},math=false]
+         {$\iint x$}%
+\GAGE
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\GAGE
+\external[file=example-inline-math-inline,preamble={\usepackage{amsmath}},math=inline]
+         {\iint x}%
+\GAGE
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\GAGE
+\external[file=example-inline-math-display,preamble={\usepackage{amsmath}},math=display]
+         {\iint x}%
+\GAGE
+\end{tcblisting}
+
+TODO: error tests.  Maybe in directory and can use relative directory to use package?
+
+% TODO: show example using \setkey{external}{file=...}
+
+TODO: options can be set in package import
+
 
 % TODO: weave separate commands to earlier test?
 \section{Separate Commands}
