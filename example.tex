@@ -5,7 +5,6 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
 % TODO: center listings?
-% TODO: listingsutf8 does not work with xelatex or pdflatex
 
 \newcommand{\showfile}[1]{
   \begin{tcolorbox}[title=\texttt{#1}]
@@ -99,8 +98,8 @@ TODO: error tests.  Maybe in directory and can use relative directory to use pac
 
 TODO: options can be set in package import
 
+TODO: weave ``separate commands'' to test earlier?
 
-% TODO: weave separate commands to earlier test?
 \section{Separate Commands}
 
 First two are blank
@@ -132,7 +131,8 @@ Note: be careful if you rename such a file, as you will also want to change the 
 
 \section{New}
 
-TODO:
+TODO: newcounter
+
 \newcounter{external}[table]
 
 \begin{tcblisting}{}
@@ -155,7 +155,7 @@ TODO:
 
 TODO
 
-% TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `\unexpanded`
+TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `unexpanded` (still true?)
 
 \section{Problems}
 
