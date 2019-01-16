@@ -21,6 +21,13 @@
 \RequirePackage{ifxetex}
 \RequirePackage{ifluatex}
 
+
+% keys:
+% - expand
+
+% TODO: extncode.sty -> external.code.sty
+% TODO: dtx
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Options
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,7 +58,7 @@
 \def\external@math@inline{inline}
 \def\external@math@display{display}
 
-\stringkey{latex}{} % blank = auto
+\stringkey{latex}{} % empty = auto-detect
 \stringkey{latex/options}{-halt-on-error -interaction=batchmode}
 
 \lengthkey{top}{1in}
@@ -60,11 +67,6 @@
 \lengthkey{right}{1in}
 
 \stringkey{includegraphics/options}{}
-
-% keys:
-% - expand
-
-% TODO: extncode.sty -> external.code.sty
 
 \ProcessKeyvalOptions*
 
@@ -91,7 +93,7 @@
 %%%%%%%% \ExternalWrite
 
 % ARGS: options body
-\newcommand{\ExternalWrite}[2][]{{\setkeys{external}{#1}\ExternalWrite@{#2}}}
+\newcommand{\ExternalWrite}[2][]{{\externalkeys{#1}\ExternalWrite@{#2}}}
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
   % Error checking
@@ -104,13 +106,13 @@
   \else\ifx\external@math@inline \external@math\def\external@body{$#1$}%
   \else\ifx\external@math@display\external@math\def\external@body{$\displaystyle#1$}%
   \else\PackageError{external}{In \noexpand\ExternalRead,
-    unknown math option (must be "true", "false", "inline", or "display"):
+    unknown `math` option (must be "true", "false", "inline", or "display"):
     \external@math}{}%
   \fi\fi\fi\fi
   % Use \edef to control what to expand in the arguments of \ExternalCode
   \edef\external@code{%
     \unexpanded{\ExternalCode}%
-    {\external@file.dim}%
+    {\external@file\csname external@file/dim\endcsname}%
     {\unexpanded{\expandafter\setlength\csname external@TOP\endcsname}{\the\external@top}%
      \unexpanded{\expandafter\setlength\csname external@BOTTOM\endcsname}{\the\external@bottom}%
      \unexpanded{\expandafter\setlength\csname external@LEFT\endcsname}{\the\external@left}%
@@ -140,7 +142,8 @@
 %%%%%%%% \ExternalRun
 
 % ARGS: options
-\newcommand{\ExternalRun}[1][]{{\setkeys{external}{#1}\ExternalRun@}}
+\newcommand{\ExternalRun}[1][]{{\externalkeys{#1}\ExternalRun@}}
+% ARGS: none
 \newcommand{\ExternalRun@}{{%
   % Error checking
   \ifx\empty\external@file
@@ -170,11 +173,11 @@
       Use the `latex` option to explicitly specify it}{}%
     \fi\fi\fi
   \else
-    \let\external@latexcmd{\external@latex}
+    \let\external@latexcmd{\external@latex}%
   \fi
   %%%% Core code
   \ShellEscape{\external@latexcmd\space
-    \csname external@latex/options\endcsname\space%
+    \csname external@latex/options\endcsname\space
     \external@file\csname external@file/tex\endcsname}%
   %%%% End core code
   % Sanity checking (warnings)
@@ -191,15 +194,15 @@
 %%%%%%%% \ExternalRead
 
 % ARGS: options
-\newcommand{\ExternalRead}[1][]{{\setkeys{external}{#1}\ExternalRead@}}
+\newcommand{\ExternalRead}[1][]{{\externalkeys{#1}\ExternalRead@}}
 \newcommand{\ExternalRead@}{%
   % Handling the `math` option
   \ifx     \external@math@false  \external@math\ExternalRead@@
   \else\ifx\external@math@true   \external@math\ExternalRead@@
   \else\ifx\external@math@inline \external@math\ExternalRead@@
-  \else\ifx\external@math@display\external@math\[\ExternalRead@@\]
+  \else\ifx\external@math@display\external@math\[\ExternalRead@@\]%
   \else\PackageError{external}{In \noexpand\ExternalRead,
-    unknown math option (must be "true", "false", "inline", or "display"):
+    unknown `math` option (must be "true", "false", "inline", or "display"):
     \external@math}{}%
   \fi\fi\fi\fi}
 \newcommand{\ExternalRead@@}{%
@@ -248,18 +251,18 @@
 
 %%%%%%%% \external
 
-% ARGS: options body
+% ARGS: [options] body
 \newcommand{\external}[2][]{{%
-  \setkeys{external}{#1}%
+  \externalkeys{#1}%
   \ExternalWrite@{#2}%
   \ExternalRun@%
   \ExternalRead@}}
 
 %%%%%%%% \newexternal
 
-% ARGS: options name pre-action post-action
+% ARGS: [options] name pre-action post-action
 \newcommand{\newexternal}[4][]{
-  % ARGS: options body
+  % ARGS: [options] body
   \newcommand{#2}[2][]{%
     #3%
     \external[#1,##1]{##2}%
@@ -267,6 +270,7 @@
 
 %%%%%%%% \externalkeys
 
+% ARGS: keyvals
 \newcommand{\externalkeys}[1]{\setkeys{external}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

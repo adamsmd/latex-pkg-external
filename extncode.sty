@@ -30,7 +30,7 @@
     \expandafter\setlength\csname external@RIGHT\endcsname{1in}
 
     % Note that the use of `\unexpanded` might double any hashes (`#`)
-    % in `#2` or % `#3` (e.g., `#1` becomes `##1`), so we eliminate the
+    % (e.g., `#1` becomes `##1`) in `#2` or `#3`, so we eliminate the
     % extra hash (`#`) by indirecting through a `\def`.
 
     % Run the user specified preamble, which must include the
@@ -56,7 +56,7 @@
     %\marginparwidth=0pt% Width of margin notes
     %\marginparpush=0pt % Vertical space between margin notes
 
-    % Allow the user to run body code before the actual box
+    % Allow the user to run body code before the savebox
     \expandafter\def\csname external@code\endcsname{#3}
     \csname external@code\endcsname
 
@@ -67,13 +67,14 @@
 
     \makeatletter
 
-    % Set the text area to perfectly fit the symbol stored in
+    % Set the page and text area to perfectly fit the content stored in
     % `\external@box` with the specified amount of space around the box.
 
     % Note that `\hoffset` and `\voffset` automatically add a one inch
     % offset that we have to subtract out.
     \hoffset=\dimexpr\external@LEFT-1in
     \voffset=\dimexpr\external@TOP-1in
+
     \paperwidth=\dimexpr\external@LEFT+\wd\external@box+\external@RIGHT
     \paperheight=\dimexpr\external@TOP+\ht\external@box+\dp\external@box+\external@BOTTOM
     \ifdefined\pdfpagewidth
@@ -89,24 +90,35 @@
     \hsize=\wd\external@box                               % Paragraph width
     \vsize=\dimexpr\ht\external@box+\dp\external@box      % Column height
 
-    % Allow the user to run body code before the actual box
+    % Allow the user to run body code before the usebox
     \expandafter\def\csname external@code\endcsname{#5}
     \csname external@code\endcsname
 
     % Finally, render the \external@box
     \usebox{\external@box}
 
-    % Save the dimentions of the symbol in `\external@box`
+    % Save the dimentions of the symbol in `\external@box` to a `.dim` file
     \newwrite\external@dimfile
     \immediate\openout\external@dimfile="#1"
-    % Note that we have no guarantee that the `.dim` file will be read when `@` is a letter so we use `\csname`
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@TOP\endcsname}{\the\external@TOP}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@BOTTOM\endcsname}{\the\external@BOTTOM}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@LEFT\endcsname}{\the\external@LEFT}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@RIGHT\endcsname}{\the\external@RIGHT}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@WIDTH\endcsname}{\the\wd\external@box}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@HEIGHT\endcsname}{\the\ht\external@box}\relax}
-    \immediate\write\external@dimfile{\noexpand\setlength{\noexpand\csname external@DEPTH\endcsname}{\the\dp\external@box}\relax}
+    % The `.dim` file that we write might be read in a context where
+    % `@` is a letter so we use `\csname` in the `.dim` file.
+    %
+    % Also, we terminate each line with `\relax` so that reading the
+    % `.dim` file does not add extra spaces.
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@TOP\endcsname}{\the\external@TOP}\relax}
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@BOTTOM\endcsname}{\the\external@BOTTOM}\relax}
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@LEFT\endcsname}{\the\external@LEFT}\relax}
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@RIGHT\endcsname}{\the\external@RIGHT}\relax}
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@WIDTH\endcsname}{\the\wd\external@box}\relax}
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@HEIGHT\endcsname}{\the\ht\external@box}\relax}
+    \immediate\write\external@dimfile{%
+      \noexpand\setlength{\noexpand\csname external@DEPTH\endcsname}{\the\dp\external@box}\relax}
     \immediate\closeout\external@dimfile
 
     \end{document}}}
