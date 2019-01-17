@@ -68,7 +68,8 @@ specifies what code should be placed in the preamble of that file.
 Note that even though this is rendered as a separate document, it is
 properly spaced relative to the surrounding text as though it was
 inline.
-It even behaves properly with regard to copy-and-paste.
+In the resulting PDF, this even behaves properly with regard to
+copy-and-paste.
 
 \subsection{Notation}
 
@@ -91,7 +92,7 @@ even though the font size is 10 points.
 \section{Simple Usage}
 
 The common use case is quite simple.
-You just call \cs{external}\marg{filename}\marg{preamble}\marg{body}
+You just call \cs{external}\oarg{options}\marg{body}
 where \meta{filename} ...
 
 \begin{tcblisting}{}
