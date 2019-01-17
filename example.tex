@@ -1,4 +1,4 @@
-\documentclass{ltxdoc}
+\documentclass[10pt]{ltxdoc}
 
 \usepackage{external}
 
@@ -12,84 +12,132 @@
   \end{tcolorbox}
 }
 
-\def\GAGE{\rule{0.2em}{7pt}\llap{\rule[8pt]{0.2em}{2pt}}}
+\def\gauge{%
+  \rule{0.2em}{7pt}%
+  \llap{\rule[8pt]{0.2em}{2pt}}%
+}
 
 \begin{document}
 
-\title{TODO: Title}
-\author{TODO: Author}
+\title{The |external| package}
+\author{Michael D. Adams\\\url{https://michaeldadams.org}}
+\date{2019/01/15 v0.1}
 \maketitle
 
 \begin{abstract}
-TODO: Abstract
+This package allows you to include the result of rendering LaTeX code
+in a separate document.
+This is useful when you want to use symbols from a package that you do
+not want to load into your main document.
+For example your main document may use symbols from multiple packages
+that conflict or otherwise cannot be loaded together.
 \end{abstract}
 
 \section{Introduction}
 
-We use |\iint| which is |amsmath| only but we do not load |\usepackage{amsmath}| in the master document.
+This package allows you to include the result of rendering LaTeX code
+in a separate document.
+For example, you may want to use symbols from multiple packages that
+cannot be loaded at the same time.
+By rendering them in separate documents and then including their
+rendered results in a master document, this allows you to render the
+symbols from each part in their own package.
+
+\subsection{Quick Start}
+
+Suppose you want to use the |\textbeta| symbol from the |textgreek|
+package, but you do do not want to load the |textgreek| package into
+your master document.
+(Maybe it is incompatible with some other package that you use or maybe
+LaTeX has run out of space for declaring new fonts.)
+You can simply render the |\textbeta| using the \cs{external} command
+as in the following.
+
+\begin{tcblisting}{}
+An atom undergoing
+\external[file=example-inline-greek,
+          preamble={\usepackage{textgreek}}]
+  {\textbeta-decay}
+can emit an electron.
+\end{tcblisting}
+
+The |file| option specifies the name of the LaTeX file to which
+\cs{external} should write the code, and the |preamble| option
+specifies what code should be placed in the preamble of that file.
+
+Note that even though this is rendered as a separate document, it is
+properly spaced relative to the surrounding text as though it was
+inline.
+It even behaves properly with regard to copy-and-paste.
 
 \subsection{Notation}
 
-This documentation surrounds each example with |\GAGE| to print a gauge
-for measuring with height and width of that example.
+For debugging purposes, this documentation surrounds most examples with
+a |\gauge| macro.
+This makes it easy to see whether there is extra space to the left or
+right of a symbol and whether parts of the symbol extend below the
+baseline.
 The bottom bar starts at the baseline and goes up 7 points.
-The top bar extends up to 10 points above the baseline.
+The top bar starts at 8 points above the baseline and extends up to 10
+points.
 For example we might see something like the following.
+Note that the top of the ``M'' is at 7 points above the baseline
+even though the font size is 10 points.
 
 \begin{tcblisting}{}
-\GAGE M\GAGE
+\gauge M\gauge
 \end{tcblisting}
 
 \section{Simple Usage}
 
 The common use case is quite simple.
-You just call \cmd{\external}\marg{filename}\marg{preamble}\marg{body}
+You just call \cs{external}\marg{filename}\marg{preamble}\marg{body}
 where \meta{filename} ...
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \external[file=example-inline-simple,preamble={\usepackage{amsmath}}]
-  {$\iint x$}%
-\GAGE
+  {$\iint xy\,dx\,dy$}%
+\gauge
 \end{tcblisting}
 
-NOTE: If you want to include display math in \cmd{\external} use the incantation: |\[ \external{$\displaystyle...$} \]|
+NOTE: If you want to include display math in \cs{external} use the incantation: |\[ \external{$\displaystyle...$} \]|
 
 \begin{tcblisting}{}
 \[
-\GAGE
+\gauge
 \external[file=example-inline-display,preamble={\usepackage{amsmath}}]
-         {$\displaystyle\iint x$}%
-\GAGE
+         {$\displaystyle\iint xy\,dx\,dy$}%
+\gauge
 \]
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \external[file=example-inline-math-true,preamble={\usepackage{amsmath}},math=true]
-         {\iint x}%
-\GAGE
+         {\iint xy\,dx\,dy}%
+\gauge
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \external[file=example-inline-math-false,preamble={\usepackage{amsmath}},math=false]
-         {$\iint x$}%
-\GAGE
+         {$\iint xy\,dx\,dy$}%
+\gauge
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \external[file=example-inline-math-inline,preamble={\usepackage{amsmath}},math=inline]
-         {\iint x}%
-\GAGE
+         {\iint xy\,dx\,dy}%
+\gauge
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \external[file=example-inline-math-display,preamble={\usepackage{amsmath}},math=display]
-         {\iint x}%
-\GAGE
+         {\iint xy\,dx\,dy}%
+\gauge
 \end{tcblisting}
 
 TODO: error tests.  Maybe in directory and can use relative directory to use package?
@@ -105,14 +153,14 @@ TODO: weave ``separate commands'' to test earlier?
 First two are blank
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \ExternalWrite[file=example-inline-separate,preamble={\usepackage{amsmath}}]
-  {$\iint$}%
-\GAGE
+  {$\iint xy\,dx\,dy$}%
+\gauge
 
-\GAGE\ExternalRun[file=example-inline-separate]\GAGE
+\gauge\ExternalRun[file=example-inline-separate]\gauge
 
-\GAGE\ExternalRead[file=example-inline-separate]\GAGE
+\gauge\ExternalRead[file=example-inline-separate]\gauge
 \end{tcblisting}
 
 \section{Standalone Source Files}
@@ -121,34 +169,34 @@ First is blank
 
 \showfile{example-standalone-simple.tex}
 
-Note: be careful if you rename such a file, as you will also want to change the argument to \cmd{ExternalCode}.
+Note: be careful if you rename such a file, as you will also want to change the argument to \cs{ExternalCode}.
 
 \begin{tcblisting}{}
-\GAGE\ExternalRun[file=example-standalone-simple]\GAGE
+\gauge\ExternalRun[file=example-standalone-simple]\gauge
 
-\GAGE\ExternalRead[file=example-standalone-simple]\GAGE
+\gauge\ExternalRead[file=example-standalone-simple]\gauge
 \end{tcblisting}
 
 \section{New}
 
 TODO: newcounter
 
-\newcounter{external}[table]
+\newcounter{external}
 
 \begin{tcblisting}{}
 \newexternal[preamble={\usepackage{amsmath}}]{\ext}{\stepcounter{external}}{}
 
-\GAGE\ext[file=example-inline-new-\arabic{external}]{$\iint$}\GAGE
+\gauge\ext[file=example-inline-new-\arabic{external}]{$\iint xy\,dx\,dy$}\gauge
 
-\GAGE\ext[file=example-inline-new-\arabic{external}]{$\iiint$}\GAGE
+\gauge\ext[file=example-inline-new-\arabic{external}]{$\iiint xyz\,dx\,dy\,dz$}\gauge
 \end{tcblisting}
 
 \begin{tcblisting}{}
 \newexternal[file=example-inline-new-\arabic{external},preamble={\usepackage{amsmath}}]{\extS}{\stepcounter{external}}{}
 
-\GAGE\extS{$\iint$}\GAGE
+\gauge\extS{$\iint xy\,dx\,dy$}\gauge
 
-\GAGE\extS{$\iiint$}\GAGE
+\gauge\extS{$\iiint xyz\,dx\,dy\,dz$}\gauge
 \end{tcblisting}
 
 \section{Options}
@@ -194,7 +242,7 @@ insert an extra space at the end.
 See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
 
 \begin{tcblisting}{}
-\GAGE
+\gauge
 \external[file=example-inline-catcode,
   preamble={
     \DeclareFontFamily{U}{msa}{}
@@ -202,15 +250,40 @@ See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinech
         {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
       \usepackage{pifont}}]
   {\Pisymbol{msa}{15}}%
-\GAGE
+\gauge
 \end{tcblisting}
 
 \showfile{example-standalone-catcode.tex}
 
 \begin{tcblisting}{}
-\GAGE\ExternalRun[file=example-standalone-catcode]\GAGE
+\gauge\ExternalRun[file=example-standalone-catcode]\gauge
 
-\GAGE\ExternalRead[file=example-standalone-catcode]\GAGE
+\gauge\ExternalRead[file=example-standalone-catcode]\gauge
 \end{tcblisting}
+
+TODO: error tests
+
+ExternalWrite:
+  no file specified
+  bad ``math'' flag
+  warning: output file
+
+ExternalRun:
+  no file specified
+  no shell escape
+  restricted shell-escape
+  TeX does not exist
+  warning: no PDF file
+  warning: no dim file
+
+ExternalRead:
+  bad ``math'' flag
+  no input PDF file specified
+  PDF does not exist
+  dim file does not exist
+
+TODO: rename compile to run
+
+
 
 \end{document}

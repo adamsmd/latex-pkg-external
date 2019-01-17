@@ -1,4 +1,4 @@
-% A package for rendering LaTeX code using a separate document
+% A package for rendering LaTeX code in separate external documents
 %
 % (c) Michael D. Adams <https://michaeldadams.org>
 %
@@ -7,7 +7,7 @@
 %% in directory macros/latex/base/lppl.txt .
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{external}[2019/01/05 v0.1 Externally Rendered LaTeX]
+\ProvidesPackage{external}[2019/01/05 v0.1 Rendering LaTeX code in separate external documents]
 
 \RequirePackage{external.code}
 
@@ -21,7 +21,7 @@
 \RequirePackage{ifxetex}
 \RequirePackage{ifluatex}
 
-% TODO: extncode.sty -> external.code.sty
+% TODO: example.tex -> external.tex
 % TODO: dtx
 % TODO: key for controlling expansion?
 
@@ -37,6 +37,10 @@
   \expandafter\newlength\csname external@#1\endcsname%
   \expandafter\setlength\csname external@#1\endcsname{#2}%
   \define@key{external}{#1}{\expandafter\setlength\csname external@#1\endcsname{##1}}}
+
+\newcounter{external@number}
+
+% \jobname-external-\arabic{....}
 
 \stringkey{file}{}
 \stringkey{file/dim}{.dim}
@@ -89,7 +93,7 @@
 
 %%%%%%%% \ExternalWrite
 
-% ARGS: options body
+% ARGS: [options] body
 \newcommand{\ExternalWrite}[2][]{{\externalkeys{#1}\ExternalWrite@{#2}}}
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
@@ -138,7 +142,7 @@
 
 %%%%%%%% \ExternalRun
 
-% ARGS: options
+% ARGS: [options]
 \newcommand{\ExternalRun}[1][]{{\externalkeys{#1}\ExternalRun@}}
 % ARGS: none
 \newcommand{\ExternalRun@}{{%
@@ -190,7 +194,7 @@
 
 %%%%%%%% \ExternalRead
 
-% ARGS: options
+% ARGS: [options]
 \newcommand{\ExternalRead}[1][]{{\externalkeys{#1}\ExternalRead@}}
 \newcommand{\ExternalRead@}{%
   % Handling the `math` option
@@ -251,6 +255,7 @@
 % ARGS: [options] body
 \newcommand{\external}[2][]{{%
   \externalkeys{#1}%
+  \csname external@pre-action\endcsname%
   \ExternalWrite@{#2}%
   \ExternalRun@%
   \ExternalRead@}}
@@ -264,6 +269,10 @@
     #3%
     \external[#1,##1]{##2}%
     #4}}
+
+% TODO: \newexternal{\external*}{\stepcounter}{}
+
+% TODO: \newcountedexternal
 
 %%%%%%%% \externalkeys
 
