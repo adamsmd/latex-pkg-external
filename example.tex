@@ -12,6 +12,7 @@
   \end{tcolorbox}
 }
 
+% TODO: registration mark
 \def\gauge{%
   \rule{0.2em}{7pt}%
   \llap{\rule[8pt]{0.2em}{2pt}}%
@@ -185,7 +186,7 @@ TODO: newcounter
 \newcounter{external}
 
 \begin{tcblisting}{}
-\newexternal[preamble={\usepackage{amsmath}}]{\ext}{\stepcounter{external}}{}
+\newexternal[preamble={\usepackage{amsmath}},action={\stepcounter{external}}]{\ext}
 
 \gauge\ext[file=example-inline-new-\arabic{external}]{$\iint xy\,dx\,dy$}\gauge
 
@@ -193,7 +194,7 @@ TODO: newcounter
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\newexternal[file=example-inline-new-\arabic{external},preamble={\usepackage{amsmath}}]{\extS}{\stepcounter{external}}{}
+\newexternal[file=example-inline-new-\arabic{external},preamble={\usepackage{amsmath}},action={\stepcounter{external}}]{\extS}
 
 \gauge\extS{$\iint xy\,dx\,dy$}\gauge
 

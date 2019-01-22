@@ -20,11 +20,13 @@
 \RequirePackage{ifpdf}
 \RequirePackage{ifxetex}
 \RequirePackage{ifluatex}
+\RequirePackage{environ}
 
 % TODO: example.tex -> external.tex
 % TODO: dtx
 % TODO: key for controlling expansion?
 % TODO: texdoc dtxtut
+% TODO: https://texfaq.org/FAQ-dtx
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Options
@@ -53,6 +55,7 @@
 \stringkey{preamble}{}
 \stringkey{pre-savebox}{}
 \stringkey{pre-usebox}{}
+\stringkey{action}{}
 
 \stringkey{math}{false}
 \def\external@math@false{false}
@@ -256,20 +259,17 @@
 % ARGS: [options] body
 \newcommand{\external}[2][]{{%
   \externalkeys{#1}%
-  \csname external@pre-action\endcsname%
+  \csname external@action\endcsname%
   \ExternalWrite@{#2}%
   \ExternalRun@%
   \ExternalRead@}}
 
 %%%%%%%% \newexternal
 
-% ARGS: [options] name pre-action post-action
-\newcommand{\newexternal}[4][]{
+% ARGS: [options] name
+\newcommand{\newexternal}[2][]{
   % ARGS: [options] body
-  \newcommand{#2}[2][]{%
-    #3%
-    \external[#1,##1]{##2}%
-    #4}}
+  \newcommand{#2}[2][]{\external[#1,##1]{##2}}}
 
 % TODO: \newexternal{\external*}{\stepcounter}{}
 
