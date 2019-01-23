@@ -146,7 +146,7 @@
 \newcommand{\ExternalWrite@}[1]{%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** Begin ExternalWrite \external@file}%
+    \typeout{**** Begin \noexpand\ExternalWrite on <\external@file>}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -195,7 +195,7 @@
         \external@file\csname external@file/tex\endcsname}}%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** End ExternalWrite \external@file}%
+    \typeout{**** End \noexpand\ExternalWrite on <\external@file>}%
   \fi
 }
 
@@ -205,10 +205,10 @@
 \newcommand{\ExternalRun}[1][]{{\externalkeys{#1}\ExternalRun@}}
 
 % ARGS: (none)
-\newcommand{\ExternalRun@}{{%
+\newcommand{\ExternalRun@}{%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** Begin ExternalRun \external@file}%
+    \typeout{**** Begin \noexpand\ExternalRun on <\external@file>}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -260,29 +260,21 @@
         \external@file\csname external@file/dim\endcsname}}%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** End ExternalRun \external@file}%
+    \typeout{**** End \noexpand\ExternalRun on <\external@file>}%
   \fi
-}}
+}
 
 %%%%%%%% \ExternalRead
 
 % ARGS: [options]
-\newcommand{\ExternalRead}[1][]{{%
-  % Debug code
-  \ifx\external@debug\external@debug@true
-    \typeout{**** Begin ExternalRead \external@file}%
-  \fi
-  % Core code
-  \externalkeys{#1}%
-  \ExternalRead@
-  % Debug code
-  \ifx\external@debug\external@debug@true
-    \typeout{**** End ExternalRead \external@file}%
-  \fi
-  }}
+\newcommand{\ExternalRead}[1][]{{\externalkeys{#1}\ExternalRead@}}
 
 % ARGS: (none)
 \newcommand{\ExternalRead@}{%
+  % Debug code
+  \ifx\external@debug\external@debug@true
+    \typeout{**** Begin \noexpand\ExternalRead on <\external@file>}%
+  \fi
   % Handling the `math` option
   \ifx     \external@math@false  \external@math\ExternalRead@@
   \else\ifx\external@math@true   \external@math\ExternalRead@@
@@ -291,7 +283,12 @@
   \else\PackageError{external}{In \noexpand\ExternalRead,
     unknown `math` option (must be "true", "false", "inline", or "display"):
     \external@math}{}%
-  \fi\fi\fi\fi}
+  \fi\fi\fi\fi
+  % Debug code
+  \ifx\external@debug\external@debug@true
+    \typeout{**** End \noexpand\ExternalRead on <\external@file>}%
+  \fi
+}
 
 % ARGS: (none)
 \newcommand{\ExternalRead@@}{%
