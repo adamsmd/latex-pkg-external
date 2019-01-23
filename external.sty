@@ -30,46 +30,46 @@
 % Options
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\stringkey}[2]{%
+\newcommand{\external@stringkey}[2]{%
   \expandafter\def\csname external@#1\endcsname{#2}%
   \define@key{external}{#1}{\expandafter\def\csname external@#1\endcsname{##1}}}
 
-\newcommand{\lengthkey}[2]{%
+\newcommand{\external@lengthkey}[2]{%
   \expandafter\newlength\csname external@#1\endcsname%
   \expandafter\setlength\csname external@#1\endcsname{#2}%
   \define@key{external}{#1}{\expandafter\setlength\csname external@#1\endcsname{##1}}}
 
 \newcounter{external@number}
 
-\stringkey{file}{\jobname-external-\arabic{external@number}}
-\stringkey{file/dim}{.dim}
-\stringkey{file/tex}{.tex}
-\stringkey{file/pdf}{.pdf}
+\external@stringkey{file}{\jobname-external-\arabic{external@number}}
+\external@stringkey{file/dim}{.dim}
+\external@stringkey{file/tex}{.tex}
+\external@stringkey{file/pdf}{.pdf}
 
-\stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
-\stringkey{documentclass/options}{}
-\stringkey{preamble}{}
-\stringkey{pre-savebox}{}
-\stringkey{pre-usebox}{}
-\stringkey{action}{\stepcounter{external@number}}
+\external@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
+\external@stringkey{documentclass/options}{}
+\external@stringkey{preamble}{}
+\external@stringkey{pre-savebox}{}
+\external@stringkey{pre-usebox}{}
+\external@stringkey{action}{\stepcounter{external@number}}
 
-\stringkey{math}{false}
+\external@stringkey{math}{false}
 \def\external@math@false{false}
 \def\external@math@true{true}
 \def\external@math@inline{inline}
 \def\external@math@display{display}
 
-\stringkey{latex}{} % empty = auto-detect
-\stringkey{latex/options}{-halt-on-error -interaction=batchmode}
+\external@stringkey{latex}{} % empty = auto-detect
+\external@stringkey{latex/options}{-halt-on-error -interaction=batchmode}
 
-\lengthkey{top}{1in}
-\lengthkey{bottom}{1in}
-\lengthkey{left}{1in}
-\lengthkey{right}{1in}
+\external@lengthkey{top}{1in}
+\external@lengthkey{bottom}{1in}
+\external@lengthkey{left}{1in}
+\external@lengthkey{right}{1in}
 
-\stringkey{includegraphics/options}{}
+\external@stringkey{includegraphics/options}{}
 
-\stringkey{debug}{true}
+\external@stringkey{debug}{true}
 \def\external@debug@false{false}
 \def\external@debug@true{true}
 
@@ -89,7 +89,7 @@
 \newlength{\external@DEPTH}
 
 % Stream that `\externalWrite` writes to
-\newwrite\external@filehandle
+\newwrite{\external@filehandle}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % High-level Commands
@@ -114,6 +114,9 @@
 
 % ARGS: [options]
 \NewEnviron{externalenv}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1}}
+
+% Helper to make it easy to expand `\BODY` in `\NewEnviron` early
+% ARGS: body options
 \newcommand{\external@externalflipped}[2]{\external[#2]{#1}}
 
 %%%%%%%% \newexternal
@@ -138,10 +141,12 @@
 
 % ARGS: [options] body
 \newcommand{\ExternalWrite}[2][]{{\externalkeys{#1}\ExternalWrite@{#2}}}
+
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
+  % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** ExternalWrite \external@file}%
+    \typeout{**** Begin ExternalWrite \external@file}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -188,16 +193,22 @@
     {}
     {\PackageWarning{external}{In \noexpand\ExternalWrite, output TeX file does not exist:
         \external@file\csname external@file/tex\endcsname}}%
+  % Debug code
+  \ifx\external@debug\external@debug@true
+    \typeout{**** End ExternalWrite \external@file}%
+  \fi
 }
 
 %%%%%%%% \ExternalRun
 
 % ARGS: [options]
 \newcommand{\ExternalRun}[1][]{{\externalkeys{#1}\ExternalRun@}}
-% ARGS: none
+
+% ARGS: (none)
 \newcommand{\ExternalRun@}{{%
+  % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{******** ExternalRun \external@file}%
+    \typeout{******** Begin ExternalRun \external@file}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -247,16 +258,31 @@
     {}
     {\PackageWarning{external}{In \noexpand\ExternalRun, output dimension file does not exist:
         \external@file\csname external@file/dim\endcsname}}%
+  % Debug code
+  \ifx\external@debug\external@debug@true
+    \typeout{******** End ExternalRun \external@file}%
+  \fi
 }}
 
 %%%%%%%% \ExternalRead
 
 % ARGS: [options]
-\newcommand{\ExternalRead}[1][]{{\externalkeys{#1}\ExternalRead@}}
-\newcommand{\ExternalRead@}{%
+\newcommand{\ExternalRead}[1][]{{%
+  % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{******** ExternalRead \external@file}%
+    \typeout{******** Begin ExternalRead \external@file}%
   \fi
+  % Core code
+  \externalkeys{#1}%
+  \ExternalRead@
+  % Debug code
+  \ifx\external@debug\external@debug@true
+    \typeout{******** End ExternalRead \external@file}%
+  \fi
+  }}
+
+% ARGS: (none)
+\newcommand{\ExternalRead@}{%
   % Handling the `math` option
   \ifx     \external@math@false  \external@math\ExternalRead@@
   \else\ifx\external@math@true   \external@math\ExternalRead@@
@@ -266,6 +292,8 @@
     unknown `math` option (must be "true", "false", "inline", or "display"):
     \external@math}{}%
   \fi\fi\fi\fi}
+
+% ARGS: (none)
 \newcommand{\ExternalRead@@}{%
   % Error checking
   \ifx\empty\external@file
@@ -308,6 +336,8 @@
   %%%%%%%%%%%%%%%%%%%%%%%
 }
 
+% Helper due to trouble including a space after a command
+% ARGS: options left bottom right top body
 \newcommand{\external@includegraphics}[6]{\includegraphics[trim=#2 #3 #4 #5,#1]{#6}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
