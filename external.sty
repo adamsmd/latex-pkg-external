@@ -97,7 +97,7 @@
 
 %%%%%%%% \externalkeys
 
-% ARGS: keyvals
+% ARGS: options
 \newcommand{\externalkeys}[1]{\setkeys{external}{#1}}
 
 %%%%%%%% \external
@@ -112,6 +112,7 @@
 
 %%%%%%%% external environment
 
+% ARGS: [options]
 \NewEnviron{externalenv}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1}}
 \newcommand{\external@externalflipped}[2]{\external[#2]{#1}}
 
@@ -126,12 +127,8 @@
 
 % ARGS: [options] name
 \newcommand{\newexternalenv}[2][]{
-  % ARGS: [options] body
+  % ARGS: [options]
   \NewEnviron{#2}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1,##1}}}
-
-%\newcommand{\newexternalenv}[1][]{
-%\NewEnviron{externalenv}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1}}
-%\newcommand{\external@externalflipped}[2]{\external[#2]{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Low-level Commands
@@ -144,7 +141,7 @@
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
   \ifx\external@debug\external@debug@true
-    \typeout{++++Writing \external@file}%
+    \typeout{**** ExternalWrite \external@file}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -200,7 +197,7 @@
 % ARGS: none
 \newcommand{\ExternalRun@}{{%
   \ifx\external@debug\external@debug@true
-    \typeout{++++Running \external@file}%
+    \typeout{******** ExternalRun \external@file}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -258,7 +255,7 @@
 \newcommand{\ExternalRead}[1][]{{\externalkeys{#1}\ExternalRead@}}
 \newcommand{\ExternalRead@}{%
   \ifx\external@debug\external@debug@true
-    \typeout{++++Read \external@file}%
+    \typeout{******** ExternalRead \external@file}%
   \fi
   % Handling the `math` option
   \ifx     \external@math@false  \external@math\ExternalRead@@

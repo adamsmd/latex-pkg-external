@@ -213,56 +213,30 @@ TODO: newcounter
 \typeout{*************}
 \typeout{*************}
 \typeout{*************}
-%\begin{tcblisting}{}
+
+\begin{tcblisting}{}
 \newexternal[preamble={\usepackage{amsmath}}]{\ams}
-\makeatletter
-\typeout{**** \theexternal@number}
-\makeatother
 
-\typeout{************* A}
 \gauge\ams{$\iint xy\,dx\,dy$}\gauge
-\typeout{************* B}
 
-\makeatletter
-\typeout{**** \theexternal@number}
-\makeatother
 \gauge\ams{$\iiint xyz\,dx\,dy\,dz$}\gauge
-\typeout{************* C}
-%\end{tcblisting}
+\end{tcblisting}
 
-\makeatletter
-\typeout{**** \theexternal@number}
-\makeatother
-\typeout{************* D}
+\begin{tcblisting}{}
+\newexternalenv[preamble={\usepackage{amsmath}}]{amsenv}
 
-%%\newexternalenv[]{}
-%\makeatletter
-%\NewEnviron{extenv}{\expandafter\external@externalflipped\expandafter{\BODY}{preamble={\usepackage{amsmath}},action={\stepcounter{external}}}}
-%\makeatother
-%
-%%\NewEnviron{abcd}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{abcd}}}
-%
-%%\gauge\begin{extenv}[file=example-inline-new-\arabic{external}]$\iint xy\,dx\,dy$\end{extenv}\gauge
-%
-%\gauge
-%\begin{extenv}
-%$x\iint xy\,dx\,dy$
-%\end{extenv}
-%\gauge
-%
-%\gauge
-%\begin{extenv}{}
-%$x\iiint xyz\,dx\,dy\,dz$
-%\end{extenv}
-%\gauge
-%
-%\begin{tcblisting}{}
-%\newexternal[file=example-inline-new-\arabic{external},preamble={\usepackage{amsmath}},action={\stepcounter{external}}]{\extS}
-%
-%\gauge\extS{$\iint xy\,dx\,dy$}\gauge
-%
-%\gauge\extS{$\iiint xyz\,dx\,dy\,dz$}\gauge
-%\end{tcblisting}
+\gauge\begin{amsenv}
+$\iint xy\,dx\,dy$
+\end{amsenv}\gauge
+
+\gauge\begin{amsenv}
+$\iiint xyz\,dx\,dy\,dz$
+\end{amsenv}\gauge
+
+\gauge\begin{amsenv}[file=example-inline-amsenv] % TODO: [file=....]
+$\iiiint xyzw\,dx\,dy\,dz\,dw$
+\end{amsenv}\gauge
+\end{tcblisting}
 
 \section{Options}
 
