@@ -161,7 +161,7 @@
     unknown `math` option (must be "true", "false", "inline", or "display"):
     \external@math}{}%
   \fi\fi\fi\fi
-  % Use \edef to control what to expand in the arguments of \ExternalCode
+  % Use `\edef` to control what to expand in the arguments of `\ExternalCode`
   \edef\external@code{%
     \unexpanded{\ExternalCode}%
     {\external@file\csname external@file/dim\endcsname}%
@@ -208,7 +208,7 @@
 \newcommand{\ExternalRun@}{{%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{******** Begin ExternalRun \external@file}%
+    \typeout{**** Begin ExternalRun \external@file}%
   \fi
   % Error checking
   \ifx\empty\external@file
@@ -260,7 +260,7 @@
         \external@file\csname external@file/dim\endcsname}}%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{******** End ExternalRun \external@file}%
+    \typeout{**** End ExternalRun \external@file}%
   \fi
 }}
 
@@ -270,14 +270,14 @@
 \newcommand{\ExternalRead}[1][]{{%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{******** Begin ExternalRead \external@file}%
+    \typeout{**** Begin ExternalRead \external@file}%
   \fi
   % Core code
   \externalkeys{#1}%
   \ExternalRead@
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{******** End ExternalRead \external@file}%
+    \typeout{**** End ExternalRead \external@file}%
   \fi
   }}
 
@@ -311,34 +311,19 @@
   %%%%   Core code   %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
   \input{\external@file.dim}% Load the dimensions of the symbol
-  \raisebox{-\external@DEPTH}{% Use \raisebox to model the symbol's depth
-    % Due to trouble with including a space after a command, we cannot use:
-    %
-    %   \includegraphics[
-    %     trim=\the\external@left \the\external@bottom
-    %          \the\external@right \the\external@top]{#1.pdf}
-    %
-    % So, instead we indirect through another command.
-    %
-    % Also we need to expand \external@includegraphics/options before
-    % \includegraphics parses its argument.
-    \expandafter\let\expandafter\external@includegraphicsoptions
-      \csname external@includegraphics/options\endcsname
-    \expandafter\external@includegraphics
-      \expandafter{\external@includegraphicsoptions}
-      {\the\external@LEFT}
-      {\the\external@BOTTOM}
-      {\the\external@RIGHT}
-      {\the\external@TOP}
-      {\external@file.pdf}}%
+  \raisebox{-\external@DEPTH}{% Use `\raisebox` to model the symbol's depth.
+    % Use `\edef` to expand `\external@includegraphics/options` before
+    % `\includegraphics` parses its argument.
+    \edef\external@code{%
+      \unexpanded{\includegraphics}
+      [trim={{\the\external@LEFT} {\the\external@BOTTOM} {\the\external@RIGHT} {\the\external@TOP}},%
+        \csname external@includegraphics/options\endcsname]
+      \unexpanded{{\external@file.pdf}}}%
+    \external@code}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%% End core code %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
 }
-
-% Helper due to trouble including a space after a command
-% ARGS: options left bottom right top body
-\newcommand{\external@includegraphics}[6]{\includegraphics[trim=#2 #3 #4 #5,#1]{#6}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
