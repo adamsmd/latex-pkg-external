@@ -113,11 +113,11 @@
 %%%%%%%% external environment
 
 % ARGS: [options]
-\NewEnviron{externalenv}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1}}
-
-% Helper to make it easy to expand `\BODY` in `\NewEnviron` early
-% ARGS: body options
-\newcommand{\external@externalflipped}[2]{\external[#2]{#1}}
+\NewEnviron{externalenv}[1][]{%
+  % Use `\edef` to expand `\BODY` early (and exactly once)
+  \edef\external@code{%
+    \unexpanded{\external[#1]}{\expandafter\unexpanded\expandafter{\BODY}}}%
+  \external@code}
 
 %%%%%%%% \newexternal
 
@@ -131,7 +131,11 @@
 % ARGS: [options] name
 \newcommand{\newexternalenv}[2][]{
   % ARGS: [options]
-  \NewEnviron{#2}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1,##1}}}
+  \NewEnviron{#2}[1][]{%
+    % Use `\edef` to expand `\BODY` early (and exactly once)
+    \edef\external@code{%
+      \unexpanded{\external[#1,##1]}{\expandafter\unexpanded\expandafter{\BODY}}}%
+      \external@code}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Low-level Commands
