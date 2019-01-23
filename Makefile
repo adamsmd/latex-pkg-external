@@ -26,4 +26,4 @@ standalone-lua:
 
 clean:
 	rm -f *.aux *.dim *.log *.listing *.pdf
-	rm -f example-inline-*
+	rm -f example-inline-* example-external-*

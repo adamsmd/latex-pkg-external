@@ -14,8 +14,6 @@
 \RequirePackage{graphicx}
 \RequirePackage{keyval}
 \RequirePackage{kvoptions}
-\RequirePackage{suffix}
-\RequirePackage{pdftexcmds}
 \RequirePackage{shellesc}
 \RequirePackage{ifpdf}
 \RequirePackage{ifxetex}
@@ -43,19 +41,17 @@
 
 \newcounter{external@number}
 
-% \jobname-external-\arabic{....}
-
-\stringkey{file}{}
+\stringkey{file}{\jobname-external-\arabic{external@number}}
 \stringkey{file/dim}{.dim}
 \stringkey{file/tex}{.tex}
 \stringkey{file/pdf}{.pdf}
 
-\stringkey{documentclass}{article} % empty = do not add documentclass
+\stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
 \stringkey{documentclass/options}{}
 \stringkey{preamble}{}
 \stringkey{pre-savebox}{}
 \stringkey{pre-usebox}{}
-\stringkey{action}{}
+\stringkey{action}{\stepcounter{external@number}}
 
 \stringkey{math}{false}
 \def\external@math@false{false}
@@ -72,6 +68,10 @@
 \lengthkey{right}{1in}
 
 \stringkey{includegraphics/options}{}
+
+\stringkey{debug}{true}
+\def\external@debug@false{false}
+\def\external@debug@true{true}
 
 \ProcessKeyvalOptions*
 
@@ -92,6 +92,48 @@
 \newwrite\external@filehandle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% High-level Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%% \externalkeys
+
+% ARGS: keyvals
+\newcommand{\externalkeys}[1]{\setkeys{external}{#1}}
+
+%%%%%%%% \external
+
+% ARGS: [options] body
+\newcommand{\external}[2][]{{%
+  \externalkeys{#1}%
+  \csname external@action\endcsname%
+  \ExternalWrite@{#2}%
+  \ExternalRun@%
+  \ExternalRead@}}
+
+%%%%%%%% external environment
+
+\NewEnviron{externalenv}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1}}
+\newcommand{\external@externalflipped}[2]{\external[#2]{#1}}
+
+%%%%%%%% \newexternal
+
+% ARGS: [options] name
+\newcommand{\newexternal}[2][]{
+  % ARGS: [options] body
+  \newcommand{#2}[2][]{\external[#1,##1]{##2}}}
+
+%%%%%%%% newexternal environment
+
+% ARGS: [options] name
+\newcommand{\newexternalenv}[2][]{
+  % ARGS: [options] body
+  \NewEnviron{#2}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1,##1}}}
+
+%\newcommand{\newexternalenv}[1][]{
+%\NewEnviron{externalenv}[1][]{\expandafter\external@externalflipped\expandafter{\BODY}{#1}}
+%\newcommand{\external@externalflipped}[2]{\external[#2]{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Low-level Commands
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -101,6 +143,9 @@
 \newcommand{\ExternalWrite}[2][]{{\externalkeys{#1}\ExternalWrite@{#2}}}
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
+  \ifx\external@debug\external@debug@true
+    \typeout{++++Writing \external@file}%
+  \fi
   % Error checking
   \ifx\empty\external@file
     \PackageError{external}{In \noexpand\ExternalWrite, no output TeX file specified}{}%
@@ -132,11 +177,15 @@
     {\csname external@pre-savebox\endcsname}%
     {\expandafter\unexpanded\expandafter{\external@body}}%
     {\csname external@pre-usebox\endcsname}}%
-  %%%% Core code
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%%   Core code   %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
   \immediate\openout\external@filehandle="\external@file\csname external@file/tex\endcsname"%
   \immediate\write\external@filehandle{\external@code}%
   \immediate\closeout\external@filehandle
-  %%%% End core code
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%% End core code %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
   % Sanity checking (warnings)
   \IfFileExists{\external@file\csname external@file/tex\endcsname}
     {}
@@ -150,6 +199,9 @@
 \newcommand{\ExternalRun}[1][]{{\externalkeys{#1}\ExternalRun@}}
 % ARGS: none
 \newcommand{\ExternalRun@}{{%
+  \ifx\external@debug\external@debug@true
+    \typeout{++++Running \external@file}%
+  \fi
   % Error checking
   \ifx\empty\external@file
     \PackageError{external}{In \noexpand\ExternalRun, no input TeX file specified}{}%
@@ -180,11 +232,15 @@
   \else
     \let\external@latexcmd{\external@latex}%
   \fi
-  %%%% Core code
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%%   Core code   %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
   \ShellEscape{\external@latexcmd\space
     \csname external@latex/options\endcsname\space
     \external@file\csname external@file/tex\endcsname}%
-  %%%% End core code
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%% End core code %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
   % Sanity checking (warnings)
   \IfFileExists{\external@file\csname external@file/pdf\endcsname}
     {}
@@ -201,6 +257,9 @@
 % ARGS: [options]
 \newcommand{\ExternalRead}[1][]{{\externalkeys{#1}\ExternalRead@}}
 \newcommand{\ExternalRead@}{%
+  \ifx\external@debug\external@debug@true
+    \typeout{++++Read \external@file}%
+  \fi
   % Handling the `math` option
   \ifx     \external@math@false  \external@math\ExternalRead@@
   \else\ifx\external@math@true   \external@math\ExternalRead@@
@@ -223,7 +282,9 @@
     {}
     {\PackageError{external}{In \noexpand\ExternalRun, input dimension file does not exist:
         \external@file\csname external@file/dim\endcsname}{}}%
-  %%%% Core code
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%%   Core code   %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
   \input{\external@file.dim}% Load the dimensions of the symbol
   \raisebox{-\external@DEPTH}{% Use \raisebox to model the symbol's depth
     % Due to trouble with including a space after a command, we cannot use:
@@ -245,42 +306,12 @@
       {\the\external@RIGHT}
       {\the\external@TOP}
       {\external@file.pdf}}%
-  %%%% End core code
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%% End core code %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
 }
 
 \newcommand{\external@includegraphics}[6]{\includegraphics[trim=#2 #3 #4 #5,#1]{#6}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% High-level Commands
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%% \external
-
-% ARGS: [options] body
-\newcommand{\external}[2][]{{%
-  \externalkeys{#1}%
-  \csname external@action\endcsname%
-  \ExternalWrite@{#2}%
-  \ExternalRun@%
-  \ExternalRead@}}
-
-%%%%%%%% \newexternal
-
-% ARGS: [options] name
-\newcommand{\newexternal}[2][]{
-  % ARGS: [options] body
-  \newcommand{#2}[2][]{\external[#1,##1]{##2}}}
-
-% TODO: \newexternal{\external*}{\stepcounter}{}
-
-% TODO: \newcountedexternal
-
-% TODO: \begin{external}[options] ... \end{external}
-
-%%%%%%%% \externalkeys
-
-% ARGS: keyvals
-\newcommand{\externalkeys}[1]{\setkeys{external}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
