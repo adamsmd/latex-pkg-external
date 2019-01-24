@@ -1,10 +1,17 @@
 \documentclass[10pt]{ltxdoc}
 
 \usepackage{external}
+\externalkeys{debug=true}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
 % TODO: center listings?
+
+\usepackage{cleveref}
+
+\newcommand{\env}[1]{\texttt{#1}}
+\newcommand{\pkg}[1]{\texttt{#1}}
+\newcommand{\opt}[1]{\texttt{#1}}
 
 \newcommand{\showfile}[1]{
   \begin{tcolorbox}[title=\texttt{#1}]
@@ -12,21 +19,22 @@
   \end{tcolorbox}
 }
 
-% TODO: registration mark
 \def\gauge{%
   \rule{0.2em}{7pt}%
   \llap{\rule[8pt]{0.2em}{2pt}}%
 }
 
+% TODO: error tests.  Maybe in directory and can use relative directory to use package?
+
 \begin{document}
 
-\title{The |external| package}
+\title{The \pkg{external} package}
 \author{Michael D. Adams\\\url{https://michaeldadams.org}}
 \date{2019/01/15 v0.1}
 \maketitle
 
 \begin{abstract}
-This package allows you to include the result of rendering LaTeX code
+This package allows you to include the result of rendering \LaTeX\ code
 in a separate document.
 This is useful when you want to use symbols from a package that you do
 not want to load into your main document.
@@ -34,9 +42,11 @@ For example your main document may use symbols from multiple packages
 that conflict or otherwise cannot be loaded together.
 \end{abstract}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+\label{sec:Introduction}
 
-This package allows you to include the result of rendering LaTeX code
+This package allows you to include the result of rendering \LaTeX\ code
 in a separate document.
 For example, you may want to use symbols from multiple packages that
 cannot be loaded at the same time.
@@ -44,21 +54,29 @@ By rendering them in separate documents and then including their
 rendered results in a master document, this allows you to render the
 symbols from each part in their own package.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quick Start}
+\label{subsec:Quick Start}
 
-Suppose you want to use the |\textbeta| symbol from the |textgreek|
-package, but you do do not want to load the |textgreek| package into
-your master document.
+Suppose you want to use the \cs{textbeta} symbol from the
+\pkg{textgreek} package, but you do do not want to load the
+\pkg{textgreek} package into your master document.
 (Maybe it is incompatible with some other package that you use or maybe
-LaTeX has run out of space for declaring new fonts.)
-You can simply render the |\textbeta| using the \cs{external} command
-as in the following.
+\LaTeX\ has run out of space for declaring new fonts.)
+You can simply render \cs{textbeta} using the \cs{external} command as
+in the following.
 
 \begin{tcblisting}{}
 An atom undergoing
 \external[preamble={\usepackage{textgreek}}]{\textbeta-decay}
 can emit an electron.
 \end{tcblisting}
+
+If you prefer, you can also use the environment \env{externalenv} as in the
+following.
+(The only difference between the \cs{external} command and the
+\env{externalenv} environment is that one is a command and the other in
+an environment.)
 
 \begin{tcblisting}{}
 An atom undergoing
@@ -68,32 +86,29 @@ An atom undergoing
 ~can emit an electron.
 \end{tcblisting}
 
-TODO: Temporary files of the form ... are generated.
-You can explicitly specify the basename for this file with the
-`file` option.
+If you want to format the \LaTeX\ code as ``display'' math, use the
+|math=display| option as in the following example.
 
 \begin{tcblisting}{}
-An atom undergoing
-\external[file=example-inline-greek,
-  preamble={\usepackage{textgreek}}]
-  {\textbeta-decay}
-can emit an electron.
+\external[preamble={\usepackage{amsmath}},math=display]
+  {\iint xy\,dx\,dy}
 \end{tcblisting}
 
-The |file| option specifies the name of the LaTeX file to which
-\cs{external} should write the code, and the |preamble| option
-specifies what code should be placed in the preamble of that file.
-
-Note that even though this is rendered as a separate document, it is
-properly spaced relative to the surrounding text as though it was
-inline.
-In the resulting PDF, this even behaves properly with regard to
+Note that in all these examples even though they rendered as separate
+documents, they are automatically properly spaced relative to the
+surrounding text.
+In the resulting PDF, they even behave properly with regard to
 copy-and-paste.
 
+See \Cref{sec:Options} more details about options and \Cref{sec:Issues
+  and Workarounds} for common issues and their workarounds.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notation}
+\label{subsec:Notation}
 
 For debugging purposes, this documentation surrounds most examples with
-a |\gauge| macro.
+a \cs{gauge} macro that we use as a sort of registration mark.
 This makes it easy to see whether there is extra space to the left or
 right of a symbol and whether parts of the symbol extend below the
 baseline.
@@ -108,18 +123,214 @@ even though the font size is 10 points.
 \gauge M\gauge
 \end{tcblisting}
 
-\section{Simple Usage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{High-level Commands}
+\label{sec:High-level Commands}
 
-The common use case is quite simple.
-You just call \cs{external}\oarg{options}\marg{body}
-where \meta{filename} ...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\cs{external} and \env{externalenv}}
+\label{subsec:external and externalenv}
+
+\cs{external}\oarg{options}\marg{body}
+
+TODO: \cs{begin}\texttt{\{externalenv\}}\oarg{options}
+
+The commands \cs{external} and \env{externalenv} are the main commands
+of this package.
+The \meta{body} is the \LaTeX\ code to be externally rendered.
+An examples of their usage is the following.
 
 \begin{tcblisting}{}
 \gauge
-\external[preamble={\usepackage{amsmath}}]
-  {$\iint xy\,dx\,dy$}%
+\external[preamble={\usepackage{amsmath}},math=inline]{%
+  \iint xy\,dx\,dy}%
+\gauge
+
+\gauge
+\begin{externalenv}[preamble={\usepackage{amsmath}},math=inline]
+\iint xy\,dx\,dy%
+\end{externalenv}
 \gauge
 \end{tcblisting}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\cs{newexternal} and \env{newexternalenv}}
+\label{subsec:newexternal and newexternalenv}
+
+\cs{newexternal}\oarg{options}\marg{command name}
+
+\cs{newexternalenv}\oarg{options}\marg{command name}
+
+It is sometimes useful to define versions of \cs{newexternal} and
+\env{externalenv} that have their own custom default values for their
+options.
+These can be created with \cs{newexternal} and \env{newexternalenv}.
+
+For example, you might want to define versions that load the
+\pkg{amsmath} package by default.
+With \cs{newexternal}, this can be done as follows.
+
+\begin{tcblisting}{}
+\gauge\newexternal[preamble={\usepackage{amsmath}}, math=inline]
+  {\ams}\gauge
+
+\gauge\ams{\iint xy\,dx\,dy}\gauge
+
+\gauge\ams{\iiint xyz\,dx\,dy\,dz}\gauge
+
+\gauge\ams[math=false]{$\iiiint xyzw\,dx\,dy\,dz\,dw$}\gauge
+\end{tcblisting}
+
+With \cs{newexternalenv}, this can be done as follows.
+
+\begin{tcblisting}{}
+\gauge\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]
+  {amsenv}\gauge
+
+\gauge\begin{amsenv}
+\iint xy\,dx\,dy
+\end{amsenv}\gauge
+
+\gauge\begin{amsenv}
+\iiint xyz\,dx\,dy\,dz
+\end{amsenv}\gauge
+
+\gauge\begin{amsenv}[math=false]
+$\iiiint xyzw\,dx\,dy\,dz\,dw$
+\end{amsenv}\gauge
+\end{tcblisting}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Options}
+\label{sec:Options}
+
+Commands that take an optional argument take a list of options that are
+parsed using the \pkg{keyval} package.
+Their syntax is of the form:
+$$
+|[|\meta{key$_1$}|=|\meta{value$_1$}|, |\meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|, |\meta{key$_n$}|=|\meta{value$_n$}|]|
+$$
+
+\subsection{\cs{externalkeys}}
+\label{subsec:externalkeys}
+
+\cs{externalkeys}\marg{options}
+
+You can set the default value for any options with the
+\cs{externalkeys} command.
+For example, if want to default to use |mypdflatex| instead of
+|pdflatex| to compile \LaTeX\ code, you could add the following
+command.
+
+\begin{tcolorbox}
+\begin{verbatim}
+\setkey{external}{latex=mylatex}
+\end{verbatim}
+\end{tcolorbox}
+
+You can also specify this by passing the option when the \pkg{external}
+package is loaded.
+
+\begin{tcolorbox}
+\begin{verbatim}
+\usepackage[latex=mylatex]{external}
+\end{verbatim}
+\end{tcolorbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{action}}
+\label{subsec:action}
+
+Type: String
+
+Default: |\stepcounter{external@number}|
+
+This option specifies a bit of code to run before the rest of the code
+in each \cs{external} command or \env{externalenv} environment.
+This is particularly is useful for incrementing any counters used in
+the \opt{file} option.
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{documentclass}}
+\label{subsec:documentclass}
+
+Type: String
+
+Default: |article|
+
+This option specifies (by way of \cs{documentclass}) the document class
+to be used by the intermediate \LaTeX\ file that is generated for each
+bit of externally rendered code.
+
+If this value is blank, a \cs{documentclass} declaration it not added
+to the intermediate file.
+In this case, you will likely want to put a \cs{documentclass}
+declaration in the \opt{preamble} option.
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Option: \opt{documentclass/options}}
+\label{subsec:documentclass/options}
+
+Type: String
+
+Default: (blank)
+
+This options specifies any options to pass to the document class to be
+used by the \LaTeX\ file that is generated for each bit of externally
+rendered code.
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{preamble}}
+\label{subsec:preamble}
+
+Type: String
+
+Default: (blank)
+
+This options specifies code to be put in the preamble of the
+intermediate \LaTeX\ file that is generated for each bit of externally
+rendered code.
+
+For example, you might want to load needed packages as in the following
+example.
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{pre-savebox}}
+\label{subsec:pre-savebox}
+
+Type: String
+
+Default: (blank)
+
+You are unlikely to need this option.
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{pre-usebox}}
+\label{subsec:pre-usebox}
+
+Type: String
+
+Default: (blank)
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{math}}
+\label{subsec:math}
+
+Type: |false|, |inline|, or |display|
+
+Default: |false|
 
 NOTE: If you want to include display math in \cs{external} use the incantation: |\[ \external{$\displaystyle...$} \]|
 
@@ -130,13 +341,6 @@ NOTE: If you want to include display math in \cs{external} use the incantation: 
          {$\displaystyle\iint xy\,dx\,dy$}%
 \gauge
 \]
-\end{tcblisting}
-
-\begin{tcblisting}{}
-\gauge
-\external[preamble={\usepackage{amsmath}},math=true]
-         {\iint xy\,dx\,dy}%
-\gauge
 \end{tcblisting}
 
 \begin{tcblisting}{}
@@ -160,116 +364,302 @@ NOTE: If you want to include display math in \cs{external} use the incantation: 
 \gauge
 \end{tcblisting}
 
-TODO: error tests.  Maybe in directory and can use relative directory to use package?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{latex}}
+\label{subsec:latex}
 
-% TODO: show example using \setkey{external}{file=...}
+Type: String
 
-TODO: options can be set in package import
+Default: (blank)
 
-TODO: weave ``separate commands'' to test earlier?
+This option specifies the program to use to compile the intermediate
+\LaTeX\ file that is generated for each bit of externally rendered
+code.
 
-\section{Separate Commands}
+Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
+to match whatever the master document is being compiled with.
 
-First two are blank
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Option: \opt{latex/options}}
+\label{subsubsec:latex/options}
+
+Type: String
+
+Default: |-halt-on-error -interaction=batchmode|
+
+This option specifies what command line options to pass to \LaTeX\ when
+compiling the intermediate \LaTeX\ file that is generated for each bit
+of externally rendered code.
+
+Note that if you change this, you will almost certainly want to include
+the |-halt-on-error| and |-interaction=batchmode| options in whatever
+you change it to.
+
+TODO: example
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{file}}
+\label{subsec:file}
+
+Type: String
+
+Default: |\jobname-external-\arabic{external@number}|
+
+This option specifies the basename of the intermediate files that are
+generated for each bit of externally rendered code.
+
+For example, the following uses |example-external-greek| as the
+basename.
+
+\begin{tcblisting}{}
+An atom undergoing
+\external[file=example-external-greek,
+  preamble={\usepackage{textgreek}}]
+  {\textbeta-decay}
+can emit an electron.
+\end{tcblisting}
+
+Be careful not to use the same filename for two different bits of
+externally rendered code as that can lead to unexpected results.
+
+TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `unexpanded` (still true?)
+
+\subsubsection{Option: \opt{file/tex}, \opt{file/dim}, and \opt{file/pdf}}
+
+Type: String
+
+Defaults: Respectively |.tex|, |.dim|, and |.pdf|
+
+These options specify the extensions to use for the intermediate files.
+
+TODO: example?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{margin}}
+\label{subsec:margin}
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Option: \opt{margin/top}, \opt{margin/bottom}, \opt{margin/left}, and \opt{margin/right}}
+\label{subsubsec:margin/top, margin/bottom, margin/left, and margin/right}
+
+Type: Length
+
+Default: |1in|
+
+top
+bottom
+left
+right
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{includegraphics}}
+\label{subsec:includegraphics}
+
+\subsubsection{Option: \opt{includegraphics/options}}
+\label{subsubsec:includegraphics/options}
+
+Type: String
+
+Default: (blank)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Option: \opt{debug}}
+\label{subsec:debug}
+
+Type: |false| or |true|
+
+Default: |false|
+
+Whether to print tracing into to standard out.
+This is helpful in determining exactly what part of a command failed.
+
+TODO: example (including output)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Low-level Commands}
+\label{sec:Low-level Commands}
+
+\subsection{\cs{ExternalWrite}, \cs{ExternalCompile}, and \cs{ExternalRead}}
+\label{subsec:ExternalWrite, ExternalCompile, and ExternalRead}
+
+\cs{ExternalWrite}\oarg{options}\marg{body}
+
+\cs{ExternalCompile}\oarg{options}
+
+\cs{ExternalRead}\oarg{options}
+
+Both the \cs{external} command and the \env{externalenv} environment
+are broken up into three phases:
+\begin{enumerate}
+\item writing the intermediate \LaTeX\ file,
+\item compiling the intermediate \LaTeX\ file into a PDF file, and
+\item reading the resulting intermediate PDF file.
+\end{enumerate}
+
+These are handled with \cs{ExternalWrite}, \cs{ExternalCompile}, and
+\cs{ExternalRead}, respectively.
+For example, instead of using \cs{external}, you could explicitly call
+each of these as in the following.
 
 \begin{tcblisting}{}
 \gauge
-\ExternalWrite[file=example-inline-separate,preamble={\usepackage{amsmath}}]
+\ExternalWrite[file=example-external-separate,
+               preamble={\usepackage{amsmath}}]
   {$\iint xy\,dx\,dy$}%
 \gauge
 
-\gauge\ExternalRun[file=example-inline-separate]\gauge
+\gauge\ExternalCompile[file=example-external-separate]\gauge
 
-\gauge\ExternalRead[file=example-inline-separate]\gauge
+\gauge\ExternalRead[file=example-external-separate]\gauge
 \end{tcblisting}
 
-\section{Standalone Source Files}
+Taking explicit control of these is particularly useful if you want to
+cache compilation results.
+See \Cref{subsec:ExternalCode} for an example of this.
 
-First is blank
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\cs{ExternalCode}}
+\label{subsec:ExternalCode}
+
+\cs{ExternalCode}\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}
+
+TODO: weave ``Standalone Source File'' to test earlier?
+
+This command expands to the code used in the intermediate \LaTeX\ file.
+It is useful if you want to store the \LaTeX\ code to be rendered in a
+separate file and reuse the compiled results between compilations
+of the master \LaTeX\ file.
+
+The \meta{dimension file} is the full filename of the dimension file to
+be generated.
+The \meta{preamble}, \meta{pre-savebox}, and \meta{pre-usebox} are the
+same as the corresponding options in \Cref{sec:Options}.
+The \meta{body} is the \LaTeX\ code to be rendered.
+
+For example, you might write the following standalone file.
 
 \showfile{example-standalone-simple.tex}
 
-Note: be careful if you rename such a file, as you will also want to change the argument to \cs{ExternalCode}.
+Then in your master file you can compile and read that standalone file
+with the following commands.
 
 \begin{tcblisting}{}
-\gauge\ExternalRun[file=example-standalone-simple]\gauge
+\gauge\ExternalCompile[file=example-standalone-simple]\gauge
 
 \gauge\ExternalRead[file=example-standalone-simple]\gauge
 \end{tcblisting}
 
-\section{New}
+Be careful if you rename a standalone file, as you will need to change
+the \meta{dimension file} argument to match.
+Otherwise, you will get an error along the lines of
+|In \ExternalRead, input dimension file does not exist|.
 
-Both \cs{external} and |externalenv| have ``new'' forms ... TODO
+Also note that \cs{ExternalCode} is defined in the \pkg{external.code}
+package.
+This package is imported by the main \pkg{external} package, so you do
+not necessarily need to import it separately.
+However, \pkg{external.code} is designed be minimal and has
+dependencies.
+Thus in the previous example, by doing |\RequirePackage{external.code}|
+instead of |\RequirePackage{external}| we minimize the compilation
+time.
+When there are a large number of standalone files, this difference can
+amount to a significant amount of time.
 
-TODO: newcounter
+If you wanted to reuse compiled results between compilations of the
+master \LaTeX\ file, you would want to manually run the following
+command.
 
-\newcounter{external}
+\begin{tcolorbox}
+\begin{verbatim}
+pdflatex -shell-escape example-standalone-simple.tex
+\end{verbatim}
+\end{tcolorbox}
+
+Then you would omit the call to \cs{ExternalCompile} and just call
+\cs{ExternalRead} as in the following.
 
 \begin{tcblisting}{}
-\newexternal[preamble={\usepackage{amsmath}}]{\ams}
-
-\gauge\ams{$\iint xy\,dx\,dy$}\gauge
-
-\gauge\ams{$\iiint xyz\,dx\,dy\,dz$}\gauge
+\gauge\ExternalRead[file=example-standalone-simple]\gauge
 \end{tcblisting}
 
-\begin{tcblisting}{}
-\newexternalenv[preamble={\usepackage{amsmath}}]{amsenv}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Issues and Workarounds}
+\label{sec:Issues and Workarounds}
 
-\gauge\begin{amsenv}
-$\iint xy\,dx\,dy$
-\end{amsenv}\gauge
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Render not updating}
+\label{subsec:Render not updating}
 
-\gauge\begin{amsenv}
-$\iiint xyz\,dx\,dy\,dz$
-\end{amsenv}\gauge
+A common issue is when you change the \LaTeX\ code to be externally
+rendered (e.g., the \meta{body} of a \cs{external}), but those changes
+are not reflected in the master document after re-compiling the master
+document.
+The cause of this is that \pkg{external} has no way to detect whether
+compiling the intermediate \LaTeX\ file succeeded or failed.
+This failure can happen for example if the \LaTeX\ code to be
+externally rendered contains an error that causes the compilation of
+the intermediate \LaTeX\ file to fail.
+If compilation of the intermediate \LaTeX\ file fails, the dimension
+file and PDF file from previous compilation will not be overwritten.
 
-\gauge\begin{amsenv}[file=example-inline-amsenv] % TODO: [file=....]
-$\iiiint xyzw\,dx\,dy\,dz\,dw$
-\end{amsenv}\gauge
-\end{tcblisting}
+To fix this, delete the PDF and dimension files.
+Then failure of the compilation of the intermediate \LaTeX\ file will
+cause a file-not-found error when the PDF and dimension file are read.
+You can then fix the error in the \LaTeX\ code to be externally
+rendered and use this file-not-found error to let you know when you
+have fixed that \LaTeX\ code.
 
-\section{Options}
-
-TODO
-
-TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `unexpanded` (still true?)
-
-\section{Problems}
-
-\subsection{Hashes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Hashes and command arguments}
+\label{subsec:Hashes}
 
 Known problem: |#1|
 Known workaround: |##1|
+
+Note double hash if standalone
+
+\begin{tcolorbox}
+\begin{verbatim}
+\external[preamble={\def\parens#1{(#1)}}]
+  {\parens{x}}
+\end{verbatim}
+\end{tcolorbox}
 
 \begin{tcblisting}{}
 \external[preamble={\def\parens##1{(##1)}}]
   {\parens{x}}
 \end{tcblisting}
 
-Note double hash if standalone
+This also applies to standalone files.
+For example the following is the correct way to ...
 
 \showfile{example-standalone-hash.tex}
 
 \begin{tcblisting}{}
-\ExternalRun[file=example-standalone-hash]
+\ExternalCompile[file=example-standalone-hash]
 \ExternalRead[file=example-standalone-hash]
 \end{tcblisting}
 
-\subsection{Catcodes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Category codes}
+\label{subsec:Catcodes}
 
 Suppose you want to manually |\vDash| (\external[preamble={\usepackage{amssymb}}]{$\vDash$})
 
-Known problem: catcode in body (e.g., |\DeclareFont|, etc.)
-Known workarounds: |\scantokens|
+Known problem: catcode in body (e.g., \cs{DeclareFont}, etc.)
+Known workarounds: \cs{scantokens}
 
-We use |\scantokens| because |\DeclareFontShape| plays with the
+We use \cs{scantokens} because \cs{DeclareFontShape} plays with the
 catcodes and this code is being passed as the argument of another
 command.
 
-The |\relax| at the end ensures that |\scantokens| does not
-insert an extra space at the end.
-See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
+The \cs{relax} at the end ensures that \cs{scantokens} does not insert
+an extra space at the end.
+See
+https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
 
 \begin{tcblisting}{}
 \gauge
@@ -285,34 +675,11 @@ See https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinech
 \showfile{example-standalone-catcode.tex}
 
 \begin{tcblisting}{}
-\gauge\ExternalRun[file=example-standalone-catcode]\gauge
+\gauge\ExternalCompile[file=example-standalone-catcode]\gauge
 
 \gauge\ExternalRead[file=example-standalone-catcode]\gauge
 \end{tcblisting}
 
 TODO: error tests
-
-ExternalWrite:
-  no file specified
-  bad ``math'' flag
-  warning: output file
-
-ExternalRun:
-  no file specified
-  no shell escape
-  restricted shell-escape
-  TeX does not exist
-  warning: no PDF file
-  warning: no dim file
-
-ExternalRead:
-  bad ``math'' flag
-  no input PDF file specified
-  PDF does not exist
-  dim file does not exist
-
-TODO: rename compile to run
-
-TODO: unexpected rendering may be due to old compiled files and the new ones not overwritting them.  Delete all the PDF and .dim files
 
 \end{document}

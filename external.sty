@@ -41,35 +41,35 @@
 
 \newcounter{external@number}
 
-\external@stringkey{file}{\jobname-external-\arabic{external@number}}
-\external@stringkey{file/dim}{.dim}
-\external@stringkey{file/tex}{.tex}
-\external@stringkey{file/pdf}{.pdf}
+\external@stringkey{action}{\stepcounter{external@number}}
 
 \external@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
 \external@stringkey{documentclass/options}{}
 \external@stringkey{preamble}{}
 \external@stringkey{pre-savebox}{}
 \external@stringkey{pre-usebox}{}
-\external@stringkey{action}{\stepcounter{external@number}}
 
 \external@stringkey{math}{false}
 \def\external@math@false{false}
-\def\external@math@true{true}
 \def\external@math@inline{inline}
 \def\external@math@display{display}
 
 \external@stringkey{latex}{} % empty = auto-detect
 \external@stringkey{latex/options}{-halt-on-error -interaction=batchmode}
 
-\external@lengthkey{top}{1in}
-\external@lengthkey{bottom}{1in}
-\external@lengthkey{left}{1in}
-\external@lengthkey{right}{1in}
+\external@stringkey{file}{\jobname-external-\arabic{external@number}}
+\external@stringkey{file/tex}{.tex}
+\external@stringkey{file/dim}{.dim}
+\external@stringkey{file/pdf}{.pdf}
+
+\external@lengthkey{margin/top}{1in}
+\external@lengthkey{margin/bottom}{1in}
+\external@lengthkey{margin/left}{1in}
+\external@lengthkey{margin/right}{1in}
 
 \external@stringkey{includegraphics/options}{}
 
-\external@stringkey{debug}{true}
+\external@stringkey{debug}{false}
 \def\external@debug@false{false}
 \def\external@debug@true{true}
 
@@ -107,7 +107,7 @@
   \externalkeys{#1}%
   \csname external@action\endcsname%
   \ExternalWrite@{#2}%
-  \ExternalRun@%
+  \ExternalCompile@%
   \ExternalRead@}}
 
 %%%%%%%% external environment
@@ -122,20 +122,20 @@
 %%%%%%%% \newexternal
 
 % ARGS: [options] name
-\newcommand{\newexternal}[2][]{
+\newcommand{\newexternal}[2][]{%
   % ARGS: [options] body
   \newcommand{#2}[2][]{\external[#1,##1]{##2}}}
 
 %%%%%%%% newexternal environment
 
 % ARGS: [options] name
-\newcommand{\newexternalenv}[2][]{
+\newcommand{\newexternalenv}[2][]{%
   % ARGS: [options]
   \NewEnviron{#2}[1][]{%
     % Use `\edef` to expand `\BODY` early (and exactly once)
     \edef\external@code{%
       \unexpanded{\external[#1,##1]}{\expandafter\unexpanded\expandafter{\BODY}}}%
-      \external@code}}
+    \external@code}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Low-level Commands
@@ -149,30 +149,33 @@
 % ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
   % Debug code
-  \ifx\external@debug\external@debug@true
-    \typeout{**** Begin \noexpand\ExternalWrite on <\external@file>}%
-  \fi
+  \ifx     \external@debug@false\external@debug
+  \else\ifx\external@debug@true \external@debug
+    \typeout{**** Begin \noexpand\ExternalWrite on <\external@file> with \unexpanded{#1}}%
+  \else\PackageError{external}{In \noexpand\ExternalWrite,
+    unknown `debug` option (must be "false" or "true"):
+    \external@debug}
+  \fi\fi
   % Error checking
   \ifx\empty\external@file
     \PackageError{external}{In \noexpand\ExternalWrite, no output TeX file specified}{}%
   \fi
   % Handling `math` option
   \ifx     \external@math@false  \external@math\def\external@body{#1}%
-  \else\ifx\external@math@true   \external@math\def\external@body{$#1$}%
   \else\ifx\external@math@inline \external@math\def\external@body{$#1$}%
   \else\ifx\external@math@display\external@math\def\external@body{$\displaystyle#1$}%
-  \else\PackageError{external}{In \noexpand\ExternalRead,
-    unknown `math` option (must be "true", "false", "inline", or "display"):
+  \else\PackageError{external}{In \noexpand\ExternalWrite,
+    unknown `math` option (must be "false", "inline", or "display"):
     \external@math}{}%
-  \fi\fi\fi\fi
+  \fi\fi\fi
   % Use `\edef` to control what to expand in the arguments of `\ExternalCode`
   \edef\external@code{%
     \unexpanded{\ExternalCode}%
     {\external@file\csname external@file/dim\endcsname}%
-    {\unexpanded{\expandafter\setlength\csname external@TOP\endcsname}{\the\external@top}%
-     \unexpanded{\expandafter\setlength\csname external@BOTTOM\endcsname}{\the\external@bottom}%
-     \unexpanded{\expandafter\setlength\csname external@LEFT\endcsname}{\the\external@left}%
-     \unexpanded{\expandafter\setlength\csname external@RIGHT\endcsname}{\the\external@right}%
+    {\unexpanded{\expandafter\setlength\csname external@TOP\endcsname}{\the\csname external@margin/top\endcsname}%
+     \unexpanded{\expandafter\setlength\csname external@BOTTOM\endcsname}{\the\csname external@margin/bottom\endcsname}%
+     \unexpanded{\expandafter\setlength\csname external@LEFT\endcsname}{\the\csname external@margin/left\endcsname}%
+     \unexpanded{\expandafter\setlength\csname external@RIGHT\endcsname}{\the\csname external@margin/right\endcsname}%
      \ifx\empty\external@documentclass
      \else
        \unexpanded{\documentclass}%
@@ -203,41 +206,45 @@
   \fi
 }
 
-%%%%%%%% \ExternalRun
+%%%%%%%% \ExternalCompile
 
 % ARGS: [options]
-\newcommand{\ExternalRun}[1][]{{\externalkeys{#1}\ExternalRun@}}
+\newcommand{\ExternalCompile}[1][]{{\externalkeys{#1}\ExternalCompile@}}
 
 % ARGS: (none)
-\newcommand{\ExternalRun@}{%
+\newcommand{\ExternalCompile@}{%
   % Debug code
-  \ifx\external@debug\external@debug@true
-    \typeout{**** Begin \noexpand\ExternalRun on <\external@file>}%
-  \fi
+  \ifx     \external@debug@false\external@debug
+  \else\ifx\external@debug@true \external@debug
+    \typeout{**** Begin \noexpand\ExternalCompile on <\external@file>}%
+  \else\PackageError{external}{In \noexpand\ExternalCompile,
+    unknown `debug` option (must be "false" or "true"):
+    \external@debug}
+  \fi\fi
   % Error checking
   \ifx\empty\external@file
-    \PackageError{external}{In \noexpand\ExternalRun, no input TeX file specified}{}%
+    \PackageError{external}{In \noexpand\ExternalCompile, no input TeX file specified}{}%
   \fi
   \ifcase\pdf@shellescape
-    \PackageError{external}{In \noexpand\ExternalRun,
+    \PackageError{external}{In \noexpand\ExternalCompile,
       shell escape (i.e., \noexpand\write18) is not enabled.
       Maybe add `-shell-escape` to the command line options}{}%
   \or
   \or
-    \PackageError{external}{In \noexpand\ExternalRun,
+    \PackageError{external}{In \noexpand\ExternalCompile,
       shell escape (i.e., \noexpand\write18) is not enabled.
       Maybe add `-shell-escape` to the command line options}{}%
   \fi
   \IfFileExists{\external@file\csname external@file/tex\endcsname}
     {}
-    {\PackageError{external}{In \noexpand\ExternalRun, input TeX file does not exist:
+    {\PackageError{external}{In \noexpand\ExternalCompile, input TeX file does not exist:
         \external@file\csname external@file/tex\endcsname}{}}%
   % Determine what latex command to use
   \ifx\empty\external@latex
     \ifluatex     \def\external@latexcmd{lualatex}%
     \else\ifxetex \def\external@latexcmd{xelatex}%
     \else\ifpdf   \def\external@latexcmd{pdflatex}%
-    \else\PackageError{external}{In \noexpand\ExternalRun,
+    \else\PackageError{external}{In \noexpand\ExternalCompile,
       could not detect the latex command to use.
       Use the `latex` option to explicitly specify it}{}%
     \fi\fi\fi
@@ -256,15 +263,15 @@
   % Sanity checking (warnings)
   \IfFileExists{\external@file\csname external@file/pdf\endcsname}
     {}
-    {\PackageWarning{external}{In \noexpand\ExternalRun, output PDF file does not exist:
+    {\PackageWarning{external}{In \noexpand\ExternalCompile, output PDF file does not exist:
         \external@file\csname external@file/pdf\endcsname}}%
   \IfFileExists{\external@file\csname external@file/dim\endcsname}
     {}
-    {\PackageWarning{external}{In \noexpand\ExternalRun, output dimension file does not exist:
+    {\PackageWarning{external}{In \noexpand\ExternalCompile, output dimension file does not exist:
         \external@file\csname external@file/dim\endcsname}}%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** End \noexpand\ExternalRun on <\external@file>}%
+    \typeout{**** End \noexpand\ExternalCompile on <\external@file>}%
   \fi
 }
 
@@ -276,18 +283,21 @@
 % ARGS: (none)
 \newcommand{\ExternalRead@}{%
   % Debug code
-  \ifx\external@debug\external@debug@true
+  \ifx     \external@debug@false\external@debug
+  \else\ifx\external@debug@true \external@debug
     \typeout{**** Begin \noexpand\ExternalRead on <\external@file>}%
-  \fi
+  \else\PackageError{external}{In \noexpand\ExternalRead,
+    unknown `debug` option (must be "false" or "true"):
+    \external@debug}
+  \fi\fi
   % Handling the `math` option
   \ifx     \external@math@false  \external@math\ExternalRead@@
-  \else\ifx\external@math@true   \external@math\ExternalRead@@
   \else\ifx\external@math@inline \external@math\ExternalRead@@
   \else\ifx\external@math@display\external@math\[\ExternalRead@@\]%
   \else\PackageError{external}{In \noexpand\ExternalRead,
-    unknown `math` option (must be "true", "false", "inline", or "display"):
+    unknown `math` option (must be "false", "inline", or "display"):
     \external@math}{}%
-  \fi\fi\fi\fi
+  \fi\fi\fi
   % Debug code
   \ifx\external@debug\external@debug@true
     \typeout{**** End \noexpand\ExternalRead on <\external@file>}%
@@ -302,11 +312,13 @@
   \fi
   \IfFileExists{\external@file\csname external@file/pdf\endcsname}
     {}
-    {\PackageError{external}{In \noexpand\ExternalRead, input PDF file does not exist:
+    {\PackageError{external}{In \noexpand\ExternalRead, input PDF file does not exist
+        (maybe compilation of the LaTeX file failed):
         \external@file\csname external@file/pdf\endcsname}{}}%
   \IfFileExists{\external@file\csname external@file/dim\endcsname}
     {}
-    {\PackageError{external}{In \noexpand\ExternalRun, input dimension file does not exist:
+    {\PackageError{external}{In \noexpand\ExternalRead, input dimension file does not exist
+        (maybe compilation of the LaTeX file failed):
         \external@file\csname external@file/dim\endcsname}{}}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%%   Core code   %%%%
