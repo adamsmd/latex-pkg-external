@@ -1,6 +1,6 @@
 \RequirePackage{external.code}
 \ExternalCode{example-standalone-hash.dim}
-  {\documentclass{article}\def\parens##1{(##1)}}
+  {\documentclass{article}\newcommand{\parens}[1]{(##1)}}
   {}
   {\parens{x}}
   {}

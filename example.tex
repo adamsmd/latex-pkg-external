@@ -54,6 +54,8 @@ By rendering them in separate documents and then including their
 rendered results in a master document, this allows you to render the
 symbols from each part in their own package.
 
+TODO: this document also serves as test cases
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quick Start}
 \label{subsec:Quick Start}
@@ -616,61 +618,137 @@ have fixed that \LaTeX\ code.
 \subsection{Hashes and command arguments}
 \label{subsec:Hashes}
 
-Known problem: |#1|
-Known workaround: |##1|
-
-Note double hash if standalone
+The use of hashes that one would use when referencing a command
+argument (e.g., |#1|) can lead to problems.
+For example, the following would lead to an error.
 
 \begin{tcolorbox}
 \begin{verbatim}
-\external[preamble={\def\parens#1{(#1)}}]
-  {\parens{x}}
+\external[preamble={\newcommand{\parens}[1]{(#1)}}]{\parens{x}}
 \end{verbatim}
 \end{tcolorbox}
 
+The solution to this is to use double hashes (for example, |##1|
+instead of |#1|) as demonstrated in the following.
+
 \begin{tcblisting}{}
-\external[preamble={\def\parens##1{(##1)}}]
-  {\parens{x}}
+\gauge
+\external[preamble={\newcommand{\parens}[1]{(##1)}}]{\parens{x}}%
+\gauge
 \end{tcblisting}
 
-This also applies to standalone files.
-For example the following is the correct way to ...
+\begin{tcblisting}{}
+\gauge
+\begin{externalenv}[preamble={\newcommand{\parens}[1]{(##1)}}]
+\parens{x}
+\end{externalenv}
+\gauge
+\end{tcblisting}
+
+This even applies in the body of an \cs{external} or \env{externalenv}
+as seen in the following.
+
+\begin{tcblisting}{}
+\gauge\external{\newcommand{\parens}[1]{(##1)}\parens{x}}\gauge
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\gauge
+\begin{externalenv}
+\newcommand{\parens}[1]{(##1)}%
+\parens{x}
+\end{externalenv}
+\gauge
+\end{tcblisting}
+
+This also applies to standalone files as seen in the following.
 
 \showfile{example-standalone-hash.tex}
 
 \begin{tcblisting}{}
-\ExternalCompile[file=example-standalone-hash]
-\ExternalRead[file=example-standalone-hash]
+\gauge\ExternalCompile[file=example-standalone-hash]\gauge
+
+\gauge\ExternalRead[file=example-standalone-hash]\gauge
+\end{tcblisting}
+
+Finally, \cs{newexternal} and \cs{newexternalenv} require \textit{four}
+hashes due to an extra level of indirection occurring in them as
+demonstrated in the following examples.
+
+\begin{tcblisting}{}
+\gauge
+\newexternal[preamble={\newcommand{\parens}[1]{(####1)}}]{\paren}%
+\gauge
+
+\gauge\paren{\parens{x}}\gauge
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\gauge
+\newexternalenv[preamble={\newcommand{\parens}[1]{(####1)}}]{paren}%
+\gauge
+
+\gauge
+\begin{paren}
+\parens{x}
+\end{paren}
+\gauge
+\end{tcblisting}
+
+However, in their bodies this does not apply and only two hashes should be used
+as demonstrated in the following.
+
+\begin{tcblisting}{}
+\gauge\newexternal{\paren}\gauge
+
+\gauge\paren{\newcommand{\parens}[1]{(##1)}\parens{x}}\gauge
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\gauge\newexternalenv{paren}\gauge
+
+\gauge
+\begin{paren}
+\newcommand{\parens}[1]{(##1)}%
+\parens{x}
+\end{paren}
+\gauge
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Category codes}
 \label{subsec:Catcodes}
 
-Suppose you want to manually |\vDash| (\external[preamble={\usepackage{amssymb}}]{$\vDash$})
+Some commands change the category codes of many characters.
+These pose a problem for use with commands from this \pkg{external}
+package as the arguments to commands are parsed before those category
+codes have changed.
+The way to work around this is to use the \cs{scantokens} macro to
+cause parts of those arguments to be re-parsed.
 
-Known problem: catcode in body (e.g., \cs{DeclareFont}, etc.)
-Known workarounds: \cs{scantokens}
-
-We use \cs{scantokens} because \cs{DeclareFontShape} plays with the
-catcodes and this code is being passed as the argument of another
-command.
-
-The \cs{relax} at the end ensures that \cs{scantokens} does not insert
-an extra space at the end.
-See
-https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens
+For example, the \cs{DeclareFontShape} macro redefines category codes
+for characters used in its argument.
+Thus to use it one must insert a call to \cs{scantokens} as in the
+following.
 
 \begin{tcblisting}{}
 \gauge
 \external[preamble={
     \DeclareFontFamily{U}{msa}{}
-      \scantokens{\DeclareFontShape{U}{msa}{m}{n}
-        {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
-      \usepackage{pifont}}]
+    \scantokens{\DeclareFontShape{U}{msa}{m}{n}
+      {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
+    \usepackage{pifont}}]
   {\Pisymbol{msa}{15}}%
 \gauge
 \end{tcblisting}
+
+The \cs{relax} before the end of the argument to \cs{scantokens}
+ensures that \cs{scantokens} does not insert an extra space at the end.
+See
+\url{https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens}
+for details.
+
+This trick also works when using a standalone file as in the following.
 
 \showfile{example-standalone-catcode.tex}
 
@@ -679,7 +757,5 @@ https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-w
 
 \gauge\ExternalRead[file=example-standalone-catcode]\gauge
 \end{tcblisting}
-
-TODO: error tests
 
 \end{document}

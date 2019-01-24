@@ -104,6 +104,7 @@
 
 % ARGS: [options] body
 \newcommand{\external}[2][]{{%
+\typeout{\unexpanded{#1}}%
   \externalkeys{#1}%
   \csname external@action\endcsname%
   \ExternalWrite@{#2}%
