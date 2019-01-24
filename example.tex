@@ -252,7 +252,13 @@ in each \cs{external} command or \env{externalenv} environment.
 This is particularly is useful for incrementing any counters used in
 the \opt{file} option.
 
-TODO: example
+\begin{tcblisting}{}
+\newcounter{foo}
+{\thefoo}
+\external[file=example-inline-action,
+          action={\setcounter{foo}{100}}]{X}
+{\thefoo}
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{documentclass}}
@@ -265,13 +271,21 @@ Default: |article|
 This option specifies (by way of \cs{documentclass}) the document class
 to be used by the intermediate \LaTeX\ file that is generated for each
 bit of externally rendered code.
+For example, the following uses the \pkg{proc} class, which (unlike
+\pkg{article}) contains the \cs{pagename} macro.
 
-If this value is blank, a \cs{documentclass} declaration it not added
-to the intermediate file.
+\begin{tcblisting}{}
+\external[documentclass=proc]{\pagename}
+\end{tcblisting}
+
+If the value of this macro is blank, a \cs{documentclass} declaration
+it not added to the intermediate file.
 In this case, you will likely want to put a \cs{documentclass}
-declaration in the \opt{preamble} option.
+declaration in the \opt{preamble} option as in the following example.
 
-TODO: example
+\begin{tcblisting}{}
+\external[documentclass={},preamble={\documentclass{proc}}]{\pagename}
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Option: \opt{documentclass/options}}
@@ -284,8 +298,12 @@ Default: (blank)
 This options specifies any options to pass to the document class to be
 used by the \LaTeX\ file that is generated for each bit of externally
 rendered code.
+For example, the following specifies the |12pt| option to
+\pkg{article}, which changes the default font to be 12 points tall.
 
-TODO: example
+\begin{tcblisting}{}
+\gauge\external[documentclass/options={12pt}]{M}\gauge
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{preamble}}
@@ -302,7 +320,11 @@ rendered code.
 For example, you might want to load needed packages as in the following
 example.
 
-TODO: example
+\begin{tcblisting}{}
+\gauge
+\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}%
+\gauge
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{pre-savebox}}
@@ -314,6 +336,8 @@ Default: (blank)
 
 You are unlikely to need this option.
 
+Corresponds to the pre-savebox argument of \cs{ExternalCode}
+
 TODO: example
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -323,6 +347,8 @@ TODO: example
 Type: String
 
 Default: (blank)
+
+You are unlikely to need this option.
 
 TODO: example
 
@@ -334,16 +360,10 @@ Type: |false|, |inline|, or |display|
 
 Default: |false|
 
-NOTE: If you want to include display math in \cs{external} use the incantation: |\[ \external{$\displaystyle...$} \]|
-
-\begin{tcblisting}{}
-\[
-\gauge
-\external[preamble={\usepackage{amsmath}}]
-         {$\displaystyle\iint xy\,dx\,dy$}%
-\gauge
-\]
-\end{tcblisting}
+This option determines whether the body of \cs{external} or
+\env{externalenv} is treated as math, and if so, whether it is inline
+math or display math.
+The following demonstrate each value possible for this option.
 
 \begin{tcblisting}{}
 \gauge
@@ -363,6 +383,16 @@ NOTE: If you want to include display math in \cs{external} use the incantation: 
 \gauge
 \external[preamble={\usepackage{amsmath}},math=display]
          {\iint xy\,dx\,dy}%
+\gauge
+\end{tcblisting}
+
+Note that |math=display|, as seen in the following example, is
+equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
+
+\begin{tcblisting}{}
+\gauge
+\[\external[preamble={\usepackage{amsmath}}]
+           {$\displaystyle\iint xy\,dx\,dy$}\]
 \gauge
 \end{tcblisting}
 
@@ -450,10 +480,40 @@ Type: Length
 
 Default: |1in|
 
-top
-bottom
-left
-right
+These options specify the margin to around the \LaTeX\ code being
+rendered externally.
+This is useful if the \LaTeX\ code being rendered externally draws
+outside its bounding box.
+If there is not enough margin to contain the drawn portions, the result
+may be clipped.
+For example, in each of the following a 2 inch rule is clipped when the
+default margins are used but is not clipped when a 3 inch rule is used.
+
+\begin{tcblisting}{}
+\external{M\rlap{\rule[3pt]{2in}{1pt}}M}
+
+\external[margin/right=3in]{M\rlap{\rule[3pt]{2in}{1pt}}M}
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\begin{flushright}
+\external{M\llap{\rule[3pt]{2in}{1pt}}M}
+
+\external[margin/left=3in]{M\llap{\rule[3pt]{2in}{1pt}}M}
+\end{flushright}
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\vspace{2in}
+\external{M\smash{\rule{1pt}{2in}}M}
+\external[margin/top=3in]{M\smash{\rule{1pt}{2in}}M}
+\end{tcblisting}
+
+\begin{tcblisting}{}
+\external{M\smash{\rule[-2in]{1pt}{2in}}M}
+\external[margin/bottom=3in]{M\smash{\rule[-2in]{1pt}{2in}}M}
+\vspace{2in}
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{includegraphics}}
@@ -466,6 +526,16 @@ Type: String
 
 Default: (blank)
 
+This option specifies options to be passed to the \cs{includegraphics}
+command that is used to read into the master document the result of
+rendering the \LaTeX\ code to be rendered separately.
+For example, the following uses \opt{angle} to rotate the image read in
+by \cs{includegraphics}.
+
+\begin{tcblisting}{}
+\gauge\external[includegraphics/options={angle=45}]{M}\gauge
+\end{tcblisting}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{debug}}
 \label{subsec:debug}
@@ -477,7 +547,28 @@ Default: |false|
 Whether to print tracing into to standard out.
 This is helpful in determining exactly what part of a command failed.
 
-TODO: example (including output)
+For example, consider the following call to \cs{external}
+
+\typeout{+++++++++++++++++}
+\begin{tcblisting}{}
+\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}
+\end{tcblisting}
+\typeout{+++++++++++++++++}
+
+When the \opt{debug} option is |true|, lines like the following will be
+printed to the standard output.
+
+\begin{tcolorbox}
+\begin{verbatim}
+**** Begin \ExternalWrite on {example-external-21}
+     with {$\iint xy\,dx\,dy$}
+**** End \ExternalWrite on {example-external-21}
+**** Begin \ExternalCompile on {example-external-21}
+**** End \ExternalCompile on {example-external-21}
+**** Begin \ExternalRead on {example-external-21}
+**** End \ExternalRead on {example-external-21}
+\end{verbatim}
+\end{tcolorbox}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Low-level Commands}

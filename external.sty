@@ -104,7 +104,6 @@
 
 % ARGS: [options] body
 \newcommand{\external}[2][]{{%
-\typeout{\unexpanded{#1}}%
   \externalkeys{#1}%
   \csname external@action\endcsname%
   \ExternalWrite@{#2}%
@@ -152,7 +151,7 @@
   % Debug code
   \ifx     \external@debug@false\external@debug
   \else\ifx\external@debug@true \external@debug
-    \typeout{**** Begin \noexpand\ExternalWrite on <\external@file> with \unexpanded{#1}}%
+    \typeout{**** Begin \noexpand\ExternalWrite on {\external@file} with {\unexpanded{#1}}}%
   \else\PackageError{external}{In \noexpand\ExternalWrite,
     unknown `debug` option (must be "false" or "true"):
     \external@debug}
@@ -203,7 +202,7 @@
         \external@file\csname external@file/tex\endcsname}}%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** End \noexpand\ExternalWrite on <\external@file>}%
+    \typeout{**** End \noexpand\ExternalWrite on {\external@file}}%
   \fi
 }
 
@@ -217,7 +216,7 @@
   % Debug code
   \ifx     \external@debug@false\external@debug
   \else\ifx\external@debug@true \external@debug
-    \typeout{**** Begin \noexpand\ExternalCompile on <\external@file>}%
+    \typeout{**** Begin \noexpand\ExternalCompile on {\external@file}}%
   \else\PackageError{external}{In \noexpand\ExternalCompile,
     unknown `debug` option (must be "false" or "true"):
     \external@debug}
@@ -272,7 +271,7 @@
         \external@file\csname external@file/dim\endcsname}}%
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** End \noexpand\ExternalCompile on <\external@file>}%
+    \typeout{**** End \noexpand\ExternalCompile on {\external@file}}%
   \fi
 }
 
@@ -286,7 +285,7 @@
   % Debug code
   \ifx     \external@debug@false\external@debug
   \else\ifx\external@debug@true \external@debug
-    \typeout{**** Begin \noexpand\ExternalRead on <\external@file>}%
+    \typeout{**** Begin \noexpand\ExternalRead on {\external@file}}%
   \else\PackageError{external}{In \noexpand\ExternalRead,
     unknown `debug` option (must be "false" or "true"):
     \external@debug}
@@ -301,7 +300,7 @@
   \fi\fi\fi
   % Debug code
   \ifx\external@debug\external@debug@true
-    \typeout{**** End \noexpand\ExternalRead on <\external@file>}%
+    \typeout{**** End \noexpand\ExternalRead on {\external@file}}%
   \fi
 }
 
