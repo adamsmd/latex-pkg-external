@@ -5,7 +5,6 @@
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
-% TODO: center listings?
 
 \usepackage{cleveref}
 
@@ -25,23 +24,16 @@
   \llap{\rule[8pt]{2pt}{2pt}}%
 }
 
-\def\gl{%
-%  \rule[3.5pt]{3.5pt}{1pt}%
-  \rule[5.5pt]{4pt}{1.5pt}%
-  \llap{\sx}}
-\def\gr{%
-  \rlap{\sx}%
-%  \rule[3.5pt]{3.5pt}{1pt}%
-  \rule[5.5pt]{4pt}{1.5pt}%
-  }
-
-%\let\<\gl
-%\let\>\gr % TODO: make active?
-
 \catcode`\<=\active
 \catcode`\>=\active
-\let<\gl
-\let>\gr
+
+\def<{%
+  \rule[5.5pt]{4pt}{1.5pt}%
+  \llap{\sx}}
+\def>{%
+  \rlap{\sx}%
+  \rule[5.5pt]{4pt}{1.5pt}%
+  }
 
 % TODO: error tests.  Maybe in directory and can use relative directory to use package?
 
@@ -129,16 +121,15 @@ See \Cref{sec:Options} more details about options and \Cref{sec:Issues
 \label{subsec:Notation}
 
 For debugging purposes, this documentation surrounds most examples with
-a \cs{sz} macro that we use as a sort of registration mark.
+|<| and |>| which render as < and >.
+These are used as a sort of gauge or registration mark.
 This makes it easy to see whether there is extra space to the left or
 right of a symbol and whether parts of the symbol extend below the
 baseline.
-The bottom bar starts at the baseline and goes up 7 points.
-The top bar starts at 8 points above the baseline and extends up to 10
-points.
-For example we might see something like the following.
-Note that the top of the ``M'' is at 7 points above the baseline
-even though the font size is 10 points.
+The bottom of the bottom bar is at the baseline.
+The top of the top, middle and bottom bars are at the font size (10
+points), where the top of an ``M'' would occur, and where the top of an
+``x'' would occur, respectively.
 
 \begin{tcblisting}{}
 <M> <x> <>
@@ -327,7 +318,6 @@ Default: (blank)
 This options specifies code to be put in the preamble of the
 intermediate \LaTeX\ file that is generated for each bit of externally
 rendered code.
-
 For example, you might want to load needed packages as in the following
 example.
 
@@ -526,10 +516,9 @@ This is useful if the \LaTeX\ code being rendered externally draws
 outside its bounding box.
 If there is not enough margin to contain the drawn portions, the result
 may be clipped.
-For example, in each of the following a 2 inch rule is clipped when the
-default margins are used but is not clipped when a 3 inch rule is used.
-
-TODO: combine into one big example
+For example, compare the two following examples.
+The 2 inch rules are clipped when the default margins are used but are
+not clipped when 3 inch margins are used.
 
 \begin{tcblisting}{}
 \vspace{2in}
@@ -553,32 +542,6 @@ TODO: combine into one big example
  \end{externalenv}>
 \vspace{2.2in}
 \end{tcblisting}
-
-%\begin{tcblisting}{}
-%<\external{M\rlap{\rule[3pt]{2in}{1pt}}M}>
-%
-%<\external[margin/right=3in]{M\rlap{\rule[3pt]{2in}{1pt}}M}>
-%\end{tcblisting}
-%
-%\begin{tcblisting}{}
-%\begin{flushright}
-%<\external{M\llap{\rule[3pt]{2in}{1pt}}M}>
-%
-%<\external[margin/left=3in]{M\llap{\rule[3pt]{2in}{1pt}}M}>
-%\end{flushright}
-%\end{tcblisting}
-%
-%\begin{tcblisting}{}
-%\vspace{2in}
-%<\external{M\smash{\rule{1pt}{2in}}M}>
-%<\external[margin/top=3in]{M\smash{\rule{1pt}{2in}}M}>
-%\end{tcblisting}
-%
-%\begin{tcblisting}{}
-%<\external{M\smash{\rule[-2in]{1pt}{2in}}M}>
-%<\external[margin/bottom=3in]{M\smash{\rule[-2in]{1pt}{2in}}M}>
-%\vspace{2in}
-%\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{includegraphics}}
@@ -703,8 +666,6 @@ with the following commands.
 <\ExternalCompile[file=example-standalone-simple]>
 <\ExternalRead[file=example-standalone-simple]>
 \end{tcblisting}
-
-TODO: GL vs GR
 
 Be careful if you rename a standalone file, as you will need to change
 the \meta{dimension file} argument to match.
