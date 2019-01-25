@@ -19,10 +19,27 @@
   \end{tcolorbox}
 }
 
-\def\gauge{%
+\def\sz{%
   \rule{0.2em}{7pt}%
   \llap{\rule[8pt]{0.2em}{2pt}}%
 }
+
+\def\sx{%
+  \rule{1.5pt}{4.5pt}%
+  \llap{\rule[5.5pt]{1.5pt}{1.5pt}}%
+  \llap{\rule[8pt]{1.5pt}{2pt}}%
+}
+
+\def\gl{%
+%  \rule[3.5pt]{3.5pt}{1pt}%
+  \rule[5.5pt]{3.5pt}{1.5pt}%
+  \llap{\sx}}
+\def\gr{%
+  \rlap{\sx}%
+%  \rule[3.5pt]{3.5pt}{1pt}%
+  \rule[5.5pt]{3.5pt}{1.5pt}%
+  }
+%\rule[3pt]{0.4em}{2pt}\llap{\sz}}
 
 % TODO: error tests.  Maybe in directory and can use relative directory to use package?
 
@@ -110,7 +127,7 @@ See \Cref{sec:Options} more details about options and \Cref{sec:Issues
 \label{subsec:Notation}
 
 For debugging purposes, this documentation surrounds most examples with
-a \cs{gauge} macro that we use as a sort of registration mark.
+a \cs{sz} macro that we use as a sort of registration mark.
 This makes it easy to see whether there is extra space to the left or
 right of a symbol and whether parts of the symbol extend below the
 baseline.
@@ -122,8 +139,17 @@ Note that the top of the ``M'' is at 7 points above the baseline
 even though the font size is 10 points.
 
 \begin{tcblisting}{}
-\gauge M\gauge
+\sz M\sz
+~\gl x\gr
+~\gl M\gr
+~\gl\gr
 \end{tcblisting}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Related Packages}
+\label{subsec:Relatec Packages}
+
+TODO: standalone, tikz, pgfplots
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{High-level Commands}
@@ -143,16 +169,14 @@ The \meta{body} is the \LaTeX\ code to be externally rendered.
 An examples of their usage is the following.
 
 \begin{tcblisting}{}
-\gauge
-\external[preamble={\usepackage{amsmath}},math=inline]{%
-  \iint xy\,dx\,dy}%
-\gauge
-
-\gauge
+\sz
+\external[preamble={\usepackage{amsmath}},math=inline]
+  {\iint xy\,dx\,dy}%
+\sz~\sz
 \begin{externalenv}[preamble={\usepackage{amsmath}},math=inline]
-\iint xy\,dx\,dy%
+  \iint xy\,dx\,dy
 \end{externalenv}
-\gauge
+\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,33 +197,19 @@ For example, you might want to define versions that load the
 With \cs{newexternal}, this can be done as follows.
 
 \begin{tcblisting}{}
-\gauge\newexternal[preamble={\usepackage{amsmath}}, math=inline]
-  {\ams}\gauge
-
-\gauge\ams{\iint xy\,dx\,dy}\gauge
-
-\gauge\ams{\iiint xyz\,dx\,dy\,dz}\gauge
-
-\gauge\ams[math=false]{$\iiiint xyzw\,dx\,dy\,dz\,dw$}\gauge
+\sz\newexternal[preamble={\usepackage{amsmath}},math=inline]{\ams}\sz~%
+\sz\ams{\iint xy\,dx\,dy}\sz~%
+\sz\ams[math=false]{$\iint xyzw\,dx\,dy$}\sz
 \end{tcblisting}
 
 With \cs{newexternalenv}, this can be done as follows.
 
 \begin{tcblisting}{}
-\gauge\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]
-  {amsenv}\gauge
-
-\gauge\begin{amsenv}
-\iint xy\,dx\,dy
-\end{amsenv}\gauge
-
-\gauge\begin{amsenv}
-\iiint xyz\,dx\,dy\,dz
-\end{amsenv}\gauge
-
-\gauge\begin{amsenv}[math=false]
-$\iiiint xyzw\,dx\,dy\,dz\,dw$
-\end{amsenv}\gauge
+\sz
+\newexternalenv[preamble={\usepackage{amsmath}},math=inline]{amsenv}%
+\sz~%
+\sz\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}\sz~%
+\sz\begin{amsenv}[math=false]$\iint xyzw\,dx\,dy$\end{amsenv}\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,7 +236,7 @@ command.
 
 \begin{tcolorbox}
 \begin{verbatim}
-\setkey{external}{latex=mylatex}
+\externalkeys{latex=mylatex}
 \end{verbatim}
 \end{tcolorbox}
 
@@ -253,11 +263,12 @@ This is particularly is useful for incrementing any counters used in
 the \opt{file} option.
 
 \begin{tcblisting}{}
-\newcounter{foo}
-{\thefoo}
-\external[file=example-inline-action,
-          action={\setcounter{foo}{100}}]{X}
-{\thefoo}
+\newcounter{foo}%
+\thefoo
+\sz
+\external[file=example-inline-action,action={\setcounter{foo}{100}}]{}%
+\sz
+\thefoo
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,17 +286,25 @@ For example, the following uses the \pkg{proc} class, which (unlike
 \pkg{article}) contains the \cs{pagename} macro.
 
 \begin{tcblisting}{}
-\external[documentclass=proc]{\pagename}
+\sz\external[documentclass=proc]{\pagename}\sz
 \end{tcblisting}
 
 If the value of this macro is blank, a \cs{documentclass} declaration
 it not added to the intermediate file.
 In this case, you will likely want to put a \cs{documentclass}
-declaration in the \opt{preamble} option as in the following example.
+declaration in the \opt{preamble} option as in the following example,
+though since this could be achieved with |documentclass=prog|, doing it
+this way is gratuitous and solely for the sake of an example.
 
 \begin{tcblisting}{}
-\external[documentclass={},preamble={\documentclass{proc}}]{\pagename}
+\sz
+\external[documentclass={},preamble={\documentclass{proc}}]{\pagename}%
+\sz
 \end{tcblisting}
+
+This example demonstrates the use of this option, though since
+the \cs{newcommand} could be put in the preamble, putting it in
+\opt{pre-savebox} is gratuitous and solely for the sake of an example.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Option: \opt{documentclass/options}}
@@ -302,7 +321,7 @@ For example, the following specifies the |12pt| option to
 \pkg{article}, which changes the default font to be 12 points tall.
 
 \begin{tcblisting}{}
-\gauge\external[documentclass/options={12pt}]{M}\gauge
+\sz\external[documentclass/options={12pt}]{M}\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -321,9 +340,7 @@ For example, you might want to load needed packages as in the following
 example.
 
 \begin{tcblisting}{}
-\gauge
-\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}%
-\gauge
+\sz\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -334,11 +351,20 @@ Type: String
 
 Default: (blank)
 
-You are unlikely to need this option.
+This option specifies code to be put before the \cs{savebox} that is
+used in the intermediate \LaTeX\ file that is generated for the
+externally rendered code.
+This option corresponds to the pre-savebox argument of
+\cs{ExternalCode}.
+This option is rarely needed.
 
-Corresponds to the pre-savebox argument of \cs{ExternalCode}
+The following example demonstrates the use of this option, though since
+the \cs{newcommand} could be put in the preamble, putting it in
+\opt{pre-savebox} is gratuitous and solely for the sake of an example.
 
-TODO: example
+\begin{tcblisting}{}
+\sz\external[pre-savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}\sz
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{pre-usebox}}
@@ -348,9 +374,28 @@ Type: String
 
 Default: (blank)
 
-You are unlikely to need this option.
+This option specifies code to be put before the \cs{usebox} that is
+used in the intermediate \LaTeX\ file that is generated for the
+externally rendered code.
+This option corresponds to the pre-usebox argument of
+\cs{ExternalCode}.
+This option is rarely needed.
 
-TODO: example
+The following example demonstrates the use of this option, though since
+there are other ways to accomplish this effect, using \opt{pre-usebox}
+is gratuitous and solely for the sake of an example.
+Note that we have to set the margins to small or zero lengths to
+prevent them from overlapping the rest of the page.
+
+\begin{tcblisting}{}
+\sz
+\external[preamble={\usepackage{xcolor}},
+          pre-usebox={\pagecolor{yellow!30}},
+          margin/top=1pt,margin/bottom=1pt,
+          margin/left=0pt,margin/right=0pt]
+  {ABC}%
+\sz
+\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{math}}
@@ -366,34 +411,34 @@ math or display math.
 The following demonstrate each value possible for this option.
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \external[preamble={\usepackage{amsmath}},math=false]
-         {$\iint xy\,dx\,dy$}%
-\gauge
+  {$\iint xy\,dx\,dy$}%
+\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \external[preamble={\usepackage{amsmath}},math=inline]
-         {\iint xy\,dx\,dy}%
-\gauge
+  {\iint xy\,dx\,dy}%
+\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \external[preamble={\usepackage{amsmath}},math=display]
-         {\iint xy\,dx\,dy}%
-\gauge
+  {\iint xy\,dx\,dy}%
+\sz
 \end{tcblisting}
 
 Note that |math=display|, as seen in the following example, is
 equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \[\external[preamble={\usepackage{amsmath}}]
-           {$\displaystyle\iint xy\,dx\,dy$}\]
-\gauge
+    {$\displaystyle\iint xy\,dx\,dy$}\]%
+\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -429,7 +474,25 @@ Note that if you change this, you will almost certainly want to include
 the |-halt-on-error| and |-interaction=batchmode| options in whatever
 you change it to.
 
-TODO: example
+For example, the \pkg{ifplatform} package needs the |-shell-escape|
+option in order to give precise platform information.
+This can be specified as in the following.
+
+\begin{tcblisting}{}
+\sz
+\external[preamble={\usepackage{ifplatform}}]
+  {\platformname}%
+\sz~\sz
+\external[preamble={\usepackage{ifplatform}},
+          latex/options={-shell-escape -halt-on-error
+                         -interaction=batchmode}]
+  {\platformname}%
+\sz
+\end{tcblisting}
+
+Note that if this document was compiled on Windows, then the two calls
+to \cs{external} in this example will produce the same results as each
+other, but on any other platform they will be different.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{file}}
@@ -442,13 +505,12 @@ Default: |\jobname-external-\arabic{external@number}|
 This option specifies the basename of the intermediate files that are
 generated for each bit of externally rendered code.
 
-For example, the following uses |example-external-greek| as the
+For example, the following uses |example-external-file| as the
 basename.
 
 \begin{tcblisting}{}
 An atom undergoing
-\external[file=example-external-greek,
-  preamble={\usepackage{textgreek}}]
+\external[file=example-external-file,preamble={\usepackage{textgreek}}]
   {\textbeta-decay}
 can emit an electron.
 \end{tcblisting}
@@ -456,17 +518,17 @@ can emit an electron.
 Be careful not to use the same filename for two different bits of
 externally rendered code as that can lead to unexpected results.
 
-TODO: `file` is fully expanded, if we don't want part of it expanded, include that in an `unexpanded` (still true?)
-
 \subsubsection{Option: \opt{file/tex}, \opt{file/dim}, and \opt{file/pdf}}
 
 Type: String
 
 Defaults: Respectively |.tex|, |.dim|, and |.pdf|
 
-These options specify the extensions to use for the intermediate files.
+These options specify the extensions to use for the intermediate
+\LaTeX, dimension, and PDF files, respectively.
+This option is rarely needed.
 
-TODO: example?
+TODO: example
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{margin}}
@@ -489,29 +551,31 @@ may be clipped.
 For example, in each of the following a 2 inch rule is clipped when the
 default margins are used but is not clipped when a 3 inch rule is used.
 
-\begin{tcblisting}{}
-\external{M\rlap{\rule[3pt]{2in}{1pt}}M}
+TODO: combine into one big example
 
-\external[margin/right=3in]{M\rlap{\rule[3pt]{2in}{1pt}}M}
+\begin{tcblisting}{}
+\sz\external{M\rlap{\rule[3pt]{2in}{1pt}}M}\sz
+
+\sz\external[margin/right=3in]{M\rlap{\rule[3pt]{2in}{1pt}}M}\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
 \begin{flushright}
-\external{M\llap{\rule[3pt]{2in}{1pt}}M}
+\sz\external{M\llap{\rule[3pt]{2in}{1pt}}M}\sz
 
-\external[margin/left=3in]{M\llap{\rule[3pt]{2in}{1pt}}M}
+\sz\external[margin/left=3in]{M\llap{\rule[3pt]{2in}{1pt}}M}\sz
 \end{flushright}
 \end{tcblisting}
 
 \begin{tcblisting}{}
 \vspace{2in}
-\external{M\smash{\rule{1pt}{2in}}M}
-\external[margin/top=3in]{M\smash{\rule{1pt}{2in}}M}
+\sz\external{M\smash{\rule{1pt}{2in}}M}\sz~
+\sz\external[margin/top=3in]{M\smash{\rule{1pt}{2in}}M}\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\external{M\smash{\rule[-2in]{1pt}{2in}}M}
-\external[margin/bottom=3in]{M\smash{\rule[-2in]{1pt}{2in}}M}
+\sz\external{M\smash{\rule[-2in]{1pt}{2in}}M}\sz~
+\sz\external[margin/bottom=3in]{M\smash{\rule[-2in]{1pt}{2in}}M}\sz
 \vspace{2in}
 \end{tcblisting}
 
@@ -533,7 +597,7 @@ For example, the following uses \opt{angle} to rotate the image read in
 by \cs{includegraphics}.
 
 \begin{tcblisting}{}
-\gauge\external[includegraphics/options={angle=45}]{M}\gauge
+\sz\external[includegraphics/options={angle=45}]{M}\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -547,11 +611,11 @@ Default: |false|
 Whether to print tracing into to standard out.
 This is helpful in determining exactly what part of a command failed.
 
-For example, consider the following call to \cs{external}
+For example, consider the following call to \cs{external}.
 
 \typeout{+++++++++++++++++}
 \begin{tcblisting}{}
-\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}
+\sz\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}\sz
 \end{tcblisting}
 \typeout{+++++++++++++++++}
 
@@ -561,7 +625,7 @@ printed to the standard output.
 \begin{tcolorbox}
 \begin{verbatim}
 **** Begin \ExternalWrite on {example-external-21}
-     with {$\iint xy\,dx\,dy$}
+       with {$\iint xy\,dx\,dy$}
 **** End \ExternalWrite on {example-external-21}
 **** Begin \ExternalCompile on {example-external-21}
 **** End \ExternalCompile on {example-external-21}
@@ -597,15 +661,13 @@ For example, instead of using \cs{external}, you could explicitly call
 each of these as in the following.
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \ExternalWrite[file=example-external-separate,
                preamble={\usepackage{amsmath}}]
   {$\iint xy\,dx\,dy$}%
-\gauge
-
-\gauge\ExternalCompile[file=example-external-separate]\gauge
-
-\gauge\ExternalRead[file=example-external-separate]\gauge
+\sz~%
+\sz\ExternalCompile[file=example-external-separate]\sz~%
+\sz\ExternalRead[file=example-external-separate]\sz
 \end{tcblisting}
 
 Taking explicit control of these is particularly useful if you want to
@@ -639,10 +701,11 @@ Then in your master file you can compile and read that standalone file
 with the following commands.
 
 \begin{tcblisting}{}
-\gauge\ExternalCompile[file=example-standalone-simple]\gauge
-
-\gauge\ExternalRead[file=example-standalone-simple]\gauge
+\sz\ExternalCompile[file=example-standalone-simple]\sz~%
+\sz\ExternalRead[file=example-standalone-simple]\sz
 \end{tcblisting}
+
+TODO: GL vs GR
 
 Be careful if you rename a standalone file, as you will need to change
 the \meta{dimension file} argument to match.
@@ -675,7 +738,7 @@ Then you would omit the call to \cs{ExternalCompile} and just call
 \cs{ExternalRead} as in the following.
 
 \begin{tcblisting}{}
-\gauge\ExternalRead[file=example-standalone-simple]\gauge
+\sz\ExternalRead[file=example-standalone-simple]\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -715,7 +778,7 @@ For example, the following would lead to an error.
 
 \begin{tcolorbox}
 \begin{verbatim}
-\external[preamble={\newcommand{\parens}[1]{(#1)}}]{\parens{x}}
+\sz\external[preamble={\newcommand{\p}[1]{(#1)}}]{\p{x}}\sz
 \end{verbatim}
 \end{tcolorbox}
 
@@ -723,33 +786,31 @@ The solution to this is to use double hashes (for example, |##1|
 instead of |#1|) as demonstrated in the following.
 
 \begin{tcblisting}{}
-\gauge
-\external[preamble={\newcommand{\parens}[1]{(##1)}}]{\parens{x}}%
-\gauge
+\sz\external[preamble={\newcommand{\p}[1]{(##1)}}]{\p{x}}\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\gauge
-\begin{externalenv}[preamble={\newcommand{\parens}[1]{(##1)}}]
-\parens{x}
+\sz
+\begin{externalenv}[preamble={\newcommand{\p}[1]{(##1)}}]
+  \p{x}
 \end{externalenv}
-\gauge
+\sz
 \end{tcblisting}
 
 This even applies in the body of an \cs{external} or \env{externalenv}
 as seen in the following.
 
 \begin{tcblisting}{}
-\gauge\external{\newcommand{\parens}[1]{(##1)}\parens{x}}\gauge
+\sz\external{\newcommand{\p}[1]{(##1)}\p{x}}\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \begin{externalenv}
-\newcommand{\parens}[1]{(##1)}%
-\parens{x}
+  \newcommand{\p}[1]{(##1)}%
+  \p{x}
 \end{externalenv}
-\gauge
+\sz
 \end{tcblisting}
 
 This also applies to standalone files as seen in the following.
@@ -757,9 +818,8 @@ This also applies to standalone files as seen in the following.
 \showfile{example-standalone-hash.tex}
 
 \begin{tcblisting}{}
-\gauge\ExternalCompile[file=example-standalone-hash]\gauge
-
-\gauge\ExternalRead[file=example-standalone-hash]\gauge
+\sz\ExternalCompile[file=example-standalone-hash]\sz~%
+\sz\ExternalRead[file=example-standalone-hash]\sz
 \end{tcblisting}
 
 Finally, \cs{newexternal} and \cs{newexternalenv} require \textit{four}
@@ -767,43 +827,31 @@ hashes due to an extra level of indirection occurring in them as
 demonstrated in the following examples.
 
 \begin{tcblisting}{}
-\gauge
-\newexternal[preamble={\newcommand{\parens}[1]{(####1)}}]{\paren}%
-\gauge
-
-\gauge\paren{\parens{x}}\gauge
+\sz\newexternal[preamble={\newcommand{\p}[1]{(####1)}}]{\paren}\sz~%
+\sz\paren{\p{x}}\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\gauge
-\newexternalenv[preamble={\newcommand{\parens}[1]{(####1)}}]{paren}%
-\gauge
-
-\gauge
-\begin{paren}
-\parens{x}
-\end{paren}
-\gauge
+\sz\newexternalenv[preamble={\newcommand{\p}[1]{(####1)}}]{paren}\sz~%
+\sz\begin{paren}\p{x}\end{paren}\sz
 \end{tcblisting}
 
 However, in their bodies this does not apply and only two hashes should be used
 as demonstrated in the following.
 
 \begin{tcblisting}{}
-\gauge\newexternal{\paren}\gauge
-
-\gauge\paren{\newcommand{\parens}[1]{(##1)}\parens{x}}\gauge
+\sz\newexternal{\paren}\sz~%
+\sz\paren{\newcommand{\parens}[1]{(##1)}\parens{x}}\sz
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\gauge\newexternalenv{paren}\gauge
-
-\gauge
+\sz\newexternalenv{paren}\sz~%
+\sz
 \begin{paren}
-\newcommand{\parens}[1]{(##1)}%
-\parens{x}
+  \newcommand{\parens}[1]{(##1)}%
+  \parens{x}
 \end{paren}
-\gauge
+\sz
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -823,14 +871,14 @@ Thus to use it one must insert a call to \cs{scantokens} as in the
 following.
 
 \begin{tcblisting}{}
-\gauge
+\sz
 \external[preamble={
-    \DeclareFontFamily{U}{msa}{}
-    \scantokens{\DeclareFontShape{U}{msa}{m}{n}
-      {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
-    \usepackage{pifont}}]
+            \DeclareFontFamily{U}{msa}{}
+            \scantokens{\DeclareFontShape{U}{msa}{m}{n}
+              {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
+            \usepackage{pifont}}]
   {\Pisymbol{msa}{15}}%
-\gauge
+\sz
 \end{tcblisting}
 
 The \cs{relax} before the end of the argument to \cs{scantokens}
@@ -844,9 +892,8 @@ This trick also works when using a standalone file as in the following.
 \showfile{example-standalone-catcode.tex}
 
 \begin{tcblisting}{}
-\gauge\ExternalCompile[file=example-standalone-catcode]\gauge
-
-\gauge\ExternalRead[file=example-standalone-catcode]\gauge
+\sz\ExternalCompile[file=example-standalone-catcode]\sz~%
+\sz\ExternalRead[file=example-standalone-catcode]\sz
 \end{tcblisting}
 
 \end{document}
