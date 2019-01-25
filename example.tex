@@ -19,27 +19,29 @@
   \end{tcolorbox}
 }
 
-\def\sz{%
-  \rule{0.2em}{7pt}%
-  \llap{\rule[8pt]{0.2em}{2pt}}%
-}
-
 \def\sx{%
-  \rule{1.5pt}{4.5pt}%
-  \llap{\rule[5.5pt]{1.5pt}{1.5pt}}%
-  \llap{\rule[8pt]{1.5pt}{2pt}}%
+  \rule{2pt}{4.5pt}%
+  \llap{\rule[5.5pt]{2pt}{1.5pt}}%
+  \llap{\rule[8pt]{2pt}{2pt}}%
 }
 
 \def\gl{%
 %  \rule[3.5pt]{3.5pt}{1pt}%
-  \rule[5.5pt]{3.5pt}{1.5pt}%
+  \rule[5.5pt]{4pt}{1.5pt}%
   \llap{\sx}}
 \def\gr{%
   \rlap{\sx}%
 %  \rule[3.5pt]{3.5pt}{1pt}%
-  \rule[5.5pt]{3.5pt}{1.5pt}%
+  \rule[5.5pt]{4pt}{1.5pt}%
   }
-%\rule[3pt]{0.4em}{2pt}\llap{\sz}}
+
+%\let\<\gl
+%\let\>\gr % TODO: make active?
+
+\catcode`\<=\active
+\catcode`\>=\active
+\let<\gl
+\let>\gr
 
 % TODO: error tests.  Maybe in directory and can use relative directory to use package?
 
@@ -109,7 +111,7 @@ If you want to format the \LaTeX\ code as ``display'' math, use the
 |math=display| option as in the following example.
 
 \begin{tcblisting}{}
-\external[preamble={\usepackage{amsmath}},math=display]
+\external[preamble={\usepackage{amsmath}}, math=display]
   {\iint xy\,dx\,dy}
 \end{tcblisting}
 
@@ -139,10 +141,7 @@ Note that the top of the ``M'' is at 7 points above the baseline
 even though the font size is 10 points.
 
 \begin{tcblisting}{}
-\sz M\sz
-~\gl x\gr
-~\gl M\gr
-~\gl\gr
+<M> <x> <>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,14 +168,11 @@ The \meta{body} is the \LaTeX\ code to be externally rendered.
 An examples of their usage is the following.
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={\usepackage{amsmath}},math=inline]
-  {\iint xy\,dx\,dy}%
-\sz~\sz
-\begin{externalenv}[preamble={\usepackage{amsmath}},math=inline]
-  \iint xy\,dx\,dy
-\end{externalenv}
-\sz
+<\external[preamble={\usepackage{amsmath}}, math=inline]
+   {\iint xy\,dx\,dy}>
+<\begin{externalenv}[preamble={\usepackage{amsmath}}, math=inline]
+   \iint xy\,dx\,dy
+ \end{externalenv}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,19 +193,17 @@ For example, you might want to define versions that load the
 With \cs{newexternal}, this can be done as follows.
 
 \begin{tcblisting}{}
-\sz\newexternal[preamble={\usepackage{amsmath}},math=inline]{\ams}\sz~%
-\sz\ams{\iint xy\,dx\,dy}\sz~%
-\sz\ams[math=false]{$\iint xyzw\,dx\,dy$}\sz
+<\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
+<\ams{\iint xy\,dx\,dy}>
+<\ams[math=false]{$\iint xyzw\,dx\,dy$}>
 \end{tcblisting}
 
 With \cs{newexternalenv}, this can be done as follows.
 
 \begin{tcblisting}{}
-\sz
-\newexternalenv[preamble={\usepackage{amsmath}},math=inline]{amsenv}%
-\sz~%
-\sz\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}\sz~%
-\sz\begin{amsenv}[math=false]$\iint xyzw\,dx\,dy$\end{amsenv}\sz
+<\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
+<\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}>
+<\begin{amsenv}[math=false]$\iint xyzw\,dx\,dy$\end{amsenv}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,9 +259,8 @@ the \opt{file} option.
 \begin{tcblisting}{}
 \newcounter{foo}%
 \thefoo
-\sz
-\external[file=example-inline-action,action={\setcounter{foo}{100}}]{}%
-\sz
+<\external[file=example-inline-action,
+           action={\stepcounter{foo}}]{}>%
 \thefoo
 \end{tcblisting}
 
@@ -286,7 +279,7 @@ For example, the following uses the \pkg{proc} class, which (unlike
 \pkg{article}) contains the \cs{pagename} macro.
 
 \begin{tcblisting}{}
-\sz\external[documentclass=proc]{\pagename}\sz
+<\external[documentclass=proc]{\pagename}>
 \end{tcblisting}
 
 If the value of this macro is blank, a \cs{documentclass} declaration
@@ -297,9 +290,8 @@ though since this could be achieved with |documentclass=prog|, doing it
 this way is gratuitous and solely for the sake of an example.
 
 \begin{tcblisting}{}
-\sz
-\external[documentclass={},preamble={\documentclass{proc}}]{\pagename}%
-\sz
+<\external[documentclass={}, preamble={\documentclass{proc}}]
+   {\pagename}>
 \end{tcblisting}
 
 This example demonstrates the use of this option, though since
@@ -321,7 +313,7 @@ For example, the following specifies the |12pt| option to
 \pkg{article}, which changes the default font to be 12 points tall.
 
 \begin{tcblisting}{}
-\sz\external[documentclass/options={12pt}]{M}\sz
+<\external[documentclass/options={12pt}]{M}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -340,7 +332,7 @@ For example, you might want to load needed packages as in the following
 example.
 
 \begin{tcblisting}{}
-\sz\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}\sz
+<\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,7 +355,7 @@ the \cs{newcommand} could be put in the preamble, putting it in
 \opt{pre-savebox} is gratuitous and solely for the sake of an example.
 
 \begin{tcblisting}{}
-\sz\external[pre-savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}\sz
+<\external[pre-savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -388,13 +380,11 @@ Note that we have to set the margins to small or zero lengths to
 prevent them from overlapping the rest of the page.
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={\usepackage{xcolor}},
-          pre-usebox={\pagecolor{yellow!30}},
-          margin/top=1pt,margin/bottom=1pt,
-          margin/left=0pt,margin/right=0pt]
-  {ABC}%
-\sz
+<\external[preamble={\usepackage{xcolor}},
+           pre-usebox={\pagecolor{yellow!30}},
+           margin/top=1pt, margin/bottom=1pt,
+           margin/left=0pt, margin/right=0pt]
+   {ABC}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -411,34 +401,26 @@ math or display math.
 The following demonstrate each value possible for this option.
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={\usepackage{amsmath}},math=false]
-  {$\iint xy\,dx\,dy$}%
-\sz
+<\external[preamble={\usepackage{amsmath}}, math=false]
+   {$\iint xy\,dx\,dy$}>
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={\usepackage{amsmath}},math=inline]
-  {\iint xy\,dx\,dy}%
-\sz
+<\external[preamble={\usepackage{amsmath}}, math=inline]
+   {\iint xy\,dx\,dy}>
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={\usepackage{amsmath}},math=display]
-  {\iint xy\,dx\,dy}%
-\sz
+<\external[preamble={\usepackage{amsmath}}, math=display]
+   {\iint xy\,dx\,dy}>
 \end{tcblisting}
 
 Note that |math=display|, as seen in the following example, is
 equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 
 \begin{tcblisting}{}
-\sz
-\[\external[preamble={\usepackage{amsmath}}]
-    {$\displaystyle\iint xy\,dx\,dy$}\]%
-\sz
+<\[\external[preamble={\usepackage{amsmath}}]
+     {$\displaystyle\iint xy\,dx\,dy$}\]>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -479,15 +461,12 @@ option in order to give precise platform information.
 This can be specified as in the following.
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={\usepackage{ifplatform}}]
-  {\platformname}%
-\sz~\sz
-\external[preamble={\usepackage{ifplatform}},
-          latex/options={-shell-escape -halt-on-error
-                         -interaction=batchmode}]
-  {\platformname}%
-\sz
+<\external[preamble={\usepackage{ifplatform}}]
+   {\platformname}>
+<\external[preamble={\usepackage{ifplatform}},
+           latex/options={-shell-escape -halt-on-error
+                          -interaction=batchmode}]
+   {\platformname}>
 \end{tcblisting}
 
 Note that if this document was compiled on Windows, then the two calls
@@ -509,10 +488,9 @@ For example, the following uses |example-external-file| as the
 basename.
 
 \begin{tcblisting}{}
-An atom undergoing
-\external[file=example-external-file,preamble={\usepackage{textgreek}}]
-  {\textbeta-decay}
-can emit an electron.
+<\external[file=example-external-file,
+           preamble={\usepackage{amsmath}}]
+   {$\iint xy\,dx\,dy$}>
 \end{tcblisting}
 
 Be careful not to use the same filename for two different bits of
@@ -554,30 +532,53 @@ default margins are used but is not clipped when a 3 inch rule is used.
 TODO: combine into one big example
 
 \begin{tcblisting}{}
-\sz\external{M\rlap{\rule[3pt]{2in}{1pt}}M}\sz
-
-\sz\external[margin/right=3in]{M\rlap{\rule[3pt]{2in}{1pt}}M}\sz
-\end{tcblisting}
-
-\begin{tcblisting}{}
-\begin{flushright}
-\sz\external{M\llap{\rule[3pt]{2in}{1pt}}M}\sz
-
-\sz\external[margin/left=3in]{M\llap{\rule[3pt]{2in}{1pt}}M}\sz
-\end{flushright}
+\vspace{2in}
+\hspace{2in}
+<\begin{externalenv}
+   \rlap{\rule[3pt]{2in}{1pt}}%
+   \llap{\rule[3pt]{2in}{1pt}}%
+   \smash{\rule[-2in]{1pt}{4in}}%
+ \end{externalenv}>
+\vspace{2in}
 \end{tcblisting}
 
 \begin{tcblisting}{}
 \vspace{2in}
-\sz\external{M\smash{\rule{1pt}{2in}}M}\sz~
-\sz\external[margin/top=3in]{M\smash{\rule{1pt}{2in}}M}\sz
+\hspace{2in}
+<\begin{externalenv}[margin/top=3in, margin/bottom=3in,
+                     margin/left=3in, margin/right=3in]
+   \rlap{\rule[3pt]{2in}{1pt}}%
+   \llap{\rule[3pt]{2in}{1pt}}%
+   \smash{\rule[-2in]{1pt}{4in}}%
+ \end{externalenv}>
+\vspace{2.2in}
 \end{tcblisting}
 
-\begin{tcblisting}{}
-\sz\external{M\smash{\rule[-2in]{1pt}{2in}}M}\sz~
-\sz\external[margin/bottom=3in]{M\smash{\rule[-2in]{1pt}{2in}}M}\sz
-\vspace{2in}
-\end{tcblisting}
+%\begin{tcblisting}{}
+%<\external{M\rlap{\rule[3pt]{2in}{1pt}}M}>
+%
+%<\external[margin/right=3in]{M\rlap{\rule[3pt]{2in}{1pt}}M}>
+%\end{tcblisting}
+%
+%\begin{tcblisting}{}
+%\begin{flushright}
+%<\external{M\llap{\rule[3pt]{2in}{1pt}}M}>
+%
+%<\external[margin/left=3in]{M\llap{\rule[3pt]{2in}{1pt}}M}>
+%\end{flushright}
+%\end{tcblisting}
+%
+%\begin{tcblisting}{}
+%\vspace{2in}
+%<\external{M\smash{\rule{1pt}{2in}}M}>
+%<\external[margin/top=3in]{M\smash{\rule{1pt}{2in}}M}>
+%\end{tcblisting}
+%
+%\begin{tcblisting}{}
+%<\external{M\smash{\rule[-2in]{1pt}{2in}}M}>
+%<\external[margin/bottom=3in]{M\smash{\rule[-2in]{1pt}{2in}}M}>
+%\vspace{2in}
+%\end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{includegraphics}}
@@ -597,7 +598,7 @@ For example, the following uses \opt{angle} to rotate the image read in
 by \cs{includegraphics}.
 
 \begin{tcblisting}{}
-\sz\external[includegraphics/options={angle=45}]{M}\sz
+<\external[includegraphics/options={angle=45}]{M}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -615,7 +616,7 @@ For example, consider the following call to \cs{external}.
 
 \typeout{+++++++++++++++++}
 \begin{tcblisting}{}
-\sz\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}\sz
+<\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
 \end{tcblisting}
 \typeout{+++++++++++++++++}
 
@@ -661,13 +662,11 @@ For example, instead of using \cs{external}, you could explicitly call
 each of these as in the following.
 
 \begin{tcblisting}{}
-\sz
-\ExternalWrite[file=example-external-separate,
-               preamble={\usepackage{amsmath}}]
-  {$\iint xy\,dx\,dy$}%
-\sz~%
-\sz\ExternalCompile[file=example-external-separate]\sz~%
-\sz\ExternalRead[file=example-external-separate]\sz
+<\ExternalWrite[file=example-external-separate,
+                preamble={\usepackage{amsmath}}]
+   {$\iint xy\,dx\,dy$}>
+<\ExternalCompile[file=example-external-separate]>
+<\ExternalRead[file=example-external-separate]>
 \end{tcblisting}
 
 Taking explicit control of these is particularly useful if you want to
@@ -701,8 +700,8 @@ Then in your master file you can compile and read that standalone file
 with the following commands.
 
 \begin{tcblisting}{}
-\sz\ExternalCompile[file=example-standalone-simple]\sz~%
-\sz\ExternalRead[file=example-standalone-simple]\sz
+<\ExternalCompile[file=example-standalone-simple]>
+<\ExternalRead[file=example-standalone-simple]>
 \end{tcblisting}
 
 TODO: GL vs GR
@@ -738,7 +737,7 @@ Then you would omit the call to \cs{ExternalCompile} and just call
 \cs{ExternalRead} as in the following.
 
 \begin{tcblisting}{}
-\sz\ExternalRead[file=example-standalone-simple]\sz
+<\ExternalRead[file=example-standalone-simple]>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -778,7 +777,7 @@ For example, the following would lead to an error.
 
 \begin{tcolorbox}
 \begin{verbatim}
-\sz\external[preamble={\newcommand{\p}[1]{(#1)}}]{\p{x}}\sz
+<\external[preamble={\newcommand{\p}[1]{(#1)}}]{\p{x}}>
 \end{verbatim}
 \end{tcolorbox}
 
@@ -786,31 +785,27 @@ The solution to this is to use double hashes (for example, |##1|
 instead of |#1|) as demonstrated in the following.
 
 \begin{tcblisting}{}
-\sz\external[preamble={\newcommand{\p}[1]{(##1)}}]{\p{x}}\sz
+<\external[preamble={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\sz
-\begin{externalenv}[preamble={\newcommand{\p}[1]{(##1)}}]
-  \p{x}
-\end{externalenv}
-\sz
+<\begin{externalenv}[preamble={\newcommand{\p}[1]{(##1)}}]
+   \p{x}
+ \end{externalenv}>
 \end{tcblisting}
 
 This even applies in the body of an \cs{external} or \env{externalenv}
 as seen in the following.
 
 \begin{tcblisting}{}
-\sz\external{\newcommand{\p}[1]{(##1)}\p{x}}\sz
+<\external{\newcommand{\p}[1]{(##1)}\p{x}}>
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\sz
-\begin{externalenv}
-  \newcommand{\p}[1]{(##1)}%
-  \p{x}
-\end{externalenv}
-\sz
+<\begin{externalenv}
+   \newcommand{\p}[1]{(##1)}%
+   \p{x}
+ \end{externalenv}>
 \end{tcblisting}
 
 This also applies to standalone files as seen in the following.
@@ -818,8 +813,8 @@ This also applies to standalone files as seen in the following.
 \showfile{example-standalone-hash.tex}
 
 \begin{tcblisting}{}
-\sz\ExternalCompile[file=example-standalone-hash]\sz~%
-\sz\ExternalRead[file=example-standalone-hash]\sz
+<\ExternalCompile[file=example-standalone-hash]>
+<\ExternalRead[file=example-standalone-hash]>
 \end{tcblisting}
 
 Finally, \cs{newexternal} and \cs{newexternalenv} require \textit{four}
@@ -827,31 +822,29 @@ hashes due to an extra level of indirection occurring in them as
 demonstrated in the following examples.
 
 \begin{tcblisting}{}
-\sz\newexternal[preamble={\newcommand{\p}[1]{(####1)}}]{\paren}\sz~%
-\sz\paren{\p{x}}\sz
+<\newexternal[preamble={\newcommand{\p}[1]{(####1)}}]{\paren}>
+<\paren{\p{x}}>
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\sz\newexternalenv[preamble={\newcommand{\p}[1]{(####1)}}]{paren}\sz~%
-\sz\begin{paren}\p{x}\end{paren}\sz
+<\newexternalenv[preamble={\newcommand{\p}[1]{(####1)}}]{paren}>
+<\begin{paren}\p{x}\end{paren}>
 \end{tcblisting}
 
 However, in their bodies this does not apply and only two hashes should be used
 as demonstrated in the following.
 
 \begin{tcblisting}{}
-\sz\newexternal{\paren}\sz~%
-\sz\paren{\newcommand{\parens}[1]{(##1)}\parens{x}}\sz
+<\newexternal{\paren}>
+<\paren{\newcommand{\parens}[1]{(##1)}\parens{x}}>
 \end{tcblisting}
 
 \begin{tcblisting}{}
-\sz\newexternalenv{paren}\sz~%
-\sz
-\begin{paren}
-  \newcommand{\parens}[1]{(##1)}%
-  \parens{x}
-\end{paren}
-\sz
+<\newexternalenv{paren}>
+<\begin{paren}
+   \newcommand{\parens}[1]{(##1)}%
+   \parens{x}
+ \end{paren}>
 \end{tcblisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -871,14 +864,14 @@ Thus to use it one must insert a call to \cs{scantokens} as in the
 following.
 
 \begin{tcblisting}{}
-\sz
-\external[preamble={
-            \DeclareFontFamily{U}{msa}{}
-            \scantokens{\DeclareFontShape{U}{msa}{m}{n}
-              {<-6>msam5<6-8>msam7<8->msam10}{}\relax}
-            \usepackage{pifont}}]
-  {\Pisymbol{msa}{15}}%
-\sz
+<\external[preamble={
+             \usepackage{pifont}
+             \DeclareFontFamily{U}{msa}{}
+             \scantokens{
+               \DeclareFontShape
+                 {U}{msa}{m}{n}
+                 {<-6>msam5<6-8>msam7<8->msam10}{}\relax}}]
+   {\Pisymbol{msa}{15}}>
 \end{tcblisting}
 
 The \cs{relax} before the end of the argument to \cs{scantokens}
@@ -892,8 +885,8 @@ This trick also works when using a standalone file as in the following.
 \showfile{example-standalone-catcode.tex}
 
 \begin{tcblisting}{}
-\sz\ExternalCompile[file=example-standalone-catcode]\sz~%
-\sz\ExternalRead[file=example-standalone-catcode]\sz
+<\ExternalCompile[file=example-standalone-catcode]>
+<\ExternalRead[file=example-standalone-catcode]>
 \end{tcblisting}
 
 \end{document}
