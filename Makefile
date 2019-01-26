@@ -1,4 +1,7 @@
-all: all-pdf
+all:
+	pdflatex external.ins
+	pdflatex -shell-escape external.dtx
+
 all-pdf: standalone-pdf
 	pdflatex -shell-escape example.tex
 
@@ -25,5 +28,7 @@ standalone-lua:
 	lualatex example-standalone-hash.tex
 
 clean:
-	rm -f *.aux *.dim *.log *.listing *.pdf
+	rm -f *.aux *.dim *.glo *.idx *.log *.listing *.out *.pdf
 	rm -f example-inline-* example-external-*
+	rm -f external-external-* external-standalone-*
+	rm -f external.sty external.code.sty

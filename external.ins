@@ -1,0 +1,63 @@
+%%
+%% Copyright (C) hyear i by hyour namei
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.3 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%%
+%% http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3 or later is part of all distributions of
+%% LaTeX version 2005/12/01 or later.
+%%
+
+\input docstrip.tex
+\keepsilent
+
+%\usedir{tex/latex/external}
+
+\preamble
+
+A package for rendering LaTeX code in separate external documents
+
+Copyright (C) 2019 by Michael D. Adams
+
+This file may be distributed and/or modified under the
+conditions of the LaTeX Project Public License, either
+version 1.3 of this license or (at your option) any later
+version. The latest version of this license is in:
+
+   http://www.latex-project.org/lppl.txt
+
+and version 1.3 or later is part of all distributions of
+LaTeX version 2005/12/01 or later.
+
+\endpreamble
+
+\generate{
+  \file{external.sty}{\from{external.dtx}{package}}
+  \file{external.code.sty}{\from{external.dtx}{package-code}}}
+
+\generate{
+  \nopreamble\nopostamble
+  \file{external-standalone-simple.tex}{\from{external.dtx}{standalone-simple}}
+  \file{external-standalone-hash.tex}{\from{external.dtx}{standalone-hash}}
+  \file{external-standalone-catcode.tex}{\from{external.dtx}{standalone-catcode}}}
+
+\obeyspaces
+\Msg{****************************************************}
+\Msg{*                                                  *}
+\Msg{* To finish the installation you have to move the  *}
+\Msg{* following file into a directory searched by TeX: *}
+\Msg{*                                                  *}
+\Msg{*     external.sty                                 *}
+\Msg{*                                                  *}
+\Msg{* To produce the documentation run the file        *}
+\Msg{* external.dtx through LaTeX.                      *}
+\Msg{*                                                  *}
+\Msg{* Happy TeXing!                                    *}
+\Msg{*                                                  *}
+\Msg{****************************************************}
+
+\endbatchfile
