@@ -149,11 +149,11 @@ Suppose you want to use the \cs{textbeta} symbol from the
 You can simply render \cs{textbeta} using the \cs{external} command as
 in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 An atom undergoing
 \external[preamble={\usepackage{textgreek}}]{\textbeta-decay}
 can emit an electron.
-\end{tcblisting}
+\end{dispExample}
 
 If you prefer, you can also use the environment \env{externalenv} as in the
 following.
@@ -161,21 +161,21 @@ following.
 \env{externalenv} environment is that one is a command and the other in
 an environment.)
 
-\begin{tcblisting}{}
+\begin{dispExample}
 An atom undergoing
 \begin{externalenv}[preamble={\usepackage{textgreek}}]
 \textbeta-decay
 \end{externalenv}
 ~can emit an electron.
-\end{tcblisting}
+\end{dispExample}
 
 If you want to format the \LaTeX\ code as ``display'' math, use the
 |math=display| option as in the following example.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 \external[preamble={\usepackage{amsmath}}, math=display]
   {\iint xy\,dx\,dy}
-\end{tcblisting}
+\end{dispExample}
 
 Note that in all these examples even though they rendered as separate
 documents, they are automatically properly spaced relative to the
@@ -201,9 +201,9 @@ The top of the top, middle and bottom bars are at the font size (10
 points), where the top of an ``M'' would occur, and where the top of an
 ``x'' would occur, respectively.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <M> <x> <>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Related Packages}
@@ -234,13 +234,15 @@ of this package.
 The \meta{body} is the \LaTeX\ code to be externally rendered.
 An examples of their usage is the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}, math=inline]
    {\iint xy\,dx\,dy}>
+\end{dispExample}
+\begin{dispExample}
 <\begin{externalenv}[preamble={\usepackage{amsmath}}, math=inline]
    \iint xy\,dx\,dy
  \end{externalenv}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\cs{newexternal} and \env{newexternalenv}}
@@ -259,19 +261,19 @@ For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
 With \cs{newexternal}, this can be done as follows.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
 <\ams{\iint xy\,dx\,dy}>
 <\ams[math=false]{$\iint xyzw\,dx\,dy$}>
-\end{tcblisting}
+\end{dispExample}
 
 With \cs{newexternalenv}, this can be done as follows.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
 <\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}>
 <\begin{amsenv}[math=false]$\iint xyzw\,dx\,dy$\end{amsenv}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Options}
@@ -297,20 +299,16 @@ For example, if want to default to use |mypdflatex| instead of
 |pdflatex| to compile \LaTeX\ code, you could add the following
 command.
 
-\begin{tcolorbox}
-\begin{verbatim}
+\begin{dispListing}
 \externalkeys{latex=mylatex}
-\end{verbatim}
-\end{tcolorbox}
+\end{dispListing}
 
 You can also specify this by passing the option when the \pkg{external}
 package is loaded.
 
-\begin{tcolorbox}
-\begin{verbatim}
+\begin{dispListing}
 \usepackage[latex=mylatex]{external}
-\end{verbatim}
-\end{tcolorbox}
+\end{dispListing}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{action}}
@@ -325,13 +323,13 @@ in each \cs{external} command or \env{externalenv} environment.
 This is particularly is useful for incrementing any counters used in
 the \opt{file} option.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 \newcounter{foo}%
 \thefoo
 <\external[file=example-inline-action,
            action={\stepcounter{foo}}]{}>%
 \thefoo
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{documentclass}}
@@ -347,9 +345,9 @@ bit of externally rendered code.
 For example, the following uses the \pkg{proc} class, which (unlike
 \pkg{article}) contains the \cs{pagename} macro.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[documentclass=proc]{\pagename}>
-\end{tcblisting}
+\end{dispExample}
 
 If the value of this macro is blank, a \cs{documentclass} declaration
 it not added to the intermediate file.
@@ -358,10 +356,10 @@ declaration in the \opt{preamble} option as in the following example,
 though since this could be achieved with |documentclass=prog|, doing it
 this way is gratuitous and solely for the sake of an example.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[documentclass={}, preamble={\documentclass{proc}}]
    {\pagename}>
-\end{tcblisting}
+\end{dispExample}
 
 This example demonstrates the use of this option, though since
 the \cs{newcommand} could be put in the preamble, putting it in
@@ -381,9 +379,9 @@ rendered code.
 For example, the following specifies the |12pt| option to
 \pkg{article}, which changes the default font to be 12 points tall.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[documentclass/options={12pt}]{M}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{preamble}}
@@ -399,9 +397,9 @@ rendered code.
 For example, you might want to load needed packages as in the following
 example.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{pre-savebox}}
@@ -422,9 +420,9 @@ The following example demonstrates the use of this option, though since
 the \cs{newcommand} could be put in the preamble, putting it in
 \opt{pre-savebox} is gratuitous and solely for the sake of an example.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[pre-savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{pre-usebox}}
@@ -447,13 +445,13 @@ is gratuitous and solely for the sake of an example.
 Note that we have to set the margins to small or zero lengths to
 prevent them from overlapping the rest of the page.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{xcolor}},
            pre-usebox={\pagecolor{yellow!30}},
            margin/top=1pt, margin/bottom=1pt,
            margin/left=0pt, margin/right=0pt]
    {ABC}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{math}}
@@ -468,28 +466,28 @@ This option determines whether the body of \cs{external} or
 math or display math.
 The following demonstrate each value possible for this option.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}, math=false]
    {$\iint xy\,dx\,dy$}>
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}, math=inline]
    {\iint xy\,dx\,dy}>
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}, math=display]
    {\iint xy\,dx\,dy}>
-\end{tcblisting}
+\end{dispExample}
 
 Note that |math=display|, as seen in the following example, is
 equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\[\external[preamble={\usepackage{amsmath}}]
      {$\displaystyle\iint xy\,dx\,dy$}\]>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{latex}}
@@ -528,14 +526,14 @@ For example, the \pkg{ifplatform} package needs the |-shell-escape|
 option in order to give precise platform information.
 This can be specified as in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{ifplatform}}]
    {\platformname}>
 <\external[preamble={\usepackage{ifplatform}},
            latex/options={-shell-escape -halt-on-error
                           -interaction=batchmode}]
    {\platformname}>
-\end{tcblisting}
+\end{dispExample}
 
 Note that if this document was compiled on Windows, then the two calls
 to \cs{external} in this example will produce the same results as each
@@ -555,11 +553,11 @@ generated for each bit of externally rendered code.
 For example, the following uses |example-external-file| as the
 basename.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[file=example-external-file,
            preamble={\usepackage{amsmath}}]
    {$\iint xy\,dx\,dy$}>
-\end{tcblisting}
+\end{dispExample}
 
 Be careful not to use the same filename for two different bits of
 externally rendered code as that can lead to unexpected results.
@@ -598,7 +596,7 @@ For example, compare the two following examples.
 The 2 inch rules are clipped when the default margins are used but are
 not clipped when 3 inch margins are used.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 \vspace{2in}
 \hspace{2in}
 <\begin{externalenv}
@@ -607,9 +605,9 @@ not clipped when 3 inch margins are used.
    \smash{\rule[-2in]{1pt}{4in}}%
  \end{externalenv}>
 \vspace{2in}
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 \vspace{2in}
 \hspace{2in}
 <\begin{externalenv}[margin/top=3in, margin/bottom=3in,
@@ -619,7 +617,7 @@ not clipped when 3 inch margins are used.
    \smash{\rule[-2in]{1pt}{4in}}%
  \end{externalenv}>
 \vspace{2.2in}
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{includegraphics}}
@@ -638,9 +636,9 @@ rendering the \LaTeX\ code to be rendered separately.
 For example, the following uses \opt{angle} to rotate the image read in
 by \cs{includegraphics}.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[includegraphics/options={angle=45}]{M}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{debug}}
@@ -656,16 +654,15 @@ This is helpful in determining exactly what part of a command failed.
 For example, consider the following call to \cs{external}.
 
 \typeout{+++++++++++++++++}
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
-\end{tcblisting}
+\end{dispExample}
 \typeout{+++++++++++++++++}
 
 When the \opt{debug} option is |true|, lines like the following will be
 printed to the standard output.
 
-\begin{tcolorbox}
-\begin{verbatim}
+\begin{dispListing}
 **** Begin \ExternalWrite on {example-external-21}
        with {$\iint xy\,dx\,dy$}
 **** End \ExternalWrite on {example-external-21}
@@ -673,8 +670,7 @@ printed to the standard output.
 **** End \ExternalCompile on {example-external-21}
 **** Begin \ExternalRead on {example-external-21}
 **** End \ExternalRead on {example-external-21}
-\end{verbatim}
-\end{tcolorbox}
+\end{dispListing}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Low-level Commands}
@@ -702,13 +698,13 @@ These are handled with \cs{ExternalWrite}, \cs{ExternalCompile}, and
 For example, instead of using \cs{external}, you could explicitly call
 each of these as in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\ExternalWrite[file=example-external-separate,
                 preamble={\usepackage{amsmath}}]
    {$\iint xy\,dx\,dy$}>
 <\ExternalCompile[file=example-external-separate]>
 <\ExternalRead[file=example-external-separate]>
-\end{tcblisting}
+\end{dispExample}
 
 Taking explicit control of these is particularly useful if you want to
 cache compilation results.
@@ -740,10 +736,10 @@ For example, you might write the following standalone file.
 Then in your master file you can compile and read that standalone file
 with the following commands.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\ExternalCompile[file=external-standalone-simple]>
 <\ExternalRead[file=external-standalone-simple]>
-\end{tcblisting}
+\end{dispExample}
 
 Be careful if you rename a standalone file, as you will need to change
 the \meta{dimension file} argument to match.
@@ -766,18 +762,16 @@ If you wanted to reuse compiled results between compilations of the
 master \LaTeX\ file, you would want to manually run the following
 command.
 
-\begin{tcolorbox}
-\begin{verbatim}
+\begin{dispListing}
 pdflatex -shell-escape external-standalone-simple.tex
-\end{verbatim}
-\end{tcolorbox}
+\end{dispListing}
 
 Then you would omit the call to \cs{ExternalCompile} and just call
 \cs{ExternalRead} as in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\ExternalRead[file=external-standalone-simple]>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Issues and Workarounds}
@@ -814,77 +808,75 @@ The use of hashes that one would use when referencing a command
 argument (e.g., |#1|) can lead to problems.
 For example, the following would lead to an error.
 
-\begin{tcolorbox}
-\begin{verbatim}
+\begin{dispListing}
 <\external[preamble={\newcommand{\p}[1]{(#1)}}]{\p{x}}>
-\end{verbatim}
-\end{tcolorbox}
+\end{dispListing}
 
 The solution to this is to use double hashes (for example, |##1|
 instead of |#1|) as demonstrated in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\begin{externalenv}[preamble={\newcommand{\p}[1]{(##1)}}]
    \p{x}
  \end{externalenv}>
-\end{tcblisting}
+\end{dispExample}
 
 This even applies in the body of an \cs{external} or \env{externalenv}
 as seen in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external{\newcommand{\p}[1]{(##1)}\p{x}}>
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\begin{externalenv}
    \newcommand{\p}[1]{(##1)}%
    \p{x}
  \end{externalenv}>
-\end{tcblisting}
+\end{dispExample}
 
 This also applies to standalone files as seen in the following.
 
 \showfile{external-standalone-hash.tex}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\ExternalCompile[file=external-standalone-hash]>
 <\ExternalRead[file=external-standalone-hash]>
-\end{tcblisting}
+\end{dispExample}
 
 Finally, \cs{newexternal} and \cs{newexternalenv} require \textit{four}
 hashes due to an extra level of indirection occurring in them as
 demonstrated in the following examples.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\newexternal[preamble={\newcommand{\p}[1]{(####1)}}]{\paren}>
 <\paren{\p{x}}>
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\newexternalenv[preamble={\newcommand{\p}[1]{(####1)}}]{paren}>
 <\begin{paren}\p{x}\end{paren}>
-\end{tcblisting}
+\end{dispExample}
 
 However, in their bodies this does not apply and only two hashes should be used
 as demonstrated in the following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\newexternal{\paren}>
 <\paren{\newcommand{\parens}[1]{(##1)}\parens{x}}>
-\end{tcblisting}
+\end{dispExample}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\newexternalenv{paren}>
 <\begin{paren}
    \newcommand{\parens}[1]{(##1)}%
    \parens{x}
  \end{paren}>
-\end{tcblisting}
+\end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Category codes}
@@ -902,7 +894,7 @@ for characters used in its argument.
 Thus to use it one must insert a call to \cs{scantokens} as in the
 following.
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\external[preamble={
              \usepackage{pifont}
              \DeclareFontFamily{U}{msa}{}
@@ -911,7 +903,7 @@ following.
                  {U}{msa}{m}{n}
                  {<-6>msam5<6-8>msam7<8->msam10}{}\relax}}]
    {\Pisymbol{msa}{15}}>
-\end{tcblisting}
+\end{dispExample}
 
 The \cs{relax} before the end of the argument to \cs{scantokens}
 ensures that \cs{scantokens} does not insert an extra space at the end.
@@ -923,10 +915,10 @@ This trick also works when using a standalone file as in the following.
 
 \showfile{external-standalone-catcode.tex}
 
-\begin{tcblisting}{}
+\begin{dispExample}
 <\ExternalCompile[file=external-standalone-catcode]>
 <\ExternalRead[file=external-standalone-catcode]>
-\end{tcblisting}
+\end{dispExample}
 
 \section{Usage}
 
