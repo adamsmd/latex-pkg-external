@@ -255,17 +255,17 @@ An examples of their usage is the following.
 \subsection{\com{newexternal} and \com{newexternalenv}}
 \label{subsec:newexternal and newexternalenv}
 
-It is sometimes useful to define versions of \cs{newexternal} and
+It is sometimes useful to define versions of \com{newexternal} and
 \env{externalenv} that have their own custom default values for their
 options.
-These can be created with \cs{newexternal} and \env{newexternalenv}.
 
+These can be created with \com{newexternal} and \com{newexternalenv}.
 For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
-With \cs{newexternal}, this can be done as follows.
 
 \begin{docCommand}{newexternal}{\oarg{options}\marg{command name}}
 
+With \com{newexternal}, this can be done as follows.
 \begin{dispExample}
 <\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
 <\ams{\iint xy\,dx\,dy}>
@@ -273,9 +273,9 @@ With \cs{newexternal}, this can be done as follows.
 \end{dispExample}
 \end{docCommand}
 
-With \cs{newexternalenv}, this can be done as follows.
 \begin{docCommand}{newexternalenv}{\oarg{options}\marg{command name}}
 
+With \com{newexternalenv}, this can be done as follows.
 \begin{dispExample}
 <\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
 <\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}>
