@@ -210,13 +210,29 @@ points), where the top of an ``M'' would occur, and where the top of an
 \subsection{Related Packages}
 \label{subsec:Relatec Packages}
 
-TODO: standalone, tikz, pgfplots
+TODO
 
 \paragraph{\pkg{standalone}}
 
 \paragraph{\pkg{docmute}}
 
-tcolorbox
+\paragraph{\pkg{minidocument}}
+
+\paragraph{\pkg{subfiles}}
+
+\paragraph{\pkg{combine}}
+
+\paragraph{\pkg{includex}}
+
+\paragraph{\pkg{childdoc}}
+
+\paragraph{\pkg{subdocs}}
+
+\paragraph{\pkg{tcolorbox}}
+
+\paragraph{\pkg{tikz}}
+
+\paragraph{\pkg{pgfplots}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{High-level Commands}
@@ -230,10 +246,8 @@ The main commands of this package are \com{external} and \env{externalenv}.
 
 \begin{docCommand}{external}{\oarg{options}\marg{code}}
 
-The commands \cs{external} and \env{externalenv} are the main commands
-of this package.
-The \meta{body} is the \LaTeX\ code to be externally rendered.
-An examples of their usage is the following.
+Externally renders the the \LaTeX\ code in \meta{code}.
+An examples of its usage is the following.
 
 \begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}, math=inline]
@@ -243,6 +257,10 @@ An examples of their usage is the following.
 
 
 \begin{docEnvironment}{externalenv}{\oarg{options}}
+
+The same as \com{external}.
+The only difference is that \com{external} is a command and
+\env{externalenv} is an environment.
 
 \begin{dispExample}
 <\begin{externalenv}[preamble={\usepackage{amsmath}}, math=inline]
@@ -258,7 +276,6 @@ An examples of their usage is the following.
 It is sometimes useful to define versions of \com{newexternal} and
 \env{externalenv} that have their own custom default values for their
 options.
-
 These can be created with \com{newexternal} and \com{newexternalenv}.
 For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
@@ -266,6 +283,7 @@ For example, you might want to define versions that load the
 \begin{docCommand}{newexternal}{\oarg{options}\marg{command name}}
 
 With \com{newexternal}, this can be done as follows.
+
 \begin{dispExample}
 <\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
 <\ams{\iint xy\,dx\,dy}>
@@ -276,6 +294,7 @@ With \com{newexternal}, this can be done as follows.
 \begin{docCommand}{newexternalenv}{\oarg{options}\marg{command name}}
 
 With \com{newexternalenv}, this can be done as follows.
+
 \begin{dispExample}
 <\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
 <\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}>
@@ -323,6 +342,9 @@ package is loaded.
 \label{subsec:action}
 
 \begin{docKey}{action}{=\meta{code}}{initially |\stepcounter{external@number}|}\end{docKey}
+
+TODO: action to ``before''?
+
 Type: String
 
 Default: |\stepcounter{external@number}|
@@ -582,6 +604,8 @@ other, but on any other platform they will be different.
 
 \begin{docKey}{file}{=\meta{file basename}}{initially |\jobname-external-\arabic{external@number}|}
 \end{docKey}
+
+TODO: fix jobname
 
 Type: String
 
@@ -879,6 +903,8 @@ instead of |#1|) as demonstrated in the following.
    \p{x}
  \end{externalenv}>
 \end{dispExample}
+
+%%%%%% Test
 
 This even applies in the body of an \com{external} or \env{externalenv}
 as seen in the following.
