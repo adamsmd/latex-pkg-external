@@ -1006,13 +1006,76 @@ This trick also works when using a standalone file as in the following.
 %% Restore the category code for `%` that ltxdoc normally expects
 \catcode`\%=9
 
+% \StopEventually{\PrintIndex}
+%
 % \iffalse
 %</documentation>
 % \fi
 %
+% \section{Example Standalone Files}
 %
 % \iffalse
-%<*package>
+%<*standalone-simple>
+% \fi
+%
+% \subsection{\texttt{external-standalone-simple.tex}}
+%
+%    \begin{macrocode}
+% TODO: this code is an example used in the documentation for external.sty
+\RequirePackage{external.code}
+\ExternalCode
+  {external-standalone-simple.dim}
+  {\documentclass{article}\usepackage{amsmath}}
+  {}
+  {$\iint xy\,dx\,dy$}
+  {}
+%    \end{macrocode}
+% \iffalse
+%</standalone-simple>
+% \fi
+%
+% \iffalse
+%<*standalone-hash>
+% \fi
+%
+% \subsection{\texttt{external-standalone-hash.tex}}
+%
+%    \begin{macrocode}
+\RequirePackage{external.code}
+\ExternalCode
+  {external-standalone-hash.dim}
+  {\documentclass{article}\newcommand{\p}[1]{(##1)}}
+  {}
+  {\p{x}}
+  {}
+%    \end{macrocode}
+% \iffalse
+%</standalone-hash>
+% \fi
+%
+% \iffalse
+%<*standalone-catcode>
+% \fi
+%
+% \subsection{\texttt{external-standalone-catcode.tex}}
+%
+%    \begin{macrocode}
+\RequirePackage{external.code}
+\ExternalCode
+  {external-standalone-catcode.dim}
+  {\documentclass{article}
+   \usepackage{pifont}
+   \DeclareFontFamily{U}{msa}{}
+   \scantokens{
+     \DeclareFontShape
+       {U}{msa}{m}{n}
+       {<-6>msam5<6-8>msam7<8->msam10}{}\relax}}
+  {}
+  {\Pisymbol{msa}{15}}
+  {}
+%    \end{macrocode}
+% \iffalse
+%</standalone-catcode>
 % \fi
 %
 % \section{Implementation}
@@ -1020,16 +1083,20 @@ This trick also works when using a standalone file as in the following.
 % \begin{macro}{\YOURMACRO}
 % Put explanation of |\YOURMACRO|'s implementation here.
 %    \begin{macrocode}
-\newcommand{\YOURMACRO}{}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{environment}{YOURENV}
 % Put explanation of |YOURENV|'s implementation here.
 %    \begin{macrocode}
-\newenvironment{YOURENV}{}{}
 %    \end{macrocode}
 % \end{environment}
+%
+% \iffalse
+%<*package>
+% \fi
+%
+% \subsection{\texttt{external.sty}}
 %
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}
@@ -1051,6 +1118,7 @@ This trick also works when using a standalone file as in the following.
 % TODO: key for controlling expansion?
 % TODO: texdoc dtxtut
 % TODO: https://texfaq.org/FAQ-dtx
+% TODO: pre-savebox -> before savebox
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Options
@@ -1363,9 +1431,6 @@ This trick also works when using a standalone file as in the following.
   %%%% End core code %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %    \end{macrocode}
 %
 % \iffalse
@@ -1375,6 +1440,8 @@ This trick also works when using a standalone file as in the following.
 % \iffalse
 %<*package-code>
 % \fi
+%
+% \subsection{\texttt{external.code.sty}}
 %
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}
@@ -1496,60 +1563,6 @@ This trick also works when using a standalone file as in the following.
 %
 % \iffalse
 %</package-code>
-% \fi
-%
-% \iffalse
-%<*standalone-simple>
-% \fi
-%    \begin{macrocode}
-\RequirePackage{external.code}
-\ExternalCode
-  {external-standalone-simple.dim}
-  {\documentclass{article}\usepackage{amsmath}}
-  {}
-  {$\iint xy\,dx\,dy$}
-  {}
-%    \end{macrocode}
-% \iffalse
-%</standalone-simple>
-% \fi
-%
-% \iffalse
-%<*standalone-hash>
-% \fi
-%    \begin{macrocode}
-\RequirePackage{external.code}
-\ExternalCode
-  {external-standalone-hash.dim}
-  {\documentclass{article}\newcommand{\p}[1]{(##1)}}
-  {}
-  {\p{x}}
-  {}
-%    \end{macrocode}
-% \iffalse
-%</standalone-hash>
-% \fi
-%
-% \iffalse
-%<*standalone-catcode>
-% \fi
-%    \begin{macrocode}
-\RequirePackage{external.code}
-\ExternalCode
-  {external-standalone-catcode.dim}
-  {\documentclass{article}
-   \usepackage{pifont}
-   \DeclareFontFamily{U}{msa}{}
-   \scantokens{
-     \DeclareFontShape
-       {U}{msa}{m}{n}
-       {<-6>msam5<6-8>msam7<8->msam10}{}\relax}}
-  {}
-  {\Pisymbol{msa}{15}}
-  {}
-%    \end{macrocode}
-% \iffalse
-%</standalone-catcode>
 % \fi
 %
 % \Finale
