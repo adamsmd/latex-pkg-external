@@ -4,8 +4,8 @@
 *.idx
 *.log
 *.out
+*.dim
 *.tcbtemp
 external-external-*
-external-standalone-*
 example-external-*
 example-inline-*

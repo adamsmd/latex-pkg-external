@@ -1,0 +1,13 @@
+\RequirePackage{external.code}
+\ExternalCode
+  {external-standalone-catcode.dim}
+  {\documentclass{article}
+   \usepackage{pifont}
+   \DeclareFontFamily{U}{msa}{}
+   \scantokens{
+     \DeclareFontShape
+       {U}{msa}{m}{n}
+       {<-6>msam5<6-8>msam7<8->msam10}{}\relax}}
+  {}
+  {\Pisymbol{msa}{15}}
+  {}

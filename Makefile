@@ -1,35 +1,31 @@
-all:
-	pdflatex external.ins
-	pdflatex -shell-escape external.dtx
-	pdflatex -shell-escape external.dtx
-
 all-pdf: standalone-pdf
-	pdflatex -shell-escape example.tex
+	pdflatex -shell-escape external.tex
+	pdflatex -shell-escape external.tex
 
 all-xe: standalone-pdf
-	xelatex -shell-escape example.tex
+	xelatex -shell-escape external.tex
+	xelatex -shell-escape external.tex
 
 all-lua: standalone-pdf
-	lualatex -shell-escape example.tex
+	lualatex -shell-escape external.tex
+	lualatex -shell-escape external.tex
 
 standalone: standalone-pdf
 standalone-pdf:
-	pdflatex example-standalone-simple.tex
-	pdflatex example-standalone-catcode.tex
-	pdflatex example-standalone-hash.tex
+	pdflatex external-standalone-simple.tex
+	pdflatex external-standalone-catcode.tex
+	pdflatex external-standalone-hash.tex
 
 standalone-xe:
-	xelatex example-standalone-simple.tex
-	xelatex example-standalone-catcode.tex
-	xelatex example-standalone-hash.tex
+	xelatex external-standalone-simple.tex
+	xelatex external-standalone-catcode.tex
+	xelatex external-standalone-hash.tex
 
 standalone-lua:
-	lualatex example-standalone-simple.tex
-	lualatex example-standalone-catcode.tex
-	lualatex example-standalone-hash.tex
+	lualatex external-standalone-simple.tex
+	lualatex external-standalone-catcode.tex
+	lualatex external-standalone-hash.tex
 
 clean:
 	rm -f *.aux *.dim *.glo *.idx *.log *.listing *.out *.pdf
-	rm -f example-inline-* example-external-*
-	rm -f external-external-* external-standalone-*
-	rm -f external.sty external.code.sty
+	rm -f external-inline-* external-external-*
