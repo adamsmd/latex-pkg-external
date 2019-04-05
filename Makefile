@@ -1,6 +1,7 @@
 all:
 	pdflatex external.ins
 	pdflatex -shell-escape external.dtx
+	pdflatex -shell-escape external.dtx
 
 all-pdf: standalone-pdf
 	pdflatex -shell-escape example.tex
