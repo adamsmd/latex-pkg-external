@@ -226,9 +226,9 @@ tcolorbox
 \subsection{\com{external} and \env{externalenv}}
 \label{subsec:external and externalenv}
 
-\cs{external}\oarg{options}\marg{body}
+The main commands of this package are \com{external} and \env{externalenv}.
 
-TODO: \cs{begin}\texttt{\{externalenv\}}\oarg{options}
+\begin{docCommand}{external}{\oarg{options}\marg{code}}
 
 The commands \cs{external} and \env{externalenv} are the main commands
 of this package.
@@ -239,19 +239,21 @@ An examples of their usage is the following.
 <\external[preamble={\usepackage{amsmath}}, math=inline]
    {\iint xy\,dx\,dy}>
 \end{dispExample}
+\end{docCommand}
+
+
+\begin{docEnvironment}{externalenv}{\oarg{options}}
+
 \begin{dispExample}
 <\begin{externalenv}[preamble={\usepackage{amsmath}}, math=inline]
    \iint xy\,dx\,dy
  \end{externalenv}>
 \end{dispExample}
+\end{docEnvironment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\com{newexternal} and \com{newexternalenv}}
 \label{subsec:newexternal and newexternalenv}
-
-\cs{newexternal}\oarg{options}\marg{command name}
-
-\cs{newexternalenv}\oarg{options}\marg{command name}
 
 It is sometimes useful to define versions of \cs{newexternal} and
 \env{externalenv} that have their own custom default values for their
@@ -262,19 +264,24 @@ For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
 With \cs{newexternal}, this can be done as follows.
 
+\begin{docCommand}{newexternal}{\oarg{options}\marg{command name}}
+
 \begin{dispExample}
 <\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
 <\ams{\iint xy\,dx\,dy}>
 <\ams[math=false]{$\iint xyzw\,dx\,dy$}>
 \end{dispExample}
+\end{docCommand}
 
 With \cs{newexternalenv}, this can be done as follows.
+\begin{docCommand}{newexternalenv}{\oarg{options}\marg{command name}}
 
 \begin{dispExample}
 <\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
 <\begin{amsenv}\iint xy\,dx\,dy\end{amsenv}>
 <\begin{amsenv}[math=false]$\iint xyzw\,dx\,dy$\end{amsenv}>
 \end{dispExample}
+\end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Options}
@@ -292,7 +299,7 @@ $$
 \subsection{\com{externalkeys}}
 \label{subsec:externalkeys}
 
-\cs{externalkeys}\marg{options}
+\begin{docCommand}{externalkeys}{\marg{options}}\end{docCommand}
 
 You can set the default value for any options with the
 \com{externalkeys} command.
@@ -315,6 +322,7 @@ package is loaded.
 \subsection{Option: \opt{action}}
 \label{subsec:action}
 
+\begin{docKey}{action}{=\meta{code}}{initially |\stepcounter{external@number}|}\end{docKey}
 Type: String
 
 Default: |\stepcounter{external@number}|
@@ -335,6 +343,9 @@ the \opt{file} option.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{documentclass}}
 \label{subsec:documentclass}
+
+\begin{docKey}{documentclass}{=\meta{class}}{initially |article|}
+\end{docKey}
 
 Type: String
 
@@ -370,6 +381,9 @@ the \cs{newcommand} could be put in the preamble, putting it in
 \subsubsection{Option: \opt{documentclass/options}}
 \label{subsec:documentclass/options}
 
+\begin{docKey}{documentclass/options}{=\meta{options}}{initially empty}
+\end{docKey}
+
 Type: String
 
 Default: (blank)
@@ -388,6 +402,9 @@ For example, the following specifies the |12pt| option to
 \subsection{Option: \opt{preamble}}
 \label{subsec:preamble}
 
+\begin{docKey}{preamble}{=\meta{code}}{initially empty}
+\end{docKey}
+
 Type: String
 
 Default: (blank)
@@ -405,6 +422,9 @@ example.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{pre-savebox}}
 \label{subsec:pre-savebox}
+
+\begin{docKey}{pre-savebox}{=\meta{code}}{initially empty}
+\end{docKey}
 
 Type: String
 
@@ -428,6 +448,9 @@ the \cs{newcommand} could be put in the preamble, putting it in
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{pre-usebox}}
 \label{subsec:pre-usebox}
+
+\begin{docKey}{pre-usebox}{=\meta{code}}{initially empty}
+\end{docKey}
 
 Type: String
 
@@ -457,6 +480,13 @@ prevent them from overlapping the rest of the page.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{math}}
 \label{subsec:math}
+
+\begin{docKey}{math}{=\meta{|false|, |inline|, or |display|}}{initially \docValue{false}}
+\end{docKey}
+
+\docValue{false}
+\docValue{inline}
+\docValue{display}
 
 Type: |false|, |inline|, or |display|
 
@@ -494,6 +524,9 @@ equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 \subsection{Option: \opt{latex}}
 \label{subsec:latex}
 
+\begin{docKey}{latex}{=\meta{program name}}{initially empty}
+\end{docKey}
+
 Type: String
 
 Default: (blank)
@@ -510,6 +543,9 @@ TODO: example
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Option: \opt{latex/options}}
 \label{subsubsec:latex/options}
+
+\begin{docKey}{latex/options}{=\meta{code}}{initially |-halt-on-error -interaction=batchmode|}
+\end{docKey}
 
 Type: String
 
@@ -543,6 +579,9 @@ other, but on any other platform they will be different.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Option: \opt{file}}
 \label{subsec:file}
+
+\begin{docKey}{file}{=\meta{file basename}}{initially |\jobname-external-\arabic{external@number}|}
+\end{docKey}
 
 Type: String
 
@@ -583,6 +622,10 @@ TODO: example
 \subsubsection{Option: \opt{margin/top}, \opt{margin/bottom}, \opt{margin/left}, and \opt{margin/right}}
 \label{subsubsec:margin/top, margin/bottom, margin/left, and margin/right}
 
+\begin{docKey}{margin/top}{=\meta{length}}{initially |1in|}\end{docKey}
+\begin{docKey}{margin/bottom}{=\meta{length}}{initially |1in|}\end{docKey}
+\begin{docKey}{margin/left}{=\meta{length}}{initially |1in|}\end{docKey}
+\begin{docKey}{margin/right}{=\meta{length}}{initially |1in|}\end{docKey}
 Type: Length
 
 Default: |1in|
@@ -627,6 +670,8 @@ not clipped when 3 inch margins are used.
 \subsubsection{Option: \opt{includegraphics/options}}
 \label{subsubsec:includegraphics/options}
 
+\begin{docKey}{includegraphics/options}{=\meta{key-value sequence}}{initially empty}\end{docKey}
+
 Type: String
 
 Default: (blank)
@@ -645,9 +690,14 @@ by \cs{includegraphics}.
 \subsection{Option: \opt{debug}}
 \label{subsec:debug}
 
+\begin{docKey}{debug}{=\meta{|true| or |false|}}{initially |false|}\end{docKey}
+
 Type: |false| or |true|
 
 Default: |false|
+
+\docValue{true}
+\docValue{false}
 
 Whether to print tracing into to standard out.
 This is helpful in determining exactly what part of a command failed.
@@ -680,11 +730,14 @@ printed to the standard output.
 \subsection{\com{ExternalWrite}, \com{ExternalCompile}, and \com{ExternalRead}}
 \label{subsec:ExternalWrite, ExternalCompile, and ExternalRead}
 
-\cs{ExternalWrite}\oarg{options}\marg{body}
+\begin{docCommand}{ExternalWrite}{\oarg{options}\marg{body}}
+\end{docCommand}
 
-\cs{ExternalCompile}\oarg{options}
+\begin{docCommand}{ExternalCompile}{\oarg{options}}
+\end{docCommand}
 
-\cs{ExternalRead}\oarg{options}
+\begin{docCommand}{ExternalRead}{\oarg{options}}
+\end{docCommand}
 
 Both the \com{external} command and the \env{externalenv} environment
 are broken up into three phases:
@@ -715,7 +768,8 @@ See \Cref{subsec:ExternalCode} for an example of this.
 \subsection{\com{ExternalCode}}
 \label{subsec:ExternalCode}
 
-\cs{ExternalCode}\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}
+\begin{docCommand}{ExternalCode}{\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}}
+\end{docCommand}
 
 TODO: weave ``Standalone Source File'' to test earlier?
 
