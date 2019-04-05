@@ -1,0 +1,11 @@
+*~
+*.aux
+*.glo
+*.idx
+*.log
+*.out
+*.tcbtemp
+external-external-*
+external-standalone-*
+example-external-*
+example-inline-*
