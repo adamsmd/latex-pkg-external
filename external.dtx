@@ -101,12 +101,13 @@
 %
 % %\DoNotIndex{hlist of control sequencesi}
 %
-
 \catcode`\%=14
+
 % Normally `ltxdoc` sets the catcode for `%` to 9 (ignored character).
-% However this causes problems in `tcblisting`, so we set it to the
-% standard 14 (comment character).  After all the `tcblisting` we set
-% it back to the 9 that `ltxdoc` expects.
+% However this causes problems both in `tcblisting` and the spacing
+% of some of our examples, so we set it to the standard 14 (comment
+% character). After all the `tcblisting` and examples we set it back
+% to the 9 that `ltxdoc` expects.
 
 \title{The \textsf{external} package%
   \thanks{This document corresponds to
@@ -1001,17 +1002,8 @@ This trick also works when using a standalone file as in the following.
 <\ExternalRead[file=external-standalone-catcode]>
 \end{dispExample}
 
-\section{Usage}
 
-\DescribeMacro{\YOURMACRO}
-Put description of |\YOURMACRO| here.
-
-\DescribeEnv{YOURENV}
-Put description of |YOURENV| here.
-
-\StopEventually{\PrintIndex}
-
-% Restore the category code for `%` that ltxdoc normally expect
+%% Restore the category code for `%` that ltxdoc normally expects
 \catcode`\%=9
 
 % \iffalse
