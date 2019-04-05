@@ -36,7 +36,8 @@
 
 \usepackage{cleveref}
 
-\newcommand{\env}[1]{\texttt{#1}}
+\newcommand{\com}[1]{\refCom{#1}}
+\newcommand{\env}[1]{\refEnv{#1}}
 \newcommand{\pkg}[1]{\texttt{#1}}
 \newcommand{\opt}[1]{\texttt{#1}}
 
@@ -222,7 +223,7 @@ tcolorbox
 \label{sec:High-level Commands}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\cs{external} and \env{externalenv}}
+\subsection{\com{external} and \env{externalenv}}
 \label{subsec:external and externalenv}
 
 \cs{external}\oarg{options}\marg{body}
@@ -245,7 +246,7 @@ An examples of their usage is the following.
 \end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\cs{newexternal} and \env{newexternalenv}}
+\subsection{\com{newexternal} and \com{newexternalenv}}
 \label{subsec:newexternal and newexternalenv}
 
 \cs{newexternal}\oarg{options}\marg{command name}
@@ -288,13 +289,13 @@ $$
 |[|\meta{key$_1$}|=|\meta{value$_1$}|, |\meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|, |\meta{key$_n$}|=|\meta{value$_n$}|]|
 $$
 
-\subsection{\cs{externalkeys}}
+\subsection{\com{externalkeys}}
 \label{subsec:externalkeys}
 
 \cs{externalkeys}\marg{options}
 
 You can set the default value for any options with the
-\cs{externalkeys} command.
+\com{externalkeys} command.
 For example, if want to default to use |mypdflatex| instead of
 |pdflatex| to compile \LaTeX\ code, you could add the following
 command.
@@ -319,7 +320,7 @@ Type: String
 Default: |\stepcounter{external@number}|
 
 This option specifies a bit of code to run before the rest of the code
-in each \cs{external} command or \env{externalenv} environment.
+in each \com{external} command or \env{externalenv} environment.
 This is particularly is useful for incrementing any counters used in
 the \opt{file} option.
 
@@ -413,7 +414,7 @@ This option specifies code to be put before the \cs{savebox} that is
 used in the intermediate \LaTeX\ file that is generated for the
 externally rendered code.
 This option corresponds to the pre-savebox argument of
-\cs{ExternalCode}.
+\com{ExternalCode}.
 This option is rarely needed.
 
 The following example demonstrates the use of this option, though since
@@ -436,7 +437,7 @@ This option specifies code to be put before the \cs{usebox} that is
 used in the intermediate \LaTeX\ file that is generated for the
 externally rendered code.
 This option corresponds to the pre-usebox argument of
-\cs{ExternalCode}.
+\com{ExternalCode}.
 This option is rarely needed.
 
 The following example demonstrates the use of this option, though since
@@ -461,7 +462,7 @@ Type: |false|, |inline|, or |display|
 
 Default: |false|
 
-This option determines whether the body of \cs{external} or
+This option determines whether the body of \com{external} or
 \env{externalenv} is treated as math, and if so, whether it is inline
 math or display math.
 The following demonstrate each value possible for this option.
@@ -536,7 +537,7 @@ This can be specified as in the following.
 \end{dispExample}
 
 Note that if this document was compiled on Windows, then the two calls
-to \cs{external} in this example will produce the same results as each
+to \com{external} in this example will produce the same results as each
 other, but on any other platform they will be different.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -651,7 +652,7 @@ Default: |false|
 Whether to print tracing into to standard out.
 This is helpful in determining exactly what part of a command failed.
 
-For example, consider the following call to \cs{external}.
+For example, consider the following call to \com{external}.
 
 \typeout{+++++++++++++++++}
 \begin{dispExample}
@@ -676,7 +677,7 @@ printed to the standard output.
 \section{Low-level Commands}
 \label{sec:Low-level Commands}
 
-\subsection{\cs{ExternalWrite}, \cs{ExternalCompile}, and \cs{ExternalRead}}
+\subsection{\com{ExternalWrite}, \com{ExternalCompile}, and \com{ExternalRead}}
 \label{subsec:ExternalWrite, ExternalCompile, and ExternalRead}
 
 \cs{ExternalWrite}\oarg{options}\marg{body}
@@ -685,7 +686,7 @@ printed to the standard output.
 
 \cs{ExternalRead}\oarg{options}
 
-Both the \cs{external} command and the \env{externalenv} environment
+Both the \com{external} command and the \env{externalenv} environment
 are broken up into three phases:
 \begin{enumerate}
 \item writing the intermediate \LaTeX\ file,
@@ -693,9 +694,9 @@ are broken up into three phases:
 \item reading the resulting intermediate PDF file.
 \end{enumerate}
 
-These are handled with \cs{ExternalWrite}, \cs{ExternalCompile}, and
-\cs{ExternalRead}, respectively.
-For example, instead of using \cs{external}, you could explicitly call
+These are handled with \com{ExternalWrite}, \com{ExternalCompile}, and
+\com{ExternalRead}, respectively.
+For example, instead of using \com{external}, you could explicitly call
 each of these as in the following.
 
 \begin{dispExample}
@@ -711,7 +712,7 @@ cache compilation results.
 See \Cref{subsec:ExternalCode} for an example of this.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\cs{ExternalCode}}
+\subsection{\com{ExternalCode}}
 \label{subsec:ExternalCode}
 
 \cs{ExternalCode}\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}
@@ -746,7 +747,7 @@ the \meta{dimension file} argument to match.
 Otherwise, you will get an error along the lines of
 |In \ExternalRead, input dimension file does not exist|.
 
-Also note that \cs{ExternalCode} is defined in the \pkg{external.code}
+Also note that \com{ExternalCode} is defined in the \pkg{external.code}
 package.
 This package is imported by the main \pkg{external} package, so you do
 not necessarily need to import it separately.
@@ -766,8 +767,8 @@ command.
 pdflatex -shell-escape external-standalone-simple.tex
 \end{dispListing}
 
-Then you would omit the call to \cs{ExternalCompile} and just call
-\cs{ExternalRead} as in the following.
+Then you would omit the call to \com{ExternalCompile} and just call
+\com{ExternalRead} as in the following.
 
 \begin{dispExample}
 <\ExternalRead[file=external-standalone-simple]>
@@ -782,7 +783,7 @@ Then you would omit the call to \cs{ExternalCompile} and just call
 \label{subsec:Render not updating}
 
 A common issue is when you change the \LaTeX\ code to be externally
-rendered (e.g., the \meta{body} of a \cs{external}), but those changes
+rendered (e.g., the \meta{body} of a \com{external}), but those changes
 are not reflected in the master document after re-compiling the master
 document.
 The cause of this is that \pkg{external} has no way to detect whether
@@ -825,7 +826,7 @@ instead of |#1|) as demonstrated in the following.
  \end{externalenv}>
 \end{dispExample}
 
-This even applies in the body of an \cs{external} or \env{externalenv}
+This even applies in the body of an \com{external} or \env{externalenv}
 as seen in the following.
 
 \begin{dispExample}
@@ -848,7 +849,7 @@ This also applies to standalone files as seen in the following.
 <\ExternalRead[file=external-standalone-hash]>
 \end{dispExample}
 
-Finally, \cs{newexternal} and \cs{newexternalenv} require \textit{four}
+Finally, \com{newexternal} and \com{newexternalenv} require \textit{four}
 hashes due to an extra level of indirection occurring in them as
 demonstrated in the following examples.
 
