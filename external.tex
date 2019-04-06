@@ -564,7 +564,12 @@ code.
 Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
 to match whatever the master document is being compiled with.
 
-TODO:~example
+For example, if you wanted to force certain code to run under
+|pdflatex|, you could do the following.
+
+\begin{dispExample}
+<\external[latex=pdflatex]{\pdfescapehex{ABC}}>
+\end{dispExample}
 \end{docKey}
 
 %%%%%%%%%%
