@@ -1,16 +1,20 @@
+# Backup files
 *~
 \#*\#
-*.pdf
+.\#*
+
+# LaTeX files
 *.aux
-*.toc
+*.dim
 *.glo
 *.idx
-*.ind
 *.ilg
+*.ind
 *.log
 *.out
-*.dim
 *.tcbtemp
+*.toc
+
+# Externally rendered files
 external-external-*
-example-external-*
-example-inline-*
+external-standalone-*.pdf

@@ -36,5 +36,5 @@ standalone-lua:
 	lualatex external-standalone-hash.tex
 
 clean:
-	rm -f *.aux *.dim *.glo *.idx *.ind *.ilg *.log *.listing *.tcbtemp *.out *.pdf
-	rm -f external-inline-* external-external-*
+	rm -f *.aux *.dim *.glo *.idx *.ilg *.ind *.log *.out *.tcbtemp *.toc
+	rm -f external-external-* external-standalone-*.pdf

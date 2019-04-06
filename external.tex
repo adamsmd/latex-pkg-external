@@ -11,12 +11,15 @@
 % and version 1.3 or later is part of all distributions of LaTeX
 % version 2005/12/01 or later.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass[10pt]{ltxdoc}
 
 % TODO: figure these out
 %\EnableCrossrefs
 %\CodelineIndex
 %\RecordChanges
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{external}
 \externalkeys{debug=true}
@@ -25,14 +28,13 @@
 \tcbuselibrary{listings}
 \tcbuselibrary{documentation}
 \makeindex
-
 % Use the default `dispExample` formatting except don't mess with the font size
 \tcbset{docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
     before skip=\medskipamount,after skip=\medskipamount}}
 
 \usepackage{cleveref}
 
-\usepackage{suffix}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\texttt{#1}}
 \newcommand{\env}[1]{\refEnv{#1}}\newcommand{\Env}[1]{\texttt{#1}}
@@ -65,6 +67,7 @@
 
 % TODO: error tests.  Maybe in directory and can use relative directory to use package?
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
 % TODO: figure these out
@@ -96,7 +99,7 @@
   \thanks{This document corresponds to
     \textsf{external}~\fileversion, dated \filedate.}}
 \author{Michael D. Adams\\\url{https://michaeldadams.org}}
-
+\date{}
 \maketitle
 
 \begin{abstract}
@@ -105,11 +108,12 @@ rendering \LaTeX\ code in a separate document that has its own
 preamble.
 This is useful when you want to use symbols from a package that you do
 not want to load into your main document.
-For example your main document may use symbols from multiple packages
+For example, your main document may use symbols from multiple packages
 that conflict or otherwise cannot be loaded together.
 \end{abstract}
 
 \tableofcontents
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}%
 \label{sec:Introduction}
@@ -204,8 +208,6 @@ This is demonstrated in the following example.
 TODO
 
 \paragraph{\pkg{childdoc}} TODO:~describe
-
-\paragraph{\pkg{combine}} TODO:~describe
 
 \paragraph{\pkg{combine}} TODO:~describe
 
@@ -352,7 +354,7 @@ The following is an example of this in action.
 \begin{dispExample}
 \newcounter{foo}%
 \thefoo
-<\external[file=example-inline-before,
+<\external[file=external-external-before,
            before={\stepcounter{foo}}]{}>%
 \thefoo
 \end{dispExample}
@@ -368,7 +370,7 @@ The following is an example of this in action.
 \begin{dispExample}
 \newcounter{bar}%
 \thebar
-<\external[file=example-inline-after,
+<\external[file=external-external-after,
            after={\stepcounter{bar}}]{}>%
 \thebar
 \end{dispExample}
@@ -553,11 +555,11 @@ other, but on any other platform they will be different.
 This option specifies the basename of the intermediate files that are
 generated for externally rendered code.
 
-For example, the following uses |example-external-file| as the
+For example, the following uses |external-external-file| as the
 basename.
 
 \begin{dispExample}
-<\external[file=example-external-file,
+<\external[file=external-external-file,
            preamble={\usepackage{amsmath}}]
    {$\iint xy\,dx\,dy$}>
 \end{dispExample}
@@ -649,13 +651,13 @@ When the \key{debug} option is |true|, lines like the following will be
 printed to the standard output.
 
 \begin{dispListing}
-**** Begin \ExternalWrite on {example-external-21}
+**** Begin \ExternalWrite on {external-external-21}
        with {$\iint xy\,dx\,dy$}
-**** End \ExternalWrite on {example-external-21}
-**** Begin \ExternalCompile on {example-external-21}
-**** End \ExternalCompile on {example-external-21}
-**** Begin \ExternalRead on {example-external-21}
-**** End \ExternalRead on {example-external-21}
+**** End \ExternalWrite on {external-external-21}
+**** Begin \ExternalCompile on {external-external-21}
+**** End \ExternalCompile on {external-external-21}
+**** Begin \ExternalRead on {external-external-21}
+**** End \ExternalRead on {external-external-21}
 \end{dispListing}
 \end{docKey}
 
@@ -683,11 +685,11 @@ For example, instead of using \com{external}, you could explicitly call
 each of these as in the following.
 
 \begin{dispExample}
-<\ExternalWrite[file=example-external-separate,
+<\ExternalWrite[file=external-external-separate,
                 preamble={\usepackage{amsmath}}]
    {$\iint xy\,dx\,dy$}>
-<\ExternalCompile[file=example-external-separate]>
-<\ExternalRead[file=example-external-separate]>
+<\ExternalCompile[file=external-external-separate]>
+<\ExternalRead[file=external-external-separate]>
 \end{dispExample}
 
 Taking explicit control of these is particularly useful if you want to
