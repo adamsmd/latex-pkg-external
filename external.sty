@@ -44,6 +44,8 @@
 \newcounter{external@number}
 
 \external@stringkey{before}{\stepcounter{external@number}}
+\external@stringkey{before compile}{}
+\external@stringkey{before read}{}
 \external@stringkey{after}{}
 
 \external@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
@@ -108,7 +110,9 @@
   \externalkeys{#1}%
   \csname external@before\endcsname%
   \ExternalWrite@{#2}%
+  \csname external@before compile\endcsname%
   \ExternalCompile@%
+  \csname external@before read\endcsname%
   \ExternalRead@%
   \csname external@after\endcsname}}
 
