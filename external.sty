@@ -49,8 +49,8 @@
 \external@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
 \external@stringkey{documentclass/options}{}
 \external@stringkey{preamble}{}
-\external@stringkey{pre-savebox}{}
-\external@stringkey{pre-usebox}{}
+\external@stringkey{before savebox}{}
+\external@stringkey{before usebox}{}
 
 \external@stringkey{math}{false}
 \def\external@math@false{false}
@@ -185,9 +185,9 @@
        {\external@documentclass}%
      \fi
      \expandafter\unexpanded\expandafter{\external@preamble}}%
-    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@pre-savebox\endcsname}}% TODO: explain expandafters (use \expandonce from \usepackage{etoolbox})
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@before savebox\endcsname}}% TODO: explain expandafters (use \expandonce from \usepackage{etoolbox})
     {\expandafter\unexpanded\expandafter{\external@body}}%
-    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@pre-usebox\endcsname}}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@before usebox\endcsname}}}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%%   Core code   %%%%
   %%%%%%%%%%%%%%%%%%%%%%%

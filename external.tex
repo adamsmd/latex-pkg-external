@@ -207,6 +207,9 @@ This is demonstrated in the following example.
 
 TODO
 
+Main difference is ability to specify own preamble and
+exact sizing
+
 \paragraph{\pkg{childdoc}} TODO:~describe
 
 \paragraph{\pkg{combine}} TODO:~describe
@@ -319,8 +322,6 @@ Their syntax is of the form:
 |[|\meta{key$_1$}|=|\meta{value$_1$}|, |\meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|, |\meta{key$_n$}|=|\meta{value$_n$}|]|
 \]
 
-TODO:~organize options and list the most useful options.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{docCommand}{externalkeys}{\marg{options}}
 
@@ -343,40 +344,9 @@ package is loaded as seen in the following example.
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{before}{=\meta{code}}{initially |\textbackslash{}stepcounter\{external@number\}|}
+\subsection{High-level Options}
 
-This option specifies \LaTeX\ code to run before the rest of the code
-in an \com{external} command or \env{externalenv} environment.
-This is particularly is useful for incrementing any counters used in
-the \key{file} option.
-The following is an example of this in action.
-
-\begin{dispExample}
-\newcounter{foo}%
-\thefoo
-<\external[file=external-external-before,
-           before={\stepcounter{foo}}]{}>%
-\thefoo
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{after}{=\meta{code}}{initially empty}
-
-This option specifies \LaTeX\ code to run after the rest of the code
-in an \com{external} command or \env{externalenv} environment.
-The following is an example of this in action.
-
-\begin{dispExample}
-\newcounter{bar}%
-\thebar
-<\external[file=external-external-after,
-           after={\stepcounter{bar}}]{}>%
-\thebar
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{documentclass}{=\meta{class}}{initially |article|}
 
 This option specifies (by way of \Com{documentclass}) the document
@@ -402,7 +372,7 @@ this way is gratuitous and solely for the sake of an example.)
 \end{dispExample}
 \end{docKey}
 
-%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
 \begin{docKey}{documentclass/options}{=\meta{options}}{initially empty}
 
 This options specifies any options to pass to the document class to be
@@ -416,7 +386,7 @@ For example, the following specifies passing the |12pt| option to
 \end{dispExample}
 \end{docKey}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{preamble}{=\meta{code}}{initially empty}
 
 This options specifies \LaTeX\ code to be put in the preamble of the
@@ -429,53 +399,7 @@ For example, you might want to load packages as in the following.
 \end{dispExample}
 \end{docKey}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{pre-savebox}{=\meta{code}}{initially empty}
-
-This option specifies code to be put before the \Com{savebox} that is
-used in the intermediate \LaTeX\ file that is generated for externally
-rendered code.
-This option corresponds to the pre-savebox argument of
-\com{ExternalCode}.
-
-This option is rarely needed.
-
-The following example demonstrates the use of this option, though since
-the definition of \Com{p} could be put in the preamble, putting it in
-\key{pre-savebox} is gratuitous and solely for the sake of an example.
-
-\begin{dispExample}
-<\external[pre-savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{pre-usebox}{=\meta{code}}{initially empty}
-
-This option specifies code to be put before the \Com{usebox} that is
-used in the intermediate \LaTeX\ file that is generated for externally
-rendered code.
-This option corresponds to the pre-usebox argument of
-\com{ExternalCode}.
-
-This option is rarely needed.
-
-The following example demonstrates the use of this option, though since
-there are other ways to accomplish this effect, using \key{pre-usebox}
-is gratuitous and solely for the sake of an example.
-Note that we have to set the margins to small or zero lengths to
-prevent them from overlapping the rest of the page.
-
-\begin{dispExample}
-<\external[preamble={\usepackage{xcolor}},
-           pre-usebox={\pagecolor{yellow!30}},
-           margin/top=1pt, margin/bottom=1pt,
-           margin/left=0pt, margin/right=0pt]
-   {ABC}>
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or \docValue{display}}}{initially \docValue{false}}
 
 This option determines whether the body of \com{external} or
@@ -507,81 +431,7 @@ equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 \end{dispExample}
 \end{docKey}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{latex}{=\meta{program name}}{initially empty}
-
-This option specifies the program to use to compile the intermediate
-\LaTeX\ file that is generated for each bit of externally rendered
-code.
-
-Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
-to match whatever the master document is being compiled with.
-
-TODO:~example
-\end{docKey}
-
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{latex/options}{=\meta{code}}{initially |-halt-on-error -interaction=batchmode|}
-
-This option specifies what command line options to pass to \LaTeX\ when
-compiling the intermediate \LaTeX\ file that is generated for
-externally rendered code.
-
-Note that if you change this, you will almost certainly want to include
-the |-halt-on-error| and |-interaction=batchmode| options in whatever
-you change it to.
-
-For example, the \pkg{ifplatform} package needs the |-shell-escape|
-option in order to give precise platform information.
-This can be specified as in the following.
-
-\begin{dispExample}
-<\external[preamble={\usepackage{ifplatform}}]
-   {\platformname}>
-<\external[preamble={\usepackage{ifplatform}},
-           latex/options={-shell-escape -halt-on-error
-                          -interaction=batchmode}]
-   {\platformname}>
-\end{dispExample}
-
-Note that if this document was compiled on Windows, then the two calls
-to \com{external} in this example will produce the same results as each
-other, but on any other platform they will be different.
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{file}{=\meta{file basename}}{initially |\textbackslash{}jobname-external-\textbackslash{}arabic\{external@number\}|}
-
-This option specifies the basename of the intermediate files that are
-generated for externally rendered code.
-
-For example, the following uses |external-external-file| as the
-basename.
-
-\begin{dispExample}
-<\external[file=external-external-file,
-           preamble={\usepackage{amsmath}}]
-   {$\iint xy\,dx\,dy$}>
-\end{dispExample}
-
-Be careful not to use the same filename for two different pieces of
-externally rendered code as that can lead to unexpected results.
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{file/tex}{=\meta{extension}}{initially |.tex|}\end{docKey}
-\begin{docKey}{file/dim}{=\meta{extension}}{initially |.dim|}\end{docKey}
-\begin{docKey}{file/pdf}{=\meta{extension}}{initially |.pdf|}
-
-These options specify the extensions to use for the intermediate
-\LaTeX, dimension, and PDF files, respectively.
-
-These options are rarely needed.
-
-TODO:~example
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{margin/top}{=\meta{length}}{initially |1in|}\end{docKey}
 \begin{docKey}{margin/bottom}{=\meta{length}}{initially |1in|}\end{docKey}
 \begin{docKey}{margin/left}{=\meta{length}}{initially |1in|}\end{docKey}
@@ -622,12 +472,169 @@ not clipped when 3 inch margins are used.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Low-level Options}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{before}{=\meta{code}}{initially |\textbackslash{}stepcounter\{external@number\}|}
+
+This option specifies \LaTeX\ code to run before the rest of the code
+in an \com{external} command or \env{externalenv} environment.
+This is particularly is useful for incrementing any counters used in
+the \key{file} option.
+The following is an example of this in action.
+
+\begin{dispExample}
+\newcounter{foo}%
+\thefoo
+<\external[file=external-external-before,
+           before={\stepcounter{foo}}]{}>%
+\thefoo
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{after}{=\meta{code}}{initially empty}
+
+This option specifies \LaTeX\ code to run after the rest of the code
+in an \com{external} command or \env{externalenv} environment.
+The following is an example of this in action.
+
+\begin{dispExample}
+\newcounter{bar}%
+\thebar
+<\external[file=external-external-after,
+           after={\stepcounter{bar}}]{}>%
+\thebar
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{before savebox}{=\meta{code}}{initially empty}
+
+This option specifies code to be put before the \Com{savebox} that is
+used in the intermediate \LaTeX\ file that is generated for externally
+rendered code.
+This option corresponds to the \meta{before savebox} argument of
+\com{ExternalCode}.
+
+This option is rarely needed.
+
+The following example demonstrates the use of this option, though since
+the definition of \Com{p} could be put in the preamble, putting it in
+\Key{before savebox} is gratuitous and solely for the sake of an example.
+
+\begin{dispExample}
+<\external[before savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{before usebox}{=\meta{code}}{initially empty}
+
+This option specifies code to be put before the \Com{usebox} that is
+used in the intermediate \LaTeX\ file that is generated for externally
+rendered code.
+This option corresponds to the \meta{before usebox} argument of
+\com{ExternalCode}.
+
+This option is rarely needed.
+
+The following example demonstrates the use of this option, though since
+there are other ways to accomplish this effect, using \Key{before usebox}
+is gratuitous and solely for the sake of an example.
+Note that we have to set the margins to small or zero lengths to
+prevent them from overlapping the rest of the page.
+
+\begin{dispExample}
+<\external[preamble={\usepackage{xcolor}},
+           before usebox={\pagecolor{yellow!30}},
+           margin/top=1pt, margin/bottom=1pt,
+           margin/left=0pt, margin/right=0pt]
+   {ABC}>
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{latex}{=\meta{program name}}{initially empty}
+
+This option specifies the program to use to compile the intermediate
+\LaTeX\ file that is generated for each bit of externally rendered
+code.
+
+Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
+to match whatever the master document is being compiled with.
+
+TODO:~example
+\end{docKey}
+
+%%%%%%%%%%
+\begin{docKey}{latex/options}{=\meta{code}}{initially |-halt-on-error -interaction=batchmode|}
+
+This option specifies what command line options to pass to \LaTeX\ when
+compiling the intermediate \LaTeX\ file that is generated for
+externally rendered code.
+
+Note that if you change this, you will almost certainly want to include
+the |-halt-on-error| and |-interaction=batchmode| options in whatever
+you change it to.
+
+For example, the \pkg{ifplatform} package needs the |-shell-escape|
+option in order to give precise platform information.
+This can be specified as in the following.
+
+\begin{dispExample}
+<\external[preamble={\usepackage{ifplatform}}]
+   {\platformname}>
+<\external[preamble={\usepackage{ifplatform}},
+           latex/options={-shell-escape -halt-on-error
+                          -interaction=batchmode}]
+   {\platformname}>
+\end{dispExample}
+
+Note that if this document was compiled on Windows, then the two calls
+to \com{external} in this example will produce the same results as each
+other, but on any other platform they will be different.
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{file}{=\meta{file basename}}{initially |\textbackslash{}jobname-external-\textbackslash{}arabic\{external@number\}|}
+
+This option specifies the basename of the intermediate files that are
+generated for externally rendered code.
+
+For example, the following uses |external-external-file| as the
+basename.
+
+\begin{dispExample}
+<\external[file=external-external-file,
+           preamble={\usepackage{amsmath}}]
+   {$\iint xy\,dx\,dy$}>
+\end{dispExample}
+
+Be careful not to use the same filename for two different pieces of
+externally rendered code as that can lead to unexpected results.
+\end{docKey}
+
+%%%%%%%%%%
+\begin{docKey}{file/tex}{=\meta{extension}}{initially |.tex|}\end{docKey}
+\begin{docKey}{file/dim}{=\meta{extension}}{initially |.dim|}\end{docKey}
+\begin{docKey}{file/pdf}{=\meta{extension}}{initially |.pdf|}
+
+These options specify the extensions to use for the intermediate
+\LaTeX, dimension, and PDF files, respectively.
+
+These options are rarely needed.
+
+TODO:~example
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{includegraphics/options}{=\meta{key-value sequence}}{initially empty}
 
 This option specifies options to be passed to the \Com{includegraphics}
 command that is used to read into the master document the result of
 rendering the \LaTeX\ code that is rendered separately.
-For example, the following uses \key{angle} to rotate the image read by
+For example, the following uses \Key{angle} to rotate the image read by
 \Com{includegraphics}.
 
 \begin{dispExample}
@@ -635,7 +642,7 @@ For example, the following uses \key{angle} to rotate the image read by
 \end{dispExample}
 \end{docKey}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{debug}{=\meta{\docValue{true} or \docValue{false}}}{initially \docValue{false}}
 
 Whether to print tracing information to standard out.
@@ -694,11 +701,11 @@ each of these as in the following.
 
 Taking explicit control of these is particularly useful if you want to
 cache compilation results.
-See \Cref{subsec:ExternalCode} for an example of this.
+See the \com{ExternalCode} command for an example of this.
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docCommand}{ExternalCode}{\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}}
+\begin{docCommand}{ExternalCode}{\marg{dimension~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
 
 This command expands to the code used in the intermediate \LaTeX\ file.
 It is useful if you want to store the \LaTeX\ code to be rendered in a
@@ -707,7 +714,7 @@ of the master \LaTeX\ file.
 
 The \meta{dimension file} is the full filename of the dimension file to
 be generated.
-The \meta{preamble}, \meta{pre-savebox}, and \meta{pre-usebox} are the
+The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
 same as the corresponding options in \Cref{sec:Options}.
 The \meta{body} is the \LaTeX\ code to be rendered.
 
