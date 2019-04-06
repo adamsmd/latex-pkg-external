@@ -493,6 +493,39 @@ The following is an example of this in action.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{before compile}{=\meta{code}}{initially empty}
+
+This option specifies \LaTeX\ code to run before compiling the
+externally rendered code in an \com{external} command or
+\env{externalenv} environment.
+The following is an example of this in action.
+
+\begin{dispExample}
+\newcounter{baz}%
+\thebaz
+<\external[file=external-external-before,
+           before compile={\stepcounter{baz}}]{}>%
+\thebaz
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{before read}{=\meta{code}}{initially empty}
+
+This option specifies \LaTeX\ code to run before reading the file
+output by the externally rendered code in an \com{external} command or
+The following is an example of this in action.
+
+\begin{dispExample}
+\newcounter{quux}%
+\thequux
+<\external[file=external-external-before,
+           before read={\stepcounter{quux}}]{}>%
+\thequux
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{after}{=\meta{code}}{initially empty}
 
 This option specifies \LaTeX\ code to run after the rest of the code
@@ -630,7 +663,17 @@ These options specify the extensions to use for the intermediate
 
 These options are rarely needed.
 
-TODO:~example
+An example of using this is the following.
+
+\begin{dispExample}
+\DeclareGraphicsRule{.mypdf}{pdf}{.mypdf}{}%
+<\external[
+   file/tex=.mytex, file/dim=.mydim, file/pdf=.mypdf,
+   file=external-external-extension,
+   before read={\ShellEscape{mv external-external-extension.pdf
+                                external-external-extension.mypdf}}]
+   {ABC}>
+\end{dispExample}
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
