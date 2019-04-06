@@ -32,8 +32,6 @@
 \tcbset{docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
     before skip=\medskipamount,after skip=\medskipamount}}
 
-\usepackage{cleveref}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\texttt{#1}}
@@ -178,8 +176,9 @@ the surrounding text.
 In the resulting PDF, they even behave properly with regard to
 copy-and-paste.
 
-See \Cref{sec:Options} more details about options and \Cref{sec:Issues
-  and Workarounds} for common issues and their workarounds.
+See Section~\ref{sec:Options} more details about options and
+Section~\ref{sec:Issues and Workarounds} for common issues and their
+workarounds.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notation}%
@@ -344,7 +343,8 @@ package is loaded as seen in the following example.
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{High-level Options}
+\subsection{High-level Options}%
+\label{subsec:High-level Options}
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{documentclass}{=\meta{class}}{initially |article|}
@@ -472,7 +472,8 @@ not clipped when 3 inch margins are used.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Low-level Options}
+\section{Low-level Options}%
+\label{subsec:Low-level Options}
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{before}{=\meta{code}}{initially |\textbackslash{}stepcounter\{external@number\}|}
@@ -763,7 +764,7 @@ of the master \LaTeX\ file.
 The \meta{dimension file} is the full filename of the dimension file to
 be generated.
 The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
-same as the corresponding options in \Cref{sec:Options}.
+same as the corresponding options in Section~\ref{sec:Options}.
 The \meta{body} is the \LaTeX\ code to be rendered.
 
 For example, you might write the following standalone file.
@@ -816,8 +817,8 @@ Then you would omit the call to \com{ExternalCompile} and just call
 \label{sec:Issues and Workarounds}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Render not updating}%
-\label{subsec:Render not updating}
+\subsection{Render Not Updating}%
+\label{subsec:Render Not Updating}
 
 A common issue is when changing the \LaTeX\ code to be externally
 rendered (e.g., the \meta{body} of a \com{external}), but those changes
@@ -839,8 +840,8 @@ rendered and use this file-not-found error to let you know when you
 have fixed that \LaTeX\ code.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Hashes and command arguments}%
-\label{subsec:Hashes}
+\subsection{Hashes and Command Arguments}%
+\label{subsec:Hashes and Command Arguments}
 
 The use of hashes that one would use when referencing a command
 argument (e.g., |#1|) can lead to problems.
@@ -917,8 +918,8 @@ be used as demonstrated in the following.
 \end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Category codes}%
-\label{subsec:Catcodes}
+\subsection{Category Codes}%
+\label{subsec:Category Codes}
 
 Some commands change the category codes of many characters.
 These pose a problem for use with commands from this \Pkg{external}
