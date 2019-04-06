@@ -21,16 +21,19 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\usepackage{xurl} % Allow url to line break anywhere
+
 \usepackage{external}
-\externalkeys{debug=true}
+%\externalkeys{debug=true}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
 \tcbuselibrary{documentation}
-\makeindex
 % Use the default `dispExample` formatting except don't mess with the font size
 \tcbset{docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
     before skip=\medskipamount,after skip=\medskipamount}}
+
+\makeindex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -402,7 +405,7 @@ For example, you might want to load packages as in the following.
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or \docValue{display}}}{initially \docValue{false}}
 
-This option determines whether the body of \com{external} or
+This option controls whether the body of \com{external} or
 \env{externalenv} is treated as math, and if so, whether it is inline
 math or display math.
 The following demonstrate each value possible for this option.
@@ -735,10 +738,10 @@ are broken up into three phases:
 \item reading the resulting intermediate PDF file.
 \end{enumerate}
 
-These are handled with \com{ExternalWrite}, \com{ExternalCompile}, and
-\com{ExternalRead}, respectively.
-For example, instead of using \com{external}, you could explicitly call
-each of these as in the following.
+These are handled with the commands \com{ExternalWrite},
+\com{ExternalCompile}, and \com{ExternalRead}, respectively.
+For example, instead of using the command \com{external}, you could
+explicitly call each of these as in the following.
 
 \begin{dispExample}
 <\ExternalWrite[file=external-external-separate,
@@ -754,14 +757,14 @@ See the \com{ExternalCode} command for an example of this.
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docCommand}{ExternalCode}{\marg{dimension~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
+\begin{docCommand}{ExternalCode}{\marg{dim~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
 
 This command expands to the code used in the intermediate \LaTeX\ file.
 It is useful if you want to store the \LaTeX\ code to be rendered in a
 separate file and reuse the compiled results between compilations
 of the master \LaTeX\ file.
 
-The \meta{dimension file} is the full filename of the dimension file to
+The \meta{dim file} is the full filename of the dimension file to
 be generated.
 The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
 same as the corresponding options in Section~\ref{sec:Options}.
@@ -780,7 +783,7 @@ with the following commands.
 \end{dispExample}
 
 Be careful if you rename a standalone file, as you will need to change
-the \meta{dimension file} argument to match.
+the \meta{dim file} argument to match.
 Otherwise, you will get an error along the lines of
 |In \ExternalRead, input dimension file does not exist|.
 
