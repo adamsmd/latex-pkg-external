@@ -37,7 +37,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\texttt{#1}}
+\newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\texttt{\textbackslash#1}}
 \newcommand{\env}[1]{\refEnv{#1}}\newcommand{\Env}[1]{\texttt{#1}}
 \newcommand{\key}[1]{\refKey{#1}}\newcommand{\Key}[1]{\texttt{#1}}
 
@@ -105,7 +105,7 @@
 
 \begin{abstract}
 The \Pkg{external} package allows you to include the result of
-rendering \LaTeX\ code in a separate document that has its own
+compiling \LaTeX\ code in a separate document that has its own
 preamble.
 This is useful when you want to use symbols from a package that you do
 not want to load into your main document.
@@ -120,12 +120,12 @@ that conflict or otherwise cannot be loaded together.
 \label{sec:Introduction}
 
 The \Pkg{external} package allows you to include the result of
-rendering \LaTeX\ code in a separate document that has its own
+compiling \LaTeX\ code in a separate document that has its own
 preamble.
 For example, you may want to use symbols from packages that cannot be
 loaded at the same time.
-By rendering them in separate documents and then including their
-rendered results in a master document, this allows you to use both
+By compiling them in separate documents and then including their
+compiled results in a master document, this allows you to use both
 symbols without conflicts.
 
 This document serves as both the documentation and test suite for the
@@ -173,11 +173,16 @@ The solution to the two dimensional integral
 is involves $x^2$ and $y^2$.
 \end{dispExample}
 
-Note that even though these examples are rendered as separate
+Note that even though these examples are compiled as separate
 \LaTeX\ documents, they are automatically properly spaced relative to
 the surrounding text.
 In the resulting PDF, they even behave properly with regard to
 copy-and-paste.
+
+TODO:~example and kerning
+\begin{dispExample}
+Test T\external{e}\external{s}t
+\end{dispExample}
 
 See Section~\ref{sec:Options} more details about options and
 Section~\ref{sec:Issues and Workarounds} for common issues and their
@@ -188,7 +193,7 @@ workarounds.
 \label{subsec:Notation}
 
 For debugging purposes, this documentation surrounds most examples with
-|<| and |>| which render as < and >.
+|<| and |>|, which are customized to render as < and >.
 These are used as a gauge or registration mark.
 This makes it easy to see whether there is extra space to the left or
 right of a symbol and whether parts of the symbol extend below the
@@ -207,36 +212,138 @@ This is demonstrated in the following example.
 \subsection{Related Packages}%
 \label{subsec:Related Packages}
 
-TODO
+There are a number of packages the provide similar functionality to
+that of \Pkg{external}.
+The main distinguishing features \Pkg{external} is that it allows
+preambles to be specified for the externally compiled code and that it
+does exact sizing and spacing when the compiled code is included.
 
-Main difference is ability to specify own preamble and
-exact sizing
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Externalization}
 
-\paragraph{\pkg{childdoc}} TODO:~describe
+A number of packages allow specified parts of a document to be
+``externalized'' by compiling those parts as a separate
+\LaTeX\ documents and then including the result in the master
+document.
+However, none of these allow those document parts to have a separate
+preamble.
 
-\paragraph{\pkg{combine}} TODO:~describe
+\paragraph{\pkg{tikz}} TODO:~describe
 
-\paragraph{\pkg{docmute}} TODO:~describe
-
-\paragraph{\pkg{includex}} TODO:~describe
-
-\paragraph{\pkg{minidocument}} TODO:~describe
-
-\paragraph{\pkg{newclude}} TODO:~describe
+caching
 
 \paragraph{\pkg{pgfplots}} TODO:~describe
 
+caching
+
 \paragraph{\pkg{preview}} TODO:~describe
 
-\paragraph{\pkg{standalone}} TODO:~describe
+part of latex-preview (e.g. AUCTeX)
+I do not understand very well
+cannot set preamble
+extracts but does not re-include
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Miniature Documents}
+
+\paragraph{\pkg{minidocument}}
+
+Provides the \Env{minidocument} environment, which allows an entire
+miniature document to be embedded including a separate
+\Com{documentclass} and preamble.
+However, it assumes documents are entire pages and does not support
+exact spacing.
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Ignoring Preambles}%
+\label{subsec:Ignoring Preambles}
+
+Several packages allow sub-documents to be included into a master
+document.
+These sub-documents are full fledged \LaTeX\ documents that can be
+compiled on their own, but when they are included into the master
+document, either their preamble or specified parts are ignored.
+These packages are geared towards helping authors manage large
+documents that otherwise take a long time to compile (e.g., a book with
+each chapter as a sub-document).
+When compiling the master document, these packages do not compile the
+sub-documents separately.
+Thus, they do not support separate preambles when compiling the master
+document.
+
+\paragraph{\pkg{docmute}}
+
+Redefines \Com{input} and \Com{include} to ignore everything between
+\Com{documentclass} and \Com{begin\{document\}}.
+
+\paragraph{\pkg{includex}}
+
+Defines versions of \Com{include} that ignore certain parts of the
+included document.
+Not only can it ignore everything between \Com{documentclass} and
+\Com{begin\{document\}}, but it also allows ignoring anything outside
+specified environments.
+This package is currently unsupported.
+
+\paragraph{\pkg{newclude}}
+
+Adds various features to the \LaTeX\ inclusion system.
+One of those features is the ability to ignore anything outside
+specified environments.
+This package is intended to subsume the features of \pkg{includex}, but
+these features are marked as in development.
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Coping Preambles from Master Files}
+
+Another approach to including sub-documents that can be independently
+compiled is to have those sub-documents automatically copy the preamble
+in the master file.
+As with Section~\ref{subsec:Ignoring Preambles}, these packages are
+geared towards helping authors manage large documents that otherwise
+take a long time to compile (e.g., a book with each chapter as a
+sub-document).
+When compiling the master document, these packages do not compile the
+sub-documents separately.
+Thus, they do not support separate preambles when compiling the master
+document.
+
+\paragraph{\pkg{subfiles}}
+
+Defines a document class for sub-documents that automatically copies
+the preamble of the master document when the sub-document is compiled,
+but when the master document is compiled, everything outside the
+\Env{document} environment is ignored.
+
+\paragraph{\pkg{childdoc}}
+
+Defines commands to be put in sub-documents instead of the standard
+\Com{documentclass} and preamble.
+When the sub-document is separately compiled, this automatically copies
+the preamble of the master document, but when the master document is
+compiled, the commands used instead of the standard \Com{documentclass}
+and preamble are ignored.
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Including Entire Pages}
+
+Some packages are designed to allow completely separate documents to be
+combined into one document.
+For example, combining multiple articles into a proceedings.
+Each document has its own preamble, but documents are included a whole
+page at a time.
+
+\paragraph{\pkg{combine}}
+
+TODO:~describe
 
 \paragraph{\pkg{subdocs}} TODO:~describe
 
-\paragraph{\pkg{subfiles}} TODO:~describe
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Listing and Displaying (TODO) Examples}
 
 \paragraph{\pkg{tcolorbox}} TODO:~describe
-
-\paragraph{\pkg{tikz}} TODO:~describe
+externalize?
 
 \paragraph{\pkg{example}} TODO:~describe
 
@@ -245,6 +352,20 @@ exact sizing
 \paragraph{\pkg{latexdemo}} TODO:~describe
 
 \paragraph{\pkg{showexpl}} TODO:~describe
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Minimal Page Layouts}
+
+\paragraph{\pkg{standalone}} Finally, this package
+
+sizing
+
+TODO:~describe
+
+minimal page (used internally)
+
+used internally
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{High-level Commands}%
@@ -258,7 +379,8 @@ The main commands of this package are \Com{external} and \Env{externalenv}.
 
 \begin{docCommand}{external}{\oarg{options}\marg{code}}
 
-Externally renders the the \LaTeX\ code in \meta{code}.
+Externally compiles the the \LaTeX\ code in \meta{code} and then
+includes the result.
 An examples of its usage is the following.
 
 \begin{dispExample}
@@ -354,7 +476,7 @@ package is loaded as seen in the following example.
 
 This option specifies (by way of \Com{documentclass}) the document
 class to be used by the intermediate \LaTeX\ file that is generated for
-each piece of externally rendered code.
+each piece of externally compiled code.
 For example, the following uses the \pkg{proc} class, which (unlike
 \pkg{article}) contains the \Com{pagename} macro.
 
@@ -379,7 +501,7 @@ this way is gratuitous and solely for the sake of an example.)
 \begin{docKey}{documentclass/options}{=\meta{options}}{initially empty}
 
 This options specifies any options to pass to the document class to be
-used by the \LaTeX\ file that is generated for externally rendered
+used by the \LaTeX\ file that is generated for externally compiled
 code.
 For example, the following specifies passing the |12pt| option to
 \pkg{article}, which changes the default font to be 12 points tall.
@@ -393,7 +515,7 @@ For example, the following specifies passing the |12pt| option to
 \begin{docKey}{preamble}{=\meta{code}}{initially empty}
 
 This options specifies \LaTeX\ code to be put in the preamble of the
-intermediate \LaTeX\ file that is generated for externally rendered
+intermediate \LaTeX\ file that is generated for externally compiled
 code.
 For example, you might want to load packages as in the following.
 
@@ -441,8 +563,8 @@ equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 \begin{docKey}{margin/right}{=\meta{length}}{initially |1in|}
 
 These options specify the margin to place around the \LaTeX\ code being
-rendered externally.
-This is useful if the \LaTeX\ code being rendered externally draws
+compiled externally.
+This is useful if the \LaTeX\ code being compiled externally draws
 outside its bounding box.
 If there is not enough margin to contain the drawn portions, the result
 may be clipped.
@@ -500,7 +622,7 @@ The following is an example of this in action.
 \begin{docKey}{before compile}{=\meta{code}}{initially empty}
 
 This option specifies \LaTeX\ code to run before compiling the
-externally rendered code in an \com{external} command or
+externally compiled code in an \com{external} command or
 \env{externalenv} environment.
 The following is an example of this in action.
 
@@ -517,7 +639,7 @@ The following is an example of this in action.
 \begin{docKey}{before read}{=\meta{code}}{initially empty}
 
 This option specifies \LaTeX\ code to run before reading the file
-output by the externally rendered code in an \com{external} command or
+output by the externally compiled code in an \com{external} command or
 The following is an example of this in action.
 
 \begin{dispExample}
@@ -550,7 +672,7 @@ The following is an example of this in action.
 
 This option specifies code to be put before the \Com{savebox} that is
 used in the intermediate \LaTeX\ file that is generated for externally
-rendered code.
+compiled code.
 This option corresponds to the \meta{before savebox} argument of
 \com{ExternalCode}.
 
@@ -570,7 +692,7 @@ the definition of \Com{p} could be put in the preamble, putting it in
 
 This option specifies code to be put before the \Com{usebox} that is
 used in the intermediate \LaTeX\ file that is generated for externally
-rendered code.
+compiled code.
 This option corresponds to the \meta{before usebox} argument of
 \com{ExternalCode}.
 
@@ -595,7 +717,7 @@ prevent them from overlapping the rest of the page.
 \begin{docKey}{latex}{=\meta{program name}}{initially empty}
 
 This option specifies the program to use to compile the intermediate
-\LaTeX\ file that is generated for each bit of externally rendered
+\LaTeX\ file that is generated for each bit of externally compiled
 code.
 
 Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
@@ -614,7 +736,7 @@ For example, if you wanted to force certain code to run under
 
 This option specifies what command line options to pass to \LaTeX\ when
 compiling the intermediate \LaTeX\ file that is generated for
-externally rendered code.
+externally compiled code.
 
 Note that if you change this, you will almost certainly want to include
 the |-halt-on-error| and |-interaction=batchmode| options in whatever
@@ -642,7 +764,7 @@ other, but on any other platform they will be different.
 \begin{docKey}{file}{=\meta{file basename}}{initially |\textbackslash{}jobname-external-\textbackslash{}arabic\{external@number\}|}
 
 This option specifies the basename of the intermediate files that are
-generated for externally rendered code.
+generated for externally compiled code.
 
 For example, the following uses |external-external-file| as the
 basename.
@@ -654,7 +776,7 @@ basename.
 \end{dispExample}
 
 Be careful not to use the same filename for two different pieces of
-externally rendered code as that can lead to unexpected results.
+externally compiled code as that can lead to unexpected results.
 \end{docKey}
 
 %%%%%%%%%%
@@ -685,7 +807,7 @@ An example of using this is the following.
 
 This option specifies options to be passed to the \Com{includegraphics}
 command that is used to read into the master document the result of
-rendering the \LaTeX\ code that is rendered separately.
+compiling the \LaTeX\ code that is compiled separately.
 For example, the following uses \Key{angle} to rotate the image read by
 \Com{includegraphics}.
 
@@ -760,7 +882,7 @@ See the \com{ExternalCode} command for an example of this.
 \begin{docCommand}{ExternalCode}{\marg{dim~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
 
 This command expands to the code used in the intermediate \LaTeX\ file.
-It is useful if you want to store the \LaTeX\ code to be rendered in a
+It is useful if you want to store the \LaTeX\ code to be compiled in a
 separate file and reuse the compiled results between compilations
 of the master \LaTeX\ file.
 
@@ -768,7 +890,7 @@ The \meta{dim file} is the full filename of the dimension file to
 be generated.
 The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
 same as the corresponding options in Section~\ref{sec:Options}.
-The \meta{body} is the \LaTeX\ code to be rendered.
+The \meta{body} is the \LaTeX\ code to be compiled.
 
 For example, you might write the following standalone file.
 
@@ -820,17 +942,17 @@ Then you would omit the call to \com{ExternalCompile} and just call
 \label{sec:Issues and Workarounds}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Render Not Updating}%
-\label{subsec:Render Not Updating}
+\subsection{Document Not Updating}%
+\label{subsec:Document Not Updating}
 
 A common issue is when changing the \LaTeX\ code to be externally
-rendered (e.g., the \meta{body} of a \com{external}), but those changes
+compiled (e.g., the \meta{body} of a \com{external}), but those changes
 are not reflected in the master document after re-compiling the master
 document.
 The cause of this is that \Pkg{external} has no way to detect whether
 compiling the intermediate \LaTeX\ file succeeded or failed.
 A failure can happen for example if the \LaTeX\ code to be externally
-rendered contains an error that causes the compilation of the
+compiled contains an error that causes the compilation of the
 intermediate \LaTeX\ file to fail.
 If compilation of the intermediate \LaTeX\ file fails, the dimension
 file and PDF file from previous compilation will not be overwritten.
@@ -839,7 +961,7 @@ To fix this, delete the PDF and dimension files.
 Then failure of the compilation of the intermediate \LaTeX\ file will
 cause a file-not-found error when the PDF and dimension file are read.
 You can then fix the error in the \LaTeX\ code to be externally
-rendered and use this file-not-found error to let you know when you
+compiled and use this file-not-found error to let you know when you
 have fixed that \LaTeX\ code.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
