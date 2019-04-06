@@ -325,15 +325,17 @@
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%%   Core code   %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
-  \input{\external@file.dim}% Load the dimensions of the symbol
+  \input{\external@file\csname external@file/dim\endcsname}% Load the dimensions of the symbol
   \raisebox{-\external@DEPTH}{% Use `\raisebox` to model the symbol's depth.
+    % Define filename since the following \edef doesn't play nice with \csname...\endcsname
+    \edef\external@filename{\external@file\csname external@file/pdf\endcsname}% 
     % Use `\edef` to expand `\external@includegraphics/options` before
     % `\includegraphics` parses its argument.
     \edef\external@code{%
       \unexpanded{\includegraphics}
       [trim={{\the\external@LEFT} {\the\external@BOTTOM} {\the\external@RIGHT} {\the\external@TOP}},%
         \csname external@includegraphics/options\endcsname]
-      \unexpanded{{\external@file.pdf}}}%
+      {\unexpanded{\external@filename}}}%
     \external@code}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%% End core code %%%%
