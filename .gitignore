@@ -1,7 +1,12 @@
 *~
+\#*\#
+*.pdf
 *.aux
+*.toc
 *.glo
 *.idx
+*.ind
+*.ilg
 *.log
 *.out
 *.dim

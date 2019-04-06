@@ -12,24 +12,34 @@
 % version 2005/12/01 or later.
 
 \documentclass[10pt]{ltxdoc}
-\usepackage{external}
-\EnableCrossrefs
-\CodelineIndex
-\RecordChanges
 
+% TODO: figure these out
+%\EnableCrossrefs
+%\CodelineIndex
+%\RecordChanges
+
+\usepackage{external}
 \externalkeys{debug=true}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
-%\tcbset{verbatim ignore percent}
 \tcbuselibrary{documentation}
+\makeindex
+
+% Use the default `dispExample` formatting except don't mess with the font size
+\tcbset{docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
+    before skip=\medskipamount,after skip=\medskipamount}}
 
 \usepackage{cleveref}
 
-\newcommand{\com}[1]{\refCom{#1}}
-\newcommand{\env}[1]{\refEnv{#1}}
-\newcommand{\pkg}[1]{\texttt{#1}}
-\newcommand{\opt}[1]{\texttt{#1}}
+\usepackage{suffix}
+
+\newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\texttt{#1}}
+\newcommand{\env}[1]{\refEnv{#1}}\newcommand{\Env}[1]{\texttt{#1}}
+\newcommand{\key}[1]{\refKey{#1}}\newcommand{\Key}[1]{\texttt{#1}}
+
+\newcommand{\pkg}[1]{\href{https://ctan.org/pkg/#1}{\texttt{#1}}}
+\newcommand{\Pkg}[1]{\texttt{#1}}
 
 \newcommand{\showfile}[1]{
   \begin{tcolorbox}[title=\texttt{#1}]
@@ -51,18 +61,13 @@
   \llap{\sx}}
 \newcommand>{%
   \rlap{\sx}%
-  \rule[5.5pt]{4pt}{1.5pt}%
-  }
+  \rule[5.5pt]{4pt}{1.5pt}}
 
 % TODO: error tests.  Maybe in directory and can use relative directory to use package?
 
 \begin{document}
-%</driver>
-% \fi
-%
-% \iffalse
-%<*documentation>
-% \fi
+
+% TODO: figure these out
 %
 % \CheckSum{0}
 %
@@ -84,10 +89,8 @@
 %
 %
 % \changes{v0.1}{2019/01/05}{Initial version}
-%
-% \GetFileInfo{external.sty}
-%
-% %\DoNotIndex{list of control sequences}
+
+\GetFileInfo{external.sty}
 
 \title{The \textsf{external} package%
   \thanks{This document corresponds to
@@ -97,39 +100,43 @@
 \maketitle
 
 \begin{abstract}
-This package allows you to include the result of rendering \LaTeX\ code
-in a separate document.
+The \Pkg{external} package allows you to include the result of
+rendering \LaTeX\ code in a separate document that has its own
+preamble.
 This is useful when you want to use symbols from a package that you do
 not want to load into your main document.
 For example your main document may use symbols from multiple packages
 that conflict or otherwise cannot be loaded together.
 \end{abstract}
 
+\tableofcontents
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction}
+\section{Introduction}%
 \label{sec:Introduction}
 
-This package allows you to include the result of rendering \LaTeX\ code
-in a separate document.
-For example, you may want to use symbols from multiple packages that
-cannot be loaded at the same time.
+The \Pkg{external} package allows you to include the result of
+rendering \LaTeX\ code in a separate document that has its own
+preamble.
+For example, you may want to use symbols from packages that cannot be
+loaded at the same time.
 By rendering them in separate documents and then including their
-rendered results in a master document, this allows you to render the
-symbols from each part in their own package.
+rendered results in a master document, this allows you to use both
+symbols without conflicts.
 
-TODO: this document also serves as test cases
+This document serves as both the documentation and test suite for the
+\Pkg{external} package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quick Start}
+\subsection{Quick Start}%
 \label{subsec:Quick Start}
 
-Suppose you want to use the \cs{textbeta} symbol from the
+Suppose you want to use the \Com{textbeta} symbol from the
 \pkg{textgreek} package, but you do do not want to load the
 \pkg{textgreek} package into your master document.
 (Maybe it is incompatible with some other package that you use or maybe
 \LaTeX\ has run out of space for declaring new fonts.)
-You can simply render \cs{textbeta} using the \cs{external} command as
-in the following.
+You can render \Com{textbeta} using the \Com{external} command as in the
+following.
 
 \begin{dispExample}
 An atom undergoing
@@ -137,12 +144,12 @@ An atom undergoing
 can emit an electron.
 \end{dispExample}
 
-If you prefer, you can also use the environment \env{externalenv} as in the
-following.
-(The only difference between the \cs{external} command and the
-\env{externalenv} environment is that one is a command and the other in
-an environment.)
+If you prefer, you can also use the environment \env{externalenv} as in
+the following.
+(The only difference between the \Com{external} command and the
 
+\env{externalenv} environment is that one is a command and the other is
+an environment.)
 \begin{dispExample}
 An atom undergoing
 \begin{externalenv}[preamble={\usepackage{textgreek}}]
@@ -155,13 +162,15 @@ If you want to format the \LaTeX\ code as ``display'' math, use the
 |math=display| option as in the following example.
 
 \begin{dispExample}
+The solution to the two dimensional integral
 \external[preamble={\usepackage{amsmath}}, math=display]
   {\iint xy\,dx\,dy}
+is involves $x^2$ and $y^2$.
 \end{dispExample}
 
-Note that in all these examples even though they rendered as separate
-documents, they are automatically properly spaced relative to the
-surrounding text.
+Note that even though these examples are rendered as separate
+\LaTeX\ documents, they are automatically properly spaced relative to
+the surrounding text.
 In the resulting PDF, they even behave properly with regard to
 copy-and-paste.
 
@@ -169,12 +178,12 @@ See \Cref{sec:Options} more details about options and \Cref{sec:Issues
   and Workarounds} for common issues and their workarounds.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Notation}
+\subsection{Notation}%
 \label{subsec:Notation}
 
 For debugging purposes, this documentation surrounds most examples with
 |<| and |>| which render as < and >.
-These are used as a sort of gauge or registration mark.
+These are used as a gauge or registration mark.
 This makes it easy to see whether there is extra space to the left or
 right of a symbol and whether parts of the symbol extend below the
 baseline.
@@ -182,48 +191,63 @@ The bottom of the bottom bar is at the baseline.
 The top of the top, middle and bottom bars are at the font size (10
 points), where the top of an ``M'' would occur, and where the top of an
 ``x'' would occur, respectively.
+This is demonstrated in the following example.
 
 \begin{dispExample}
 <M> <x> <>
 \end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Related Packages}
+\subsection{Related Packages}%
 \label{subsec:Relatec Packages}
 
 TODO
 
-\paragraph{\pkg{standalone}}
+\paragraph{\pkg{childdoc}} TODO:~describe
 
-\paragraph{\pkg{docmute}}
+\paragraph{\pkg{combine}} TODO:~describe
 
-\paragraph{\pkg{minidocument}}
+\paragraph{\pkg{combine}} TODO:~describe
 
-\paragraph{\pkg{subfiles}}
+\paragraph{\pkg{docmute}} TODO:~describe
 
-\paragraph{\pkg{combine}}
+\paragraph{\pkg{includex}} TODO:~describe
 
-\paragraph{\pkg{includex}}
+\paragraph{\pkg{minidocument}} TODO:~describe
 
-\paragraph{\pkg{childdoc}}
+\paragraph{\pkg{newclude}} TODO:~describe
 
-\paragraph{\pkg{subdocs}}
+\paragraph{\pkg{pgfplots}} TODO:~describe
 
-\paragraph{\pkg{tcolorbox}}
+\paragraph{\pkg{preview}} TODO:~describe
 
-\paragraph{\pkg{tikz}}
+\paragraph{\pkg{standalone}} TODO:~describe
 
-\paragraph{\pkg{pgfplots}}
+\paragraph{\pkg{subdocs}} TODO:~describe
+
+\paragraph{\pkg{subfiles}} TODO:~describe
+
+\paragraph{\pkg{tcolorbox}} TODO:~describe
+
+\paragraph{\pkg{tikz}} TODO:~describe
+
+\paragraph{\pkg{example}} TODO:~describe
+
+\paragraph{\pkg{examplep}} TODO:~describe
+
+\paragraph{\pkg{latexdemo}} TODO:~describe
+
+\paragraph{\pkg{showexpl}} TODO:~describe
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{High-level Commands}
+\section{High-level Commands}%
 \label{sec:High-level Commands}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\com{external} and \env{externalenv}}
+\subsection{\Com{external} and \Env{externalenv}}%
 \label{subsec:external and externalenv}
 
-The main commands of this package are \com{external} and \env{externalenv}.
+The main commands of this package are \Com{external} and \Env{externalenv}.
 
 \begin{docCommand}{external}{\oarg{options}\marg{code}}
 
@@ -236,12 +260,12 @@ An examples of its usage is the following.
 \end{dispExample}
 \end{docCommand}
 
-
 \begin{docEnvironment}{externalenv}{\oarg{options}}
 
-The same as \com{external}.
-The only difference is that \com{external} is a command and
-\env{externalenv} is an environment.
+The same as \Com{external}.
+The only difference is that \Com{external} is a command and
+\Env{externalenv} is an environment.
+An example of its usage is the following.
 
 \begin{dispExample}
 <\begin{externalenv}[preamble={\usepackage{amsmath}}, math=inline]
@@ -251,19 +275,18 @@ The only difference is that \com{external} is a command and
 \end{docEnvironment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\com{newexternal} and \com{newexternalenv}}
+\subsection{\Com{newexternal} and \Com{newexternalenv}}%
 \label{subsec:newexternal and newexternalenv}
 
-It is sometimes useful to define versions of \com{newexternal} and
-\env{externalenv} that have their own custom default values for their
-options.
-These can be created with \com{newexternal} and \com{newexternalenv}.
+It is sometimes useful to define versions of \com{external} and
+\env{externalenv} that have default values for their options.
+These can be created with \Com{newexternal} and \Com{newexternalenv}.
 For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
 
 \begin{docCommand}{newexternal}{\oarg{options}\marg{command name}}
 
-With \com{newexternal}, this can be done as follows.
+With \Com{newexternal}, one can define a version of \com{external} that has default values for its options.
 
 \begin{dispExample}
 <\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
@@ -274,7 +297,7 @@ With \com{newexternal}, this can be done as follows.
 
 \begin{docCommand}{newexternalenv}{\oarg{options}\marg{command name}}
 
-With \com{newexternalenv}, this can be done as follows.
+With \Com{newexternalenv}, one can define a version of \env{externalenv} that has default values for its options.
 
 \begin{dispExample}
 <\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
@@ -284,25 +307,23 @@ With \com{newexternalenv}, this can be done as follows.
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Options}
+\section{Options}%
 \label{sec:Options}
 
-TODO: alphabetize options but list the most useful options
-
-Commands that take an optional argument take a list of options that are
-parsed using the \pkg{keyval} package.
+Options that are passed to commands are parsed using the \pkg{keyval}
+package.
 Their syntax is of the form:
-$$
+\[
 |[|\meta{key$_1$}|=|\meta{value$_1$}|, |\meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|, |\meta{key$_n$}|=|\meta{value$_n$}|]|
-$$
+\]
 
-\subsection{\com{externalkeys}}
-\label{subsec:externalkeys}
+TODO:~organize options and list the most useful options.
 
-\begin{docCommand}{externalkeys}{\marg{options}}\end{docCommand}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docCommand}{externalkeys}{\marg{options}}
 
 You can set the default value for any options with the
-\com{externalkeys} command.
+\Com{externalkeys} command.
 For example, if want to default to use |mypdflatex| instead of
 |pdflatex| to compile \LaTeX\ code, you could add the following
 command.
@@ -311,163 +332,134 @@ command.
 \externalkeys{latex=mylatex}
 \end{dispListing}
 
-You can also specify this by passing the option when the \pkg{external}
-package is loaded.
+You can also specify this by passing the option when the \Pkg{external}
+package is loaded as seen in the following example.
 
 \begin{dispListing}
 \usepackage[latex=mylatex]{external}
 \end{dispListing}
+\end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{action}}
-\label{subsec:action}
+\begin{docKey}{before}{=\meta{code}}{initially |\textbackslash{}stepcounter\{external@number\}|}
 
-\begin{docKey}{action}{=\meta{code}}{initially |\stepcounter{external@number}|}\end{docKey}
-
-TODO: action to ``before''?
-
-Type: String
-
-Default: |\stepcounter{external@number}|
-
-This option specifies a bit of code to run before the rest of the code
-in each \com{external} command or \env{externalenv} environment.
+This option specifies \LaTeX\ code to run before the rest of the code
+in an \com{external} command or \env{externalenv} environment.
 This is particularly is useful for incrementing any counters used in
-the \opt{file} option.
+the \key{file} option.
+The following is an example of this in action.
 
 \begin{dispExample}
 \newcounter{foo}%
 \thefoo
-<\external[file=example-inline-action,
-           action={\stepcounter{foo}}]{}>%
+<\external[file=example-inline-before,
+           before={\stepcounter{foo}}]{}>%
 \thefoo
 \end{dispExample}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{documentclass}}
-\label{subsec:documentclass}
-
-\begin{docKey}{documentclass}{=\meta{class}}{initially |article|}
 \end{docKey}
 
-Type: String
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{after}{=\meta{code}}{initially empty}
 
-Default: |article|
+This option specifies \LaTeX\ code to run after the rest of the code
+in an \com{external} command or \env{externalenv} environment.
+The following is an example of this in action.
 
-This option specifies (by way of \cs{documentclass}) the document class
-to be used by the intermediate \LaTeX\ file that is generated for each
-bit of externally rendered code.
+\begin{dispExample}
+\newcounter{bar}%
+\thebar
+<\external[file=example-inline-after,
+           after={\stepcounter{bar}}]{}>%
+\thebar
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{documentclass}{=\meta{class}}{initially |article|}
+
+This option specifies (by way of \Com{documentclass}) the document
+class to be used by the intermediate \LaTeX\ file that is generated for
+each piece of externally rendered code.
 For example, the following uses the \pkg{proc} class, which (unlike
-\pkg{article}) contains the \cs{pagename} macro.
+\pkg{article}) contains the \Com{pagename} macro.
 
 \begin{dispExample}
 <\external[documentclass=proc]{\pagename}>
 \end{dispExample}
 
-If the value of this macro is blank, a \cs{documentclass} declaration
-it not added to the intermediate file.
-In this case, you will likely want to put a \cs{documentclass}
-declaration in the \opt{preamble} option as in the following example,
-though since this could be achieved with |documentclass=prog|, doing it
-this way is gratuitous and solely for the sake of an example.
+If the value of this key is blank, a \Com{documentclass} declaration is
+not added to the intermediate file.
+In this case, you will likely want to put a \Com{documentclass}
+declaration in the \key{preamble} option as in the following example.
+(Though this could be achieved with |documentclass=prog|, so doing it
+this way is gratuitous and solely for the sake of an example.)
 
 \begin{dispExample}
 <\external[documentclass={}, preamble={\documentclass{proc}}]
    {\pagename}>
 \end{dispExample}
-
-This example demonstrates the use of this option, though since
-the \cs{newcommand} could be put in the preamble, putting it in
-\opt{pre-savebox} is gratuitous and solely for the sake of an example.
-
-%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Option: \opt{documentclass/options}}
-\label{subsec:documentclass/options}
-
-\begin{docKey}{documentclass/options}{=\meta{options}}{initially empty}
 \end{docKey}
 
-Type: String
-
-Default: (blank)
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{documentclass/options}{=\meta{options}}{initially empty}
 
 This options specifies any options to pass to the document class to be
-used by the \LaTeX\ file that is generated for each bit of externally
-rendered code.
-For example, the following specifies the |12pt| option to
+used by the \LaTeX\ file that is generated for externally rendered
+code.
+For example, the following specifies passing the |12pt| option to
 \pkg{article}, which changes the default font to be 12 points tall.
 
 \begin{dispExample}
 <\external[documentclass/options={12pt}]{M}>
 \end{dispExample}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{preamble}}
-\label{subsec:preamble}
-
-\begin{docKey}{preamble}{=\meta{code}}{initially empty}
 \end{docKey}
 
-Type: String
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{preamble}{=\meta{code}}{initially empty}
 
-Default: (blank)
-
-This options specifies code to be put in the preamble of the
-intermediate \LaTeX\ file that is generated for each bit of externally
-rendered code.
-For example, you might want to load needed packages as in the following
-example.
+This options specifies \LaTeX\ code to be put in the preamble of the
+intermediate \LaTeX\ file that is generated for externally rendered
+code.
+For example, you might want to load packages as in the following.
 
 \begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
 \end{dispExample}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{pre-savebox}}
-\label{subsec:pre-savebox}
-
-\begin{docKey}{pre-savebox}{=\meta{code}}{initially empty}
 \end{docKey}
 
-Type: String
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{pre-savebox}{=\meta{code}}{initially empty}
 
-Default: (blank)
-
-This option specifies code to be put before the \cs{savebox} that is
-used in the intermediate \LaTeX\ file that is generated for the
-externally rendered code.
+This option specifies code to be put before the \Com{savebox} that is
+used in the intermediate \LaTeX\ file that is generated for externally
+rendered code.
 This option corresponds to the pre-savebox argument of
 \com{ExternalCode}.
+
 This option is rarely needed.
 
 The following example demonstrates the use of this option, though since
-the \cs{newcommand} could be put in the preamble, putting it in
-\opt{pre-savebox} is gratuitous and solely for the sake of an example.
+the definition of \Com{p} could be put in the preamble, putting it in
+\key{pre-savebox} is gratuitous and solely for the sake of an example.
 
 \begin{dispExample}
 <\external[pre-savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
 \end{dispExample}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{pre-usebox}}
-\label{subsec:pre-usebox}
-
-\begin{docKey}{pre-usebox}{=\meta{code}}{initially empty}
 \end{docKey}
 
-Type: String
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{pre-usebox}{=\meta{code}}{initially empty}
 
-Default: (blank)
-
-This option specifies code to be put before the \cs{usebox} that is
-used in the intermediate \LaTeX\ file that is generated for the
-externally rendered code.
+This option specifies code to be put before the \Com{usebox} that is
+used in the intermediate \LaTeX\ file that is generated for externally
+rendered code.
 This option corresponds to the pre-usebox argument of
 \com{ExternalCode}.
+
 This option is rarely needed.
 
 The following example demonstrates the use of this option, though since
-there are other ways to accomplish this effect, using \opt{pre-usebox}
+there are other ways to accomplish this effect, using \key{pre-usebox}
 is gratuitous and solely for the sake of an example.
 Note that we have to set the margins to small or zero lengths to
 prevent them from overlapping the rest of the page.
@@ -479,21 +471,10 @@ prevent them from overlapping the rest of the page.
            margin/left=0pt, margin/right=0pt]
    {ABC}>
 \end{dispExample}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{math}}
-\label{subsec:math}
-
-\begin{docKey}{math}{=\meta{|false|, |inline|, or |display|}}{initially \docValue{false}}
 \end{docKey}
 
-\docValue{false}
-\docValue{inline}
-\docValue{display}
-
-Type: |false|, |inline|, or |display|
-
-Default: |false|
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or \docValue{display}}}{initially \docValue{false}}
 
 This option determines whether the body of \com{external} or
 \env{externalenv} is treated as math, and if so, whether it is inline
@@ -522,17 +503,10 @@ equivalent to the incantation |\[\external{$\displaystyle...$}\]|.
 <\[\external[preamble={\usepackage{amsmath}}]
      {$\displaystyle\iint xy\,dx\,dy$}\]>
 \end{dispExample}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{latex}}
-\label{subsec:latex}
-
-\begin{docKey}{latex}{=\meta{program name}}{initially empty}
 \end{docKey}
 
-Type: String
-
-Default: (blank)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{latex}{=\meta{program name}}{initially empty}
 
 This option specifies the program to use to compile the intermediate
 \LaTeX\ file that is generated for each bit of externally rendered
@@ -541,22 +515,15 @@ code.
 Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
 to match whatever the master document is being compiled with.
 
-TODO: example
-
-%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Option: \opt{latex/options}}
-\label{subsubsec:latex/options}
-
-\begin{docKey}{latex/options}{=\meta{code}}{initially |-halt-on-error -interaction=batchmode|}
+TODO:~example
 \end{docKey}
 
-Type: String
-
-Default: |-halt-on-error -interaction=batchmode|
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{latex/options}{=\meta{code}}{initially |-halt-on-error -interaction=batchmode|}
 
 This option specifies what command line options to pass to \LaTeX\ when
-compiling the intermediate \LaTeX\ file that is generated for each bit
-of externally rendered code.
+compiling the intermediate \LaTeX\ file that is generated for
+externally rendered code.
 
 Note that if you change this, you will almost certainly want to include
 the |-halt-on-error| and |-interaction=batchmode| options in whatever
@@ -578,22 +545,13 @@ This can be specified as in the following.
 Note that if this document was compiled on Windows, then the two calls
 to \com{external} in this example will produce the same results as each
 other, but on any other platform they will be different.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{file}}
-\label{subsec:file}
-
-\begin{docKey}{file}{=\meta{file basename}}{initially |\jobname-external-\arabic{external@number}|}
 \end{docKey}
 
-TODO: fix jobname
-
-Type: String
-
-Default: |\jobname-external-\arabic{external@number}|
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{file}{=\meta{file basename}}{initially |\textbackslash{}jobname-external-\textbackslash{}arabic\{external@number\}|}
 
 This option specifies the basename of the intermediate files that are
-generated for each bit of externally rendered code.
+generated for externally rendered code.
 
 For example, the following uses |example-external-file| as the
 basename.
@@ -604,38 +562,30 @@ basename.
    {$\iint xy\,dx\,dy$}>
 \end{dispExample}
 
-Be careful not to use the same filename for two different bits of
+Be careful not to use the same filename for two different pieces of
 externally rendered code as that can lead to unexpected results.
+\end{docKey}
 
-\subsubsection{Option: \opt{file/tex}, \opt{file/dim}, and \opt{file/pdf}}
-
-Type: String
-
-Defaults: Respectively |.tex|, |.dim|, and |.pdf|
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{file/tex}{=\meta{extension}}{initially |.tex|}\end{docKey}
+\begin{docKey}{file/dim}{=\meta{extension}}{initially |.dim|}\end{docKey}
+\begin{docKey}{file/pdf}{=\meta{extension}}{initially |.pdf|}
 
 These options specify the extensions to use for the intermediate
 \LaTeX, dimension, and PDF files, respectively.
-This option is rarely needed.
 
-TODO: example
+These options are rarely needed.
+
+TODO:~example
+\end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{margin}}
-\label{subsec:margin}
-
-%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Option: \opt{margin/top}, \opt{margin/bottom}, \opt{margin/left}, and \opt{margin/right}}
-\label{subsubsec:margin/top, margin/bottom, margin/left, and margin/right}
-
 \begin{docKey}{margin/top}{=\meta{length}}{initially |1in|}\end{docKey}
 \begin{docKey}{margin/bottom}{=\meta{length}}{initially |1in|}\end{docKey}
 \begin{docKey}{margin/left}{=\meta{length}}{initially |1in|}\end{docKey}
-\begin{docKey}{margin/right}{=\meta{length}}{initially |1in|}\end{docKey}
-Type: Length
+\begin{docKey}{margin/right}{=\meta{length}}{initially |1in|}
 
-Default: |1in|
-
-These options specify the margin to around the \LaTeX\ code being
+These options specify the margin to place around the \LaTeX\ code being
 rendered externally.
 This is useful if the \LaTeX\ code being rendered externally draws
 outside its bounding box.
@@ -667,55 +617,35 @@ not clipped when 3 inch margins are used.
  \end{externalenv}>
 \vspace{2.2in}
 \end{dispExample}
+\end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{includegraphics}}
-\label{subsec:includegraphics}
+\begin{docKey}{includegraphics/options}{=\meta{key-value sequence}}{initially empty}
 
-\subsubsection{Option: \opt{includegraphics/options}}
-\label{subsubsec:includegraphics/options}
-
-\begin{docKey}{includegraphics/options}{=\meta{key-value sequence}}{initially empty}\end{docKey}
-
-Type: String
-
-Default: (blank)
-
-This option specifies options to be passed to the \cs{includegraphics}
+This option specifies options to be passed to the \Com{includegraphics}
 command that is used to read into the master document the result of
-rendering the \LaTeX\ code to be rendered separately.
-For example, the following uses \opt{angle} to rotate the image read in
-by \cs{includegraphics}.
+rendering the \LaTeX\ code that is rendered separately.
+For example, the following uses \key{angle} to rotate the image read by
+\Com{includegraphics}.
 
 \begin{dispExample}
 <\external[includegraphics/options={angle=45}]{M}>
 \end{dispExample}
+\end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Option: \opt{debug}}
-\label{subsec:debug}
+\begin{docKey}{debug}{=\meta{\docValue{true} or \docValue{false}}}{initially \docValue{false}}
 
-\begin{docKey}{debug}{=\meta{|true| or |false|}}{initially |false|}\end{docKey}
-
-Type: |false| or |true|
-
-Default: |false|
-
-\docValue{true}
-\docValue{false}
-
-Whether to print tracing into to standard out.
+Whether to print tracing information to standard out.
 This is helpful in determining exactly what part of a command failed.
 
 For example, consider the following call to \com{external}.
 
-\typeout{+++++++++++++++++}
 \begin{dispExample}
 <\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
 \end{dispExample}
-\typeout{+++++++++++++++++}
 
-When the \opt{debug} option is |true|, lines like the following will be
+When the \key{debug} option is |true|, lines like the following will be
 printed to the standard output.
 
 \begin{dispListing}
@@ -727,22 +657,17 @@ printed to the standard output.
 **** Begin \ExternalRead on {example-external-21}
 **** End \ExternalRead on {example-external-21}
 \end{dispListing}
+\end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Low-level Commands}
+\section{Low-level Commands}%
 \label{sec:Low-level Commands}
 
-\subsection{\com{ExternalWrite}, \com{ExternalCompile}, and \com{ExternalRead}}
-\label{subsec:ExternalWrite, ExternalCompile, and ExternalRead}
+\begin{docCommand}{ExternalWrite}{\oarg{options}\marg{body}}\end{docCommand}
 
-\begin{docCommand}{ExternalWrite}{\oarg{options}\marg{body}}
-\end{docCommand}
-
-\begin{docCommand}{ExternalCompile}{\oarg{options}}
-\end{docCommand}
+\begin{docCommand}{ExternalCompile}{\oarg{options}}\end{docCommand}
 
 \begin{docCommand}{ExternalRead}{\oarg{options}}
-\end{docCommand}
 
 Both the \com{external} command and the \env{externalenv} environment
 are broken up into three phases:
@@ -768,15 +693,10 @@ each of these as in the following.
 Taking explicit control of these is particularly useful if you want to
 cache compilation results.
 See \Cref{subsec:ExternalCode} for an example of this.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\com{ExternalCode}}
-\label{subsec:ExternalCode}
-
-\begin{docCommand}{ExternalCode}{\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}}
 \end{docCommand}
 
-TODO: weave ``Standalone Source File'' to test earlier?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docCommand}{ExternalCode}{\marg{dimension file}\marg{preamble}\marg{pre-savebox}\marg{body}\marg{pre-usebox}}
 
 This command expands to the code used in the intermediate \LaTeX\ file.
 It is useful if you want to store the \LaTeX\ code to be rendered in a
@@ -806,11 +726,11 @@ the \meta{dimension file} argument to match.
 Otherwise, you will get an error along the lines of
 |In \ExternalRead, input dimension file does not exist|.
 
-Also note that \com{ExternalCode} is defined in the \pkg{external.code}
+Also note that \com{ExternalCode} is defined in the \Pkg{external.code}
 package.
-This package is imported by the main \pkg{external} package, so you do
+This package is imported by the main \Pkg{external} package, so you do
 not necessarily need to import it separately.
-However, \pkg{external.code} is designed be minimal and has
+However, \Pkg{external.code} is designed be minimal and has
 dependencies.
 Thus in the previous example, by doing |\RequirePackage{external.code}|
 instead of |\RequirePackage{external}| we minimize the compilation
@@ -832,24 +752,25 @@ Then you would omit the call to \com{ExternalCompile} and just call
 \begin{dispExample}
 <\ExternalRead[file=external-standalone-simple]>
 \end{dispExample}
+\end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Issues and Workarounds}
+\section{Issues and Workarounds}%
 \label{sec:Issues and Workarounds}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Render not updating}
+\subsection{Render not updating}%
 \label{subsec:Render not updating}
 
-A common issue is when you change the \LaTeX\ code to be externally
+A common issue is when changing the \LaTeX\ code to be externally
 rendered (e.g., the \meta{body} of a \com{external}), but those changes
 are not reflected in the master document after re-compiling the master
 document.
-The cause of this is that \pkg{external} has no way to detect whether
+The cause of this is that \Pkg{external} has no way to detect whether
 compiling the intermediate \LaTeX\ file succeeded or failed.
-This failure can happen for example if the \LaTeX\ code to be
-externally rendered contains an error that causes the compilation of
-the intermediate \LaTeX\ file to fail.
+A failure can happen for example if the \LaTeX\ code to be externally
+rendered contains an error that causes the compilation of the
+intermediate \LaTeX\ file to fail.
 If compilation of the intermediate \LaTeX\ file fails, the dimension
 file and PDF file from previous compilation will not be overwritten.
 
@@ -861,7 +782,7 @@ rendered and use this file-not-found error to let you know when you
 have fixed that \LaTeX\ code.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Hashes and command arguments}
+\subsection{Hashes and command arguments}%
 \label{subsec:Hashes}
 
 The use of hashes that one would use when referencing a command
@@ -884,8 +805,6 @@ instead of |#1|) as demonstrated in the following.
    \p{x}
  \end{externalenv}>
 \end{dispExample}
-
-%%%%%% Test
 
 This even applies in the body of an \com{external} or \env{externalenv}
 as seen in the following.
@@ -910,9 +829,9 @@ This also applies to standalone files as seen in the following.
 <\ExternalRead[file=external-standalone-hash]>
 \end{dispExample}
 
-Finally, \com{newexternal} and \com{newexternalenv} require \textit{four}
-hashes due to an extra level of indirection occurring in them as
-demonstrated in the following examples.
+Finally, \com{newexternal} and \com{newexternalenv} require
+\textit{four} hashes due to an extra level of indirection occurring in
+them as demonstrated in the following examples.
 
 \begin{dispExample}
 <\newexternal[preamble={\newcommand{\p}[1]{(####1)}}]{\paren}>
@@ -924,8 +843,8 @@ demonstrated in the following examples.
 <\begin{paren}\p{x}\end{paren}>
 \end{dispExample}
 
-However, in their bodies this does not apply and only two hashes should be used
-as demonstrated in the following.
+However, in their bodies this does not apply and only two hashes should
+be used as demonstrated in the following.
 
 \begin{dispExample}
 <\newexternal{\paren}>
@@ -941,19 +860,19 @@ as demonstrated in the following.
 \end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Category codes}
+\subsection{Category codes}%
 \label{subsec:Catcodes}
 
 Some commands change the category codes of many characters.
-These pose a problem for use with commands from this \pkg{external}
+These pose a problem for use with commands from this \Pkg{external}
 package as the arguments to commands are parsed before those category
 codes have changed.
-The way to work around this is to use the \cs{scantokens} macro to
+The way to work around this is to use the \Com{scantokens} macro to
 cause parts of those arguments to be re-parsed.
 
-For example, the \cs{DeclareFontShape} macro redefines category codes
+For example, the \Com{DeclareFontShape} macro redefines category codes
 for characters used in its argument.
-Thus to use it one must insert a call to \cs{scantokens} as in the
+Thus to use it one must insert a call to \Com{scantokens} as in the
 following.
 
 \begin{dispExample}
@@ -967,8 +886,8 @@ following.
    {\Pisymbol{msa}{15}}>
 \end{dispExample}
 
-The \cs{relax} before the end of the argument to \cs{scantokens}
-ensures that \cs{scantokens} does not insert an extra space at the end.
+The \Com{relax} before the end of the argument to \Com{scantokens}
+ensures that \Com{scantokens} does not insert an extra space at the end.
 See
 \url{https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens}
 for details.
@@ -982,5 +901,6 @@ This trick also works when using a standalone file as in the following.
 <\ExternalRead[file=external-standalone-catcode]>
 \end{dispExample}
 
-% \StopEventually{\PrintIndex}
+\printindex
+
 \end{document}

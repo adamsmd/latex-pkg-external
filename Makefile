@@ -1,12 +1,21 @@
-all-pdf: standalone-pdf
+all: doc
+
+doc: doc-pdf
+doc-pdf: standalone-pdf
+	pdflatex -shell-escape external.tex
+	makeindex external.idx
 	pdflatex -shell-escape external.tex
 	pdflatex -shell-escape external.tex
 
-all-xe: standalone-pdf
+doc-xe: standalone-pdf
+	xelatex -shell-escape external.tex
+	pdflatex -shell-escape external.tex
 	xelatex -shell-escape external.tex
 	xelatex -shell-escape external.tex
 
-all-lua: standalone-pdf
+doc-lua: standalone-pdf
+	lualatex -shell-escape external.tex
+	pdflatex -shell-escape external.tex
 	lualatex -shell-escape external.tex
 	lualatex -shell-escape external.tex
 
@@ -27,5 +36,5 @@ standalone-lua:
 	lualatex external-standalone-hash.tex
 
 clean:
-	rm -f *.aux *.dim *.glo *.idx *.log *.listing *.out *.pdf
+	rm -f *.aux *.dim *.glo *.idx *.ind *.ilg *.log *.listing *.tcbtemp *.out *.pdf
 	rm -f external-inline-* external-external-*

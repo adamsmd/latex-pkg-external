@@ -1,28 +1,18 @@
+%% A package for rendering LaTeX code in separate external documents
 %%
 %% This is file `external.sty',
-%% generated with the docstrip utility.
 %%
-%% The original source files were:
-%%
-%% external.dtx  (with options: `package')
-%% 
-%% A package for rendering LaTeX code in separate external documents
-%% 
 %% Copyright (C) 2019 by Michael D. Adams
-%% 
+%%
 %% This file may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either
 %% version 1.3 of this license or (at your option) any later
 %% version. The latest version of this license is in:
-%% 
+%%
 %%    http://www.latex-project.org/lppl.txt
-%% 
+%%
 %% and version 1.3 or later is part of all distributions of
 %% LaTeX version 2005/12/01 or later.
-%% 
-\NeedsTeXFormat{LaTeX2e}[2005/12/01]
-\ProvidesPackage{external}
-   [2019/01/05 v0.1 Rendering LaTeX code in separate external documents]
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{external}[2019/01/05 v0.1 Rendering LaTeX code in separate external documents]
 
@@ -53,7 +43,8 @@
 
 \newcounter{external@number}
 
-\external@stringkey{action}{\stepcounter{external@number}}
+\external@stringkey{before}{\stepcounter{external@number}}
+\external@stringkey{after}{}
 
 \external@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
 \external@stringkey{documentclass/options}{}
@@ -115,10 +106,11 @@
 %% ARGS: [options] body
 \newcommand{\external}[2][]{{%
   \externalkeys{#1}%
-  \csname external@action\endcsname%
+  \csname external@before\endcsname%
   \ExternalWrite@{#2}%
   \ExternalCompile@%
-  \ExternalRead@}}
+  \ExternalRead@%
+  \csname external@after\endcsname}}
 
 %%%%%%%% external environment
 
