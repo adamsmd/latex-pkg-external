@@ -15,6 +15,6 @@
 *.tcbtemp
 *.toc
 
-# Externally rendered files
+# Externally compiled files
 external-external-*
 external-standalone-*.pdf
