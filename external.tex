@@ -753,7 +753,7 @@ The following is an example of this in action.
 \begin{dispExample}
 \newcounter{baz}%
 \thebaz
-<\external[file=external-external-before,
+<\external[file=external-external-before-compile,
            before compile={\stepcounter{baz}}]{}>%
 \thebaz
 \end{dispExample}
@@ -771,7 +771,7 @@ The following is an example of this in action.
 \begin{dispExample}
 \newcounter{quux}%
 \thequux
-<\external[file=external-external-before,
+<\external[file=external-external-before-read,
            before read={\stepcounter{quux}}]{}>%
 \thequux
 \end{dispExample}
