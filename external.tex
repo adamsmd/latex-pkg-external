@@ -179,9 +179,23 @@ the surrounding text.
 In the resulting PDF, they even behave properly with regard to
 copy-and-paste.
 
-TODO:~example and kerning
+For example, in the following it is nearly impossible to tell the
+difference between the ``B'' generated from \com{external} and the one
+that was not.
+
 \begin{dispExample}
-Test T\external{e}\external{s}t
+ABC A\external{B}C
+\end{dispExample}
+
+However, there is a limitation to this when it comes to kerning and
+ligatures.
+For example, in the following, due to kerning ``T'' and ``e'' have a
+different amount of space between them when using \com{external} and
+when not, and putting the second ``f'' in an \com{external} command
+breaks up the ``ffi'' ligature.
+
+\begin{dispExample}
+Teffi T\external{e}f\external{f}i
 \end{dispExample}
 
 See Section~\ref{sec:Options} more details about options and
@@ -228,20 +242,24 @@ document.
 However, none of these allow those document parts to have a separate
 preamble.
 
-\paragraph{\pkg{tikz}} TODO:~describe
+\paragraph{\pkg{tikz}}
 
-caching
+Contains the |external| library, which caches the results of compiling
+each \Env{tikzpicture} in order to improve later compilation times.
+Has no support for those pictures having different preambles from the
+main document.
 
-\paragraph{\pkg{pgfplots}} TODO:~describe
+\paragraph{\pkg{pgfplots}}
 
-caching
+Contains the |external| library as a counterpart to the \pkg{tikz}
+|external| library.
 
-\paragraph{\pkg{preview}} TODO:~describe
+\paragraph{\pkg{preview}}
 
-part of latex-preview (e.g. AUCTeX)
-I do not understand very well
-cannot set preamble
-extracts but does not re-include
+Allows extracting certain environment from \LaTeX\ sources as graphics.
+Intended for rendering ``preview'' versions of parts of a document, and
+used as part of \pkg{preview-latex} and AUC\TeX.
+Does not support custom preambles or exact sizing.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Miniature Documents}
@@ -274,7 +292,7 @@ document.
 \paragraph{\pkg{docmute}}
 
 Redefines \Com{input} and \Com{include} to ignore everything between
-\Com{documentclass} and \Com{begin\{document\}}.
+the initial \Com{documentclass} and \Com{begin\{document\}}.
 
 \paragraph{\pkg{includex}}
 
@@ -335,37 +353,40 @@ page at a time.
 
 \paragraph{\pkg{combine}}
 
-TODO:~describe
+Allows assembling a group of individual \LaTeX\ documents into a single
+document.
+Also includes the \Pkg{combinet} and \Pkg{combnat} package to allow
+documents to share things like table of contents.
 
-\paragraph{\pkg{subdocs}} TODO:~describe
+\paragraph{\pkg{subdocs}}
+
+Allows combining documents where each sub-document is a complete normal
+\LaTeX\ document that is typeset separately.
+Shares the |.aux| files between documents so thing like the table of
+contents can be kept in common.
 
 %%%%%%%%%%%%%%%%%%%%
-\subsubsection{Listing and Displaying (TODO) Examples}
+\subsubsection{Listing Code and Displaying the Results}
 
-\paragraph{\pkg{tcolorbox}} TODO:~describe
-externalize?
-
-\paragraph{\pkg{example}} TODO:~describe
-
-\paragraph{\pkg{examplep}} TODO:~describe
-
-\paragraph{\pkg{latexdemo}} TODO:~describe
-
-\paragraph{\pkg{showexpl}} TODO:~describe
+There are several packages for displaying code listings next to the
+results of that code.
+These include \pkg{tcolorbox}, \pkg{example}, \pkg{examplep},
+\pkg{latexdemo}, and \pkg{showexpl}.
+They all provide environments display their content as source code next
+to the result of rendering that code.
+None of these involves separate compilation or allowing for specifying
+a preamble.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Minimal Page Layouts}
 
-\paragraph{\pkg{standalone}} Finally, this package
+\paragraph{\pkg{standalone}}
 
-sizing
-
-TODO:~describe
-
-minimal page (used internally)
-
-used internally
-
+Provides the document class |standalone|, which produces a page with
+minimal layout that is sized to fit its contents.
+Does not support automatic extraction of standalone documents, and has
+no support for exact sizing or including the results of compiling
+standalone document.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{High-level Commands}%
