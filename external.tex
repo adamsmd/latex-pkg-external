@@ -463,6 +463,99 @@ With \Com{newexternalenv}, one can define a version of \env{externalenv} that ha
 \end{dispExample}
 \end{docCommand}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Low-level Commands}%
+\label{sec:Low-level Commands}
+
+\begin{docCommand}{ExternalWrite}{\oarg{options}\marg{body}}\end{docCommand}
+
+\begin{docCommand}{ExternalCompile}{\oarg{options}}\end{docCommand}
+
+\begin{docCommand}{ExternalRead}{\oarg{options}}
+
+Both the \com{external} command and the \env{externalenv} environment
+are broken up into three phases:
+\begin{enumerate}
+\item writing the intermediate \LaTeX\ file,
+\item compiling the intermediate \LaTeX\ file into a PDF file, and
+\item reading the resulting intermediate PDF file.
+\end{enumerate}
+These are handled with the commands \com{ExternalWrite},
+\com{ExternalCompile}, and \com{ExternalRead}, respectively.
+For example, instead of using the command \com{external}, you could
+explicitly call each of these as in the following.
+
+\begin{dispExample}
+<\ExternalWrite[file=external-external-separate,
+                preamble={\usepackage{amsmath}}]
+   {$\iint xy\,dx\,dy$}>
+<\ExternalCompile[file=external-external-separate]>
+<\ExternalRead[file=external-external-separate]>
+\end{dispExample}
+
+Taking explicit control of these is particularly useful if you want to
+cache compilation results.
+See the \com{ExternalCode} command for an example of this.
+\end{docCommand}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{docCommand}{ExternalCode}{\marg{dim~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
+
+This command expands to the code used in the intermediate \LaTeX\ file.
+It is useful if you want to store the \LaTeX\ code to be compiled in a
+separate file and reuse the compiled results between compilations
+of the master \LaTeX\ file.
+
+The \meta{dim file} is the full filename of the dimension file to
+be generated.
+The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
+same as the corresponding options in Section~\ref{sec:Options}.
+The \meta{body} is the \LaTeX\ code to be compiled.
+
+For example, you might write the following standalone file.
+
+\showfile{external-standalone-simple.tex}
+
+Then in your master file you can compile and read that standalone file
+with the following commands.
+
+\begin{dispExample}
+<\ExternalCompile[file=external-standalone-simple]>
+<\ExternalRead[file=external-standalone-simple]>
+\end{dispExample}
+
+Be careful if you rename a standalone file, as you will need to change
+the \meta{dim file} argument to match.
+Otherwise, you will get an error along the lines of
+|In \ExternalRead, input dimension file does not exist|.
+
+Also note that \com{ExternalCode} is defined in the \Pkg{external.code}
+package.
+This package is imported by the main \Pkg{external} package, so you do
+not necessarily need to import it separately.
+However, \Pkg{external.code} is designed be minimal and has no
+dependencies.
+Thus in the previous example, using |\RequirePackage{external.code}|
+instead of |\RequirePackage{external}| minimizes the compilation time.
+When there are a large number of standalone files, this difference can
+amount to a significant amount of time.
+
+If you wanted to reuse compiled results between compilations of the
+master \LaTeX\ file, you would want to manually run the following
+command.
+
+\begin{dispListing}
+pdflatex -shell-escape external-standalone-simple.tex
+\end{dispListing}
+
+Then you would omit the call to \com{ExternalCompile} and just call
+\com{ExternalRead} as in the following.
+
+\begin{dispExample}
+<\ExternalRead[file=external-standalone-simple]>
+\end{dispExample}
+\end{docCommand}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Options}%
 \label{sec:Options}
@@ -871,99 +964,6 @@ printed to the standard output.
 **** End \ExternalRead on {external-external-21}
 \end{dispListing}
 \end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Low-level Commands}%
-\label{sec:Low-level Commands}
-
-\begin{docCommand}{ExternalWrite}{\oarg{options}\marg{body}}\end{docCommand}
-
-\begin{docCommand}{ExternalCompile}{\oarg{options}}\end{docCommand}
-
-\begin{docCommand}{ExternalRead}{\oarg{options}}
-
-Both the \com{external} command and the \env{externalenv} environment
-are broken up into three phases:
-\begin{enumerate}
-\item writing the intermediate \LaTeX\ file,
-\item compiling the intermediate \LaTeX\ file into a PDF file, and
-\item reading the resulting intermediate PDF file.
-\end{enumerate}
-These are handled with the commands \com{ExternalWrite},
-\com{ExternalCompile}, and \com{ExternalRead}, respectively.
-For example, instead of using the command \com{external}, you could
-explicitly call each of these as in the following.
-
-\begin{dispExample}
-<\ExternalWrite[file=external-external-separate,
-                preamble={\usepackage{amsmath}}]
-   {$\iint xy\,dx\,dy$}>
-<\ExternalCompile[file=external-external-separate]>
-<\ExternalRead[file=external-external-separate]>
-\end{dispExample}
-
-Taking explicit control of these is particularly useful if you want to
-cache compilation results.
-See the \com{ExternalCode} command for an example of this.
-\end{docCommand}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docCommand}{ExternalCode}{\marg{dim~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
-
-This command expands to the code used in the intermediate \LaTeX\ file.
-It is useful if you want to store the \LaTeX\ code to be compiled in a
-separate file and reuse the compiled results between compilations
-of the master \LaTeX\ file.
-
-The \meta{dim file} is the full filename of the dimension file to
-be generated.
-The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
-same as the corresponding options in Section~\ref{sec:Options}.
-The \meta{body} is the \LaTeX\ code to be compiled.
-
-For example, you might write the following standalone file.
-
-\showfile{external-standalone-simple.tex}
-
-Then in your master file you can compile and read that standalone file
-with the following commands.
-
-\begin{dispExample}
-<\ExternalCompile[file=external-standalone-simple]>
-<\ExternalRead[file=external-standalone-simple]>
-\end{dispExample}
-
-Be careful if you rename a standalone file, as you will need to change
-the \meta{dim file} argument to match.
-Otherwise, you will get an error along the lines of
-|In \ExternalRead, input dimension file does not exist|.
-
-Also note that \com{ExternalCode} is defined in the \Pkg{external.code}
-package.
-This package is imported by the main \Pkg{external} package, so you do
-not necessarily need to import it separately.
-However, \Pkg{external.code} is designed be minimal and has no
-dependencies.
-Thus in the previous example, using |\RequirePackage{external.code}|
-instead of |\RequirePackage{external}| minimizes the compilation time.
-When there are a large number of standalone files, this difference can
-amount to a significant amount of time.
-
-If you wanted to reuse compiled results between compilations of the
-master \LaTeX\ file, you would want to manually run the following
-command.
-
-\begin{dispListing}
-pdflatex -shell-escape external-standalone-simple.tex
-\end{dispListing}
-
-Then you would omit the call to \com{ExternalCompile} and just call
-\com{ExternalRead} as in the following.
-
-\begin{dispExample}
-<\ExternalRead[file=external-standalone-simple]>
-\end{dispExample}
-\end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Issues and Workarounds}%
