@@ -21,6 +21,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\usepackage{noindentafter} % make the \NoIndentAfterThis command available
+
 \usepackage{xurl} % Allow url to line break anywhere
 
 \usepackage{external}
@@ -29,8 +31,11 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
 \tcbuselibrary{documentation}
-% Use the default `dispExample` formatting except don't mess with the font size
-\tcbset{docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
+\tcbset{
+  % Keep indentation working normally inside `docCommand` and friends
+  before doc body={\parindent=15pt\NoIndentAfterThis},
+  % Use the default `dispExample` formatting except don't mess with the font size
+  docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
     before skip=\medskipamount,after skip=\medskipamount}}
 
 \makeindex
@@ -152,9 +157,9 @@ can emit an electron.
 If you prefer, you can also use the environment \env{externalenv} as in
 the following.
 (The only difference between the \Com{external} command and the
-
 \env{externalenv} environment is that one is a command and the other is
 an environment.)
+
 \begin{dispExample}
 An atom undergoing
 \begin{externalenv}[preamble={\usepackage{textgreek}}]
@@ -880,7 +885,6 @@ are broken up into three phases:
 \item compiling the intermediate \LaTeX\ file into a PDF file, and
 \item reading the resulting intermediate PDF file.
 \end{enumerate}
-
 These are handled with the commands \com{ExternalWrite},
 \com{ExternalCompile}, and \com{ExternalRead}, respectively.
 For example, instead of using the command \com{external}, you could
@@ -936,8 +940,8 @@ This package is imported by the main \Pkg{external} package, so you do
 not necessarily need to import it separately.
 However, \Pkg{external.code} is designed be minimal and has
 dependencies.
-Thus in the previous example, by doing |\RequirePackage{external.code}|
-instead of |\RequirePackage{external}| we minimize the compilation
+Thus in the previous example, using |\RequirePackage{external.code}|
+instead of |\RequirePackage{external}| minimizes the compilation
 time.
 When there are a large number of standalone files, this difference can
 amount to a significant amount of time.
