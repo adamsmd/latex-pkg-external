@@ -67,3 +67,5 @@ TODO
 ## Bug Reporting
 
 TODO
+
+Patches welcome but must pass under all three of pdflatex, xelatex, and lualatex
