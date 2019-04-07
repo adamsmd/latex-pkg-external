@@ -1,4 +1,4 @@
-# The `external` package: A LaTeX package for rendering LaTeX code in separate external documents
+# The `external` package: A package for including into a document separately compiled LaTeX
 
 The `external` package allows you to include the result of rendering
 LaTeX code in a separate document that has its own preamble.  This is
