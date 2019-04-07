@@ -146,7 +146,7 @@ Suppose you want to use the \Com{textbeta} symbol from the
 \pkg{textgreek} package into your master document.
 (Maybe it is incompatible with some other package that you use or maybe
 \LaTeX\ has run out of space for declaring new fonts.)
-You can render \Com{textbeta} using the \Com{external} command as in the
+You can render \Com{textbeta} using the \com{external} command as in the
 following.
 
 \begin{dispExample}
@@ -166,8 +166,8 @@ An atom undergoing
 ~can emit an electron.
 \end{dispExample}
 
-The only difference between the \Com{external} command and the
-\env{externalenv} environment is that one is a command and the other is
+The only difference between the command \com{external} and the
+environment \env{externalenv} is that one is a command and the other is
 an environment.
 
 If you want to format the \LaTeX\ code as ``display'' math, use the
@@ -376,8 +376,7 @@ contents can be kept in common.
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Listing Code and Displaying the Results}
 
-\paragraph{\pkg{tcolorbox}, \pkg{example}, \pkg{examplep},
-\pkg{latexdemo}, and \pkg{showexpl}}
+\paragraph{\pkg{tcolorbox}, \pkg{example}, \pkg{examplep}, \pkg{latexdemo}, and \pkg{showexpl}}
 
 These packages all provide environments that display their content as
 source code next to the result of rendering that code.
@@ -419,8 +418,8 @@ An examples of its usage is the following.
 
 \begin{docEnvironment}{externalenv}{\oarg{options}}
 
-The same as \Com{external}.
-The only difference is that \Com{external} is a command and
+The same as \com{external}.
+The only difference is that \com{external} is a command and
 \Env{externalenv} is an environment.
 An example of its usage is the following.
 
@@ -435,15 +434,17 @@ An example of its usage is the following.
 \subsection{\Com{newexternal} and \Com{newexternalenv}}%
 \label{subsec:newexternal and newexternalenv}
 
-It is sometimes useful to define versions of \com{external} and
-\env{externalenv} that have default values for their options.
+It is sometimes useful to define versions of the \com{external} command
+and the \env{externalenv} environment that have default values for
+their options.
 These can be created with \Com{newexternal} and \Com{newexternalenv}.
 For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
 
 \begin{docCommand}{newexternal}{\oarg{options}\marg{command name}}
 
-With \Com{newexternal}, one can define a version of \com{external} that has default values for its options.
+With \Com{newexternal}, one can define a version of \com{external} that
+has default values for its options.
 
 \begin{dispExample}
 <\newexternal[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
@@ -454,7 +455,8 @@ With \Com{newexternal}, one can define a version of \com{external} that has defa
 
 \begin{docCommand}{newexternalenv}{\oarg{options}\marg{command name}}
 
-With \Com{newexternalenv}, one can define a version of \env{externalenv} that has default values for its options.
+With \Com{newexternalenv}, one can define a version of
+\env{externalenv} that has default values for its options.
 
 \begin{dispExample}
 <\newexternalenv[preamble={\usepackage{amsmath}}, math=inline]{amsenv}>
@@ -530,7 +532,7 @@ the \meta{dim file} argument to match.
 Otherwise, you will get an error along the lines of
 |In \ExternalRead, input dimension file does not exist|.
 
-Also note that \com{ExternalCode} is defined in the \Pkg{external.code}
+Also note that \Com{ExternalCode} is defined in the \Pkg{external.code}
 package.
 This package is imported by the main \Pkg{external} package, so you do
 not necessarily need to import it separately.
@@ -952,7 +954,7 @@ For example, consider the following call to \com{external}.
 <\external[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
 \end{dispExample}
 
-When the \key{debug} option is |true|, lines like the following will be
+When the \Key{debug} option is |true|, lines like the following will be
 printed to the standard output.
 
 \begin{dispListing}
