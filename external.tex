@@ -477,8 +477,9 @@ Both the \com{external} command and the \env{externalenv} environment
 are broken up into three phases:
 \begin{enumerate}
 \item writing the intermediate \LaTeX\ file,
-\item compiling the intermediate \LaTeX\ file into a PDF file, and
-\item reading the resulting intermediate PDF file.
+\item compiling the intermediate \LaTeX\ file, and
+\item reading the file that results from that compilation (which is
+  probably a PDF file).
 \end{enumerate}
 These are handled with the commands \Com{ExternalWrite},
 \Com{ExternalCompile}, and \Com{ExternalRead}, respectively.
@@ -905,10 +906,10 @@ externally compiled code as that can lead to unexpected results.
 %%%%%%%%%%
 \begin{docKey}{file/tex}{=\meta{extension}}{initially |.tex|}\end{docKey}
 \begin{docKey}{file/dim}{=\meta{extension}}{initially |.dim|}\end{docKey}
-\begin{docKey}{file/pdf}{=\meta{extension}}{initially |.pdf|}
+\begin{docKey}{file/out}{=\meta{extension}}{initially |.pdf|}
 
 These options specify the extensions to use for the intermediate
-\LaTeX, dimension, and PDF files, respectively.
+\LaTeX, dimension, and compiled files, respectively.
 
 These options are rarely needed.
 
@@ -917,7 +918,7 @@ An example of using them is the following.
 \begin{dispExample}
 \DeclareGraphicsRule{.mypdf}{pdf}{.mypdf}{}%
 <\external[
-   file/tex=.mytex, file/dim=.mydim, file/pdf=.mypdf,
+   file/tex=.mytex, file/dim=.mydim, file/out=.mypdf,
    file=external-external-extension,
    before read={\ShellEscape{mv external-external-extension.pdf
                                 external-external-extension.mypdf}}]
@@ -983,7 +984,8 @@ A failure can happen for example if the \LaTeX\ code to be externally
 compiled contains an error that causes the compilation of the
 intermediate \LaTeX\ file to fail.
 If compilation of the intermediate \LaTeX\ file fails, the dimension
-file and PDF file from previous compilation will not be overwritten.
+file and the resulting compiled, PDF file from previous compilation
+will not be overwritten.
 
 To fix this, delete the PDF and dimension files.
 Then failure of the compilation of the intermediate \LaTeX\ file will

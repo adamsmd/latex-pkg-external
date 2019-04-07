@@ -65,7 +65,7 @@
 \external@stringkey{file}{\jobname-external-\arabic{external@number}}
 \external@stringkey{file/tex}{.tex}
 \external@stringkey{file/dim}{.dim}
-\external@stringkey{file/pdf}{.pdf}
+\external@stringkey{file/out}{.pdf}
 
 \external@lengthkey{margin/top}{1in}
 \external@lengthkey{margin/bottom}{1in}
@@ -267,10 +267,10 @@
   %%%% End core code %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
   % Sanity checking (warnings)
-  \IfFileExists{\external@file\csname external@file/pdf\endcsname}
+  \IfFileExists{\external@file\csname external@file/out\endcsname}
     {}
-    {\PackageWarning{external}{In \noexpand\ExternalCompile, output PDF file does not exist:
-        \external@file\csname external@file/pdf\endcsname}}%
+    {\PackageWarning{external}{In \noexpand\ExternalCompile, output file does not exist:
+        \external@file\csname external@file/out\endcsname}}%
   \IfFileExists{\external@file\csname external@file/dim\endcsname}
     {}
     {\PackageWarning{external}{In \noexpand\ExternalCompile, output dimension file does not exist:
@@ -314,13 +314,13 @@
 \newcommand{\ExternalRead@@}{%
   % Error checking
   \ifx\empty\external@file
-    \PackageError{external}{In \ExternalRead, no input PDF file specified}{}%
+    \PackageError{external}{In \ExternalRead, no file to be read specified}{}%
   \fi
-  \IfFileExists{\external@file\csname external@file/pdf\endcsname}
+  \IfFileExists{\external@file\csname external@file/out\endcsname}
     {}
-    {\PackageError{external}{In \noexpand\ExternalRead, input PDF file does not exist
+    {\PackageError{external}{In \noexpand\ExternalRead, file to be read does not exist
         (maybe compilation of the LaTeX file failed):
-        \external@file\csname external@file/pdf\endcsname}{}}%
+        \external@file\csname external@file/out\endcsname}{}}%
   \IfFileExists{\external@file\csname external@file/dim\endcsname}
     {}
     {\PackageError{external}{In \noexpand\ExternalRead, input dimension file does not exist
@@ -332,7 +332,7 @@
   \input{\external@file\csname external@file/dim\endcsname}% Load the dimensions of the symbol
   \raisebox{-\external@DEPTH}{% Use `\raisebox` to model the symbol's depth.
     % Define filename since the following \edef doesn't play nice with \csname...\endcsname
-    \edef\external@filename{\external@file\csname external@file/pdf\endcsname}% 
+    \edef\external@filename{\external@file\csname external@file/out\endcsname}% 
     % Use `\edef` to expand `\external@includegraphics/options` before
     % `\includegraphics` parses its argument.
     \edef\external@code{%
