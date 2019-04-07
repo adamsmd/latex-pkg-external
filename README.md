@@ -11,7 +11,7 @@ loaded together.
 
 You can download the latest copy at:
 
-https://github.org/adamsmd/latex-external
+https://github.com/adamsmd/latex-pkg-external
 
 ## Installing
 
@@ -69,12 +69,12 @@ I am also looking for someone to take over maintenance of this package.
 ### Bug Reports
 
 Bugs should be submitted to the issue tracker at
-https://github.org/adamsmd/latex-external/issues
+https://github.com/adamsmd/latex-pkg-external/issues
 
 ### Patches
 
 Patches should be submitted via pull requests at
-https://github.org/adamsmd/latex-external/pulls
+https://github.com/adamsmd/latex-pkg-external/pulls
 
 Patches are expected to work under all of `pdflatex`, `xelatex`, and
 `lualatex`.  This can be tested by running `make docs-pdf`, `make
