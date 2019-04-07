@@ -1,19 +1,19 @@
-all: doc
+all: docs
 
-doc: doc-pdf
-doc-pdf: standalone-pdf
+docs: docs-pdf
+docs-pdf: standalone-pdf
 	pdflatex -shell-escape external.tex
 	makeindex external.idx
 	pdflatex -shell-escape external.tex
 	pdflatex -shell-escape external.tex
 
-doc-xe: standalone-pdf
+docs-xe: standalone-pdf
 	xelatex -shell-escape external.tex
 	pdflatex -shell-escape external.tex
 	xelatex -shell-escape external.tex
 	xelatex -shell-escape external.tex
 
-doc-lua: standalone-pdf
+docs-lua: standalone-pdf
 	lualatex -shell-escape external.tex
 	pdflatex -shell-escape external.tex
 	lualatex -shell-escape external.tex
