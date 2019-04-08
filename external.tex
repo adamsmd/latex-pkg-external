@@ -141,7 +141,8 @@ compiled results in a master document, this allows you to use both
 symbols without conflicts.
 
 This document serves as both the documentation and test suite for the
-\Pkg{external} package.
+\Pkg{external} package, so some of the examples in this document are
+more for testing than documentation.
 
 \begin{tcolorbox}[title=Warning,colback=red!5!white,colframe=red!75!black]
 This package is pre-alpha and its interface may change without notice.
@@ -741,13 +742,14 @@ but are not clipped when 3-inch margins are used.
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{before}{=\meta{code}}{%
-  initially |\textbackslash{}stepcounter\{external@number\}|}
+  initially |\textbackslash{}stepcounter\{external@number\}|}\end{docKey}
+\begin{docKey}{after}{=\meta{code}}{initially empty}
 
-This option specifies \LaTeX\ code to run before the rest of the code
-in an \com{external} command or \env{externalenv} environment.
+These options specify \LaTeX\ code to run before or after the rest of
+the code in an \com{external} command or \env{externalenv} environment.
 This is particularly useful for incrementing any counters used in the
 \key{file} option.
-The following is an example of this in action.
+The following is an example of these in action.
 
 \begin{dispExample}
 \newcounter{foo}%
@@ -755,22 +757,9 @@ The following is an example of this in action.
 <\external[file=external-external-before,
            before={\stepcounter{foo}}]{}>%
 \thefoo
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{after}{=\meta{code}}{initially empty}
-
-This option specifies \LaTeX\ code to run after the rest of the code
-in an \com{external} command or \env{externalenv} environment.
-The following is an example of this in action.
-
-\begin{dispExample}
-\newcounter{bar}%
-\thebar
 <\external[file=external-external-after,
-           after={\stepcounter{bar}}]{}>%
-\thebar
+           after={\stepcounter{foo}}]{}>%
+\thefoo
 \end{dispExample}
 \end{docKey}
 
@@ -782,43 +771,64 @@ The following is an example of this in action.
 \begin{docKey}{before read}{=\meta{code}}{initially empty}\end{docKey}
 \begin{docKey}{after read}{=\meta{code}}{initially empty}
 
-With an \com{external} command or \env{externalenv} environment, this
-option specifies \LaTeX\ code to run after writing the file for the
-externally complied code but before compiling the externally compiled
-code.
-The following is an example of this in action.
+With an \com{external} command or \env{externalenv} environment, these
+options specify \LaTeX\ code to run before or after
+\cmd{ExternalWrite}, \cmd{ExternalCompile}, or \cmd{ExternalRead}.
+The following is an example of these in action.
 
 \begin{dispExample}
 \newcounter{baz}%
 \thebaz
 <\external[file=external-external-before-compile,
+           before read={\stepcounter{baz}}]{}>%
+\thebaz
+<\external[file=external-external-before-compile,
+           after read={\stepcounter{baz}}]{}>%
+\thebaz
+<\external[file=external-external-before-compile,
            before compile={\stepcounter{baz}}]{}>%
+\thebaz
+<\external[file=external-external-before-compile,
+           after compile={\stepcounter{baz}}]{}>%
+\thebaz
+<\external[file=external-external-before-compile,
+           before write={\stepcounter{baz}}]{}>%
+\thebaz
+<\external[file=external-external-before-compile,
+           after write={\stepcounter{baz}}]{}>%
 \thebaz
 \end{dispExample}
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{before savebox}{=\meta{code}}{initially empty}
+\begin{docKey}{before savebox}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{after savebox}{=\meta{code}}{initially empty}
 
-This option specifies code to be put before the \Com{savebox} that is
-used in the intermediate \LaTeX\ file that is generated for externally
-compiled code.
-This option corresponds to the \meta{before savebox} argument of
-\com{ExternalCode}.
+These options specify code to be put before or after the \Com{savebox}
+that is used in the intermediate \LaTeX\ file that is generated for
+externally compiled code.
+These options correspond to the \meta{before savebox} and \meta{after
+  savebox} arguments of \com{ExternalCode}.
 
-This option is rarely needed.
+These options are rarely needed.
 
-The following example demonstrates the use of this option, though since
-the definition of \Com{p} could be put in the preamble, putting it in
-\Key{before savebox} is gratuitous and solely for the sake of an example.
+The following example demonstrates the use of these options, though
+since there are other ways to accomplish this effect, doing it this way
+is gratuitous and solely for the sake of an example.
 
 \begin{dispExample}
-<\external[before savebox={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
+<\external[preamble={\usepackage{xcolor}},
+           before savebox={\newcommand{\p}[1]{(##1)}},
+           after savebox={\pagecolor{gray!50}},
+           margin/top=1pt, margin/bottom=1pt,
+           margin/left=0pt, margin/right=0pt]
+  {\p{x}}>
 \end{dispExample}
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{before usebox}{=\meta{code}}{initially empty}
+\begin{docKey}{before usebox}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{after usebox}{=\meta{code}}{initially empty}
 
 This option specifies code to be put before the \Com{usebox} that is
 used in the intermediate \LaTeX\ file that is generated for externally
@@ -840,6 +850,11 @@ prevent them from overlapping the rest of the page.
            margin/top=1pt, margin/bottom=1pt,
            margin/left=0pt, margin/right=0pt]
    {ABC}>
+<\external[preamble={\usepackage{xcolor}},
+           after usebox={\pagecolor{gray!50}},
+           margin/top=1pt, margin/bottom=1pt,
+           margin/left=0pt, margin/right=0pt]
+   {DEF}>
 \end{dispExample}
 \end{docKey}
 

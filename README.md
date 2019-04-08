@@ -72,14 +72,8 @@ I am also looking for someone to take over maintenance of this package.
 
 ### Desired Feature
 
-A desired feature would be to subsume the functionality of the TikZ
-`externalize` library.  In order to do this, the following features
-need to be implemented.
-
-- Use `pgfkeys`
-- Support automatic caching
-- Make it possible to copy the preamble of the master document into the
-  externally compiled code.
+A notably missing feature is caching.  I would be particularly
+interested in pull requests that add this feature.
 
 ### Bug Reports
 
