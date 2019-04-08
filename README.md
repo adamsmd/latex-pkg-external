@@ -7,6 +7,10 @@ to load into your main document.  For example, your main document may
 use symbols from multiple packages that conflict or otherwise cannot be
 loaded together.
 
+## Status
+
+This package is pre-alpha and its interface may change without notice.
+
 ## Download
 
 You can download the latest copy at:
@@ -65,6 +69,17 @@ My spare time is very limited and this is not my primary project, so
 bug reports that include pull requests are more likely to be fixed.
 
 I am also looking for someone to take over maintenance of this package.
+
+### Desired Feature
+
+A desired feature would be to subsume the functionality of the TikZ
+`externalize` library.  In order to do this, the following features
+need to be implemented.
+
+- Use `pgfkeys`
+- Support automatic caching
+- Make it possible to copy the preamble of the master document into the
+  externally compiled code.
 
 ### Bug Reports
 
