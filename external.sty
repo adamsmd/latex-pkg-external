@@ -46,15 +46,22 @@
 \newcounter{external@number}
 
 \external@stringkey{before}{\stepcounter{external@number}}
-\external@stringkey{before compile}{}
-\external@stringkey{before read}{}
 \external@stringkey{after}{}
+\external@stringkey{before write}{}
+\external@stringkey{after write}{}
+\external@stringkey{before compile}{}
+\external@stringkey{after compile}{}
+\external@stringkey{before read}{}
+\external@stringkey{after read}{}
 
 \external@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
 \external@stringkey{documentclass/options}{}
 \external@stringkey{preamble}{}
+
 \external@stringkey{before savebox}{}
+\external@stringkey{after savebox}{}
 \external@stringkey{before usebox}{}
+\external@stringkey{after usebox}{}
 
 \external@stringkey{math}{false}
 \def\external@math@false{false}
@@ -112,9 +119,7 @@
   \externalkeys{#1}%
   \csname external@before\endcsname%
   \ExternalWrite@{#2}%
-  \csname external@before compile\endcsname%
   \ExternalCompile@%
-  \csname external@before read\endcsname%
   \ExternalRead@%
   \csname external@after\endcsname}}
 
@@ -156,6 +161,8 @@
 
 %% ARGS: body
 \newcommand{\ExternalWrite@}[1]{%
+  % Run the `before write` option
+  \csname external@before write\endcsname%
   % Debug code
   \ifx     \external@debug@false\external@debug
   \else\ifx\external@debug@true \external@debug
@@ -193,7 +200,9 @@
      \expandafter\unexpanded\expandafter{\external@preamble}}%
     {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@before savebox\endcsname}}% TODO: explain expandafters (use \expandonce from \usepackage{etoolbox})
     {\expandafter\unexpanded\expandafter{\external@body}}%
-    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@before usebox\endcsname}}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@after savebox\endcsname}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@before usebox\endcsname}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname external@after usebox\endcsname}}}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%%   Core code   %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
@@ -212,6 +221,8 @@
   \ifx\external@debug\external@debug@true
     \typeout{**** End \noexpand\ExternalWrite on {\external@file}}%
   \fi
+  % Run the `after write` option
+  \csname external@after write\endcsname
 }
 
 %%%%%%%% \ExternalCompile
@@ -221,6 +232,8 @@
 
 %% ARGS: (none)
 \newcommand{\ExternalCompile@}{%
+  % Run the `before compile` option
+  \csname external@before compile\endcsname%
   % Debug code
   \ifx     \external@debug@false\external@debug
   \else\ifx\external@debug@true \external@debug
@@ -281,6 +294,8 @@
   \ifx\external@debug\external@debug@true
     \typeout{**** End \noexpand\ExternalCompile on {\external@file}}%
   \fi
+  % Run the `after compile` option
+  \csname external@after compile\endcsname
 }
 
 %%%%%%%% \ExternalRead
@@ -290,6 +305,8 @@
 
 %% ARGS: (none)
 \newcommand{\ExternalRead@}{%
+  % Run the `before read` option
+  \csname external@before read\endcsname
   % Debug code
   \ifx     \external@debug@false\external@debug
   \else\ifx\external@debug@true \external@debug
@@ -310,6 +327,8 @@
   \ifx\external@debug\external@debug@true
     \typeout{**** End \noexpand\ExternalRead on {\external@file}}%
   \fi
+  % Run the `after read` option
+  \csname external@after read\endcsname
 }
 
 %% ARGS: (none)

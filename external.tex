@@ -513,17 +513,19 @@ See the \com{ExternalCode} command for an example of this.
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{docCommand}{ExternalCode}{\marg{dim~file}\marg{preamble}\marg{before~savebox}\marg{body}\marg{before~usebox}}
+\begin{docCommand}{ExternalCode}{%
+  \marg{dim~file}\marg{preamble}\marg{before~savebox}%
+  \marg{body}\marg{before~usebox}}
 
 This command expands to the code used in the intermediate \LaTeX\ file.
 It is useful if you want to store the \LaTeX\ code to be compiled in a
 separate file and reuse the compiled results between compilations
 of the master \LaTeX\ file.
 
-The \meta{dim file} is the full filename of the dimension file to
-be generated.
-The \meta{preamble}, \meta{before savebox}, and \meta{before usebox} are the
-same as the corresponding options in Section~\ref{sec:Options}.
+The \meta{dim file} is the full filename of the dimension file to be
+generated.
+The \meta{preamble}, \meta{before savebox}, and \meta{before usebox}
+are the same as the corresponding options in Section~\ref{sec:Options}.
 The \meta{body} is the \LaTeX\ code to be compiled.
 
 For example, you might write the following standalone file.
@@ -578,7 +580,9 @@ Options that are passed to commands are parsed using the \pkg{keyval}
 package.
 Their syntax is of the form:
 \[
-|[|\meta{key$_1$}|=|\meta{value$_1$}|, |\meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|, |\meta{key$_n$}|=|\meta{value$_n$}|]|
+|[|\meta{key$_1$}|=|\meta{value$_1$}|,|
+   \meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|,|
+   \meta{key$_n$}|=|\meta{value$_n$}|]|
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -659,7 +663,8 @@ For example, you might want to load packages as in the following.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or \docValue{display}}}{initially \docValue{false}}
+\begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or
+  \docValue{display}}}{initially \docValue{false}}
 
 This option controls whether the body of \com{external} or
 \env{externalenv} is treated as math, and if so, whether it is inline
@@ -735,7 +740,8 @@ but are not clipped when 3-inch margins are used.
 \label{subsec:Low-level Options}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{before}{=\meta{code}}{initially |\textbackslash{}stepcounter\{external@number\}|}
+\begin{docKey}{before}{=\meta{code}}{%
+  initially |\textbackslash{}stepcounter\{external@number\}|}
 
 This option specifies \LaTeX\ code to run before the rest of the code
 in an \com{external} command or \env{externalenv} environment.
@@ -753,7 +759,28 @@ The following is an example of this in action.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{before compile}{=\meta{code}}{initially empty}
+\begin{docKey}{after}{=\meta{code}}{initially empty}
+
+This option specifies \LaTeX\ code to run after the rest of the code
+in an \com{external} command or \env{externalenv} environment.
+The following is an example of this in action.
+
+\begin{dispExample}
+\newcounter{bar}%
+\thebar
+<\external[file=external-external-after,
+           after={\stepcounter{bar}}]{}>%
+\thebar
+\end{dispExample}
+\end{docKey}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{before write}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{after write}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{before compile}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{after compile}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{before read}{=\meta{code}}{initially empty}\end{docKey}
+\begin{docKey}{after read}{=\meta{code}}{initially empty}
 
 With an \com{external} command or \env{externalenv} environment, this
 option specifies \LaTeX\ code to run after writing the file for the
@@ -767,40 +794,6 @@ The following is an example of this in action.
 <\external[file=external-external-before-compile,
            before compile={\stepcounter{baz}}]{}>%
 \thebaz
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{before read}{=\meta{code}}{initially empty}
-
-In an \com{external} command or \env{externalenv} environment, this
-option specifies \LaTeX\ code to run after compiling the externally
-compiled code but before reading the file output by the externally
-compiled code.
-The following is an example of this in action.
-
-\begin{dispExample}
-\newcounter{quux}%
-\thequux
-<\external[file=external-external-before-read,
-           before read={\stepcounter{quux}}]{}>%
-\thequux
-\end{dispExample}
-\end{docKey}
-
-%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{after}{=\meta{code}}{initially empty}
-
-This option specifies \LaTeX\ code to run after the rest of the code
-in an \com{external} command or \env{externalenv} environment.
-The following is an example of this in action.
-
-\begin{dispExample}
-\newcounter{bar}%
-\thebar
-<\external[file=external-external-after,
-           after={\stepcounter{bar}}]{}>%
-\thebar
 \end{dispExample}
 \end{docKey}
 
@@ -869,7 +862,8 @@ For example, if you wanted to force certain code to run under
 \end{docKey}
 
 %%%%%%%%%%
-\begin{docKey}{latex/options}{=\meta{code}}{initially |-halt-on-error -interaction=batchmode|}
+\begin{docKey}{latex/options}{=\meta{code}}{%
+  initially |-halt-on-error -interaction=batchmode|}
 
 This option specifies what command-line options to pass to \LaTeX\ when
 compiling the intermediate \LaTeX\ file that is generated for
@@ -898,7 +892,9 @@ other, but on any other platform they will be different.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{file}{=\meta{file basename}}{initially |\textbackslash{}jobname-external-\textbackslash{}arabic\{external@number\}|}
+\begin{docKey}{file}{=\meta{file basename}}{%
+  initially |\textbackslash{}jobname-external-%
+             \textbackslash{}arabic\{external@number\}|}
 
 This option specifies the basename of the intermediate files that are
 generated for externally compiled code.

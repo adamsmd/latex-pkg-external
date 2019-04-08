@@ -1,7 +1,9 @@
 \RequirePackage{external.code}
 \ExternalCode
-  {external-standalone-hash.dim}
-  {\documentclass{article}\newcommand{\p}[1]{(##1)}}
-  {}
-  {\p{x}}
-  {}
+  {external-standalone-hash.dim} % dimension file
+  {\documentclass{article}\newcommand{\p}[1]{(##1)}} % preamble
+  {} % before savebox
+  {\p{x}} % body
+  {} % after savebox
+  {} % before usebox
+  {} % after usebox

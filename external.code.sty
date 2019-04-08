@@ -18,7 +18,8 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{external.code}[2019/01/05 v0.1 Rendering LaTeX code in separate external documents]
 
-\newcommand{\ExternalCode}[5]{%
+%% ARGS: dimension-file preamble before-savebox body after-savebox before-usebox after-usebox
+\newcommand{\ExternalCode}[7]{%
   \unexpanded{%
     % Note that since the user code supplied in arguments to
     % `\ExternalCode might assume `@` is `other`, we avoid calling
@@ -63,7 +64,7 @@
     %\marginparwidth=0pt% Width of margin notes
     %\marginparpush=0pt % Vertical space between margin notes
 
-    % Allow the user to run body code before the savebox
+    % Allow the user to run code before the savebox
     \expandafter\def\csname external@code\endcsname{#3}
     \csname external@code\endcsname
 
@@ -71,6 +72,10 @@
     \expandafter\def\csname external@code\endcsname{#4}
     \expandafter\newsavebox\csname external@box\endcsname
     \expandafter\savebox\csname external@box\endcsname{\csname external@code\endcsname}
+
+    % Allow the user to run code after the savebox
+    \expandafter\def\csname external@code\endcsname{#5}
+    \csname external@code\endcsname
 
     \makeatletter
 
@@ -97,12 +102,16 @@
     \hsize=\wd\external@box                               % Paragraph width
     \vsize=\dimexpr\ht\external@box+\dp\external@box      % Column height
 
-    % Allow the user to run body code before the usebox
-    \expandafter\def\csname external@code\endcsname{#5}
+    % Allow the user to run code before the usebox
+    \expandafter\def\csname external@code\endcsname{#6}
     \csname external@code\endcsname
 
     % Finally, render the \external@box
     \usebox{\external@box}
+
+    % Allow the user to run code after the usebox
+    \expandafter\def\csname external@code\endcsname{#7}
+    \csname external@code\endcsname
 
     % Save the dimentions of the symbol in `\external@box` to a `.dim` file
     \newwrite\external@dimfile
