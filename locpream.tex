@@ -55,7 +55,7 @@
 \newcommand{\Pkg}[1]{\texttt{#1}}
 
 \newcommand{\showfile}[1]{
-  \begin{tcolorbox}[title=\texttt{#1}]
+  \begin{tcolorbox}[title=\texttt{#1},right=4pt]
   \verbatiminput{#1}
   \end{tcolorbox}
 }
@@ -665,8 +665,8 @@ For example, you might want to load packages as in the following.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or
-  \docValue{display}}}{initially \docValue{false}}
+\begin{docKey}{math}{=\docValue{false}, \docValue{inline}, or
+  \docValue{display}}{initially \docValue{false}}
 
 This option controls whether the code in the body of
 \com{localpreamble} or \env{localpreambleenv} is treated as math, and
@@ -964,7 +964,7 @@ For example, the following uses \Key{angle} to rotate the image read by
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{debug}{=\meta{\docValue{true} or \docValue{false}}}{initially \docValue{false}}
+\begin{docKey}{debug}{=\docValue{true} or \docValue{false}}{initially \docValue{false}}
 
 Whether to print tracing information to standard out.
 This is helpful in determining exactly what part of a command failed.
