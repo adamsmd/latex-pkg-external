@@ -6,16 +6,19 @@ docs-pdf: standalone-pdf
 	makeindex locpream.idx
 	pdflatex -shell-escape locpream.tex
 	pdflatex -shell-escape locpream.tex
+	pdflatex -shell-escape locpream.tex
 
 docs-xe: standalone-pdf
 	xelatex -shell-escape locpream.tex
-	pdflatex -shell-escape locpream.tex
+	makeindex locpream.idx
+	xelatex -shell-escape locpream.tex
 	xelatex -shell-escape locpream.tex
 	xelatex -shell-escape locpream.tex
 
 docs-lua: standalone-pdf
 	lualatex -shell-escape locpream.tex
-	pdflatex -shell-escape locpream.tex
+	makeindex locpream.idx
+	lualatex -shell-escape locpream.tex
 	lualatex -shell-escape locpream.tex
 	lualatex -shell-escape locpream.tex
 
