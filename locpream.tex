@@ -430,8 +430,8 @@ An examples of its usage is the following.
 \begin{docEnvironment}{localpreambleenv}{\oarg{options}}
 
 The same as \com{localpreamble}.
-The only difference is that \com{localpreamble} is a command and
-\Env{localpreambleenv} is an environment.
+The only difference between the two is that \com{localpreamble} is a
+command and \Env{localpreambleenv} is an environment.
 An example of its usage is the following.
 
 \begin{dispExample}
@@ -497,7 +497,7 @@ environment are broken up into three phases:
 \item reading the file that results from that compilation (which is
   probably a PDF file).
 \end{enumerate}
-These are handled with the commands \Com{LocalPreambleWrite},
+These are handled with \Com{LocalPreambleWrite},
 \Com{LocalPreambleCompile}, and \Com{LocalPreambleRead}, respectively.
 For example, instead of using the command \com{localpreamble}, you
 could explicitly call each of these as in the following.
@@ -546,8 +546,9 @@ with the following commands.
 
 Be careful if you rename a standalone file, as you will need to change
 the \meta{dimension file} argument to match.
-Otherwise, you will get an error along the lines of
-|In \LocalPreambleRead, input dimension file does not exist|.
+Otherwise, you will get an error along the lines of:
+
+|In \LocalPreambleRead, input dimension file does not exist|
 
 Also note that \Com{LocalPreambleCode} is defined in the
 \Pkg{locpream.code} package.
@@ -555,8 +556,9 @@ This package is imported by the main \Pkg{locpream} package, so you do
 not necessarily need to import it separately.
 However, \Pkg{locpream.code} is designed be minimal and has no
 dependencies.
-Thus in the previous example, using |\RequirePackage{locpream.code}|
-instead of |\RequirePackage{locpream}| minimizes the compilation time.
+Thus in the previous example, using the command
+|\RequirePackage{locpream.code}| instead of the command
+|\RequirePackage{locpream}| minimizes the compilation time.
 When there are a large number of standalone files, this difference can
 amount to a significant amount of time.
 
@@ -583,11 +585,9 @@ call \com{LocalPreambleRead} as in the following.
 Options that are passed to commands are parsed using the \pkg{keyval}
 package.
 Their syntax is of the form:
-\[
-|[|\meta{key$_1$}|=|\meta{value$_1$}|,|
-   \meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|,|
-   \meta{key$_n$}|=|\meta{value$_n$}|]|
-\]
+\[|[|\meta{key$_1$}|=|\meta{value$_1$}|,|
+     \meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|,|
+     \meta{key$_n$}|=|\meta{value$_n$}|]|\]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{docCommand}{locpreamkeys}{\marg{options}}
@@ -619,9 +619,9 @@ package is loaded as seen in the following example.
 
 This option specifies the document class to be used by the intermediate
 \LaTeX\ file (by way of \Com{documentclass}) that is generated for each
-piece of externally compiled code.
+piece of code with a local preamble.
 For example, the following uses the \pkg{proc} class, which (unlike
-\pkg{article}) contains the \Com{pagename} macro.\marginpar{TODO:REV}
+\pkg{article}) contains the \Com{pagename} macro.
 
 \begin{dispExample}
 <\localpreamble[documentclass=proc]{\pagename}>
@@ -668,9 +668,9 @@ For example, you might want to load packages as in the following.
 \begin{docKey}{math}{=\meta{\docValue{false}, \docValue{inline}, or
   \docValue{display}}}{initially \docValue{false}}
 
-This option controls whether the body of \com{localpreamble} or
-\env{localpreambleenv} is treated as math, and if so, whether it is
-inline math or display math.
+This option controls whether the code in the body of
+\com{localpreamble} or \env{localpreambleenv} is treated as math, and
+if so, whether it is inline math or display math.
 The following demonstrate each value possible for this option.
 
 \begin{dispExample}
@@ -756,10 +756,10 @@ The following is an example of these in action.
 \newcounter{foo}%
 \thefoo
 <\localpreamble[file=locpream-locpream-before,
-           before={\stepcounter{foo}}]{}>%
+                before={\stepcounter{foo}}]{}>%
 \thefoo
 <\localpreamble[file=locpream-locpream-after,
-           after={\stepcounter{foo}}]{}>%
+                after={\stepcounter{foo}}]{}>%
 \thefoo
 \end{dispExample}
 \end{docKey}
@@ -772,32 +772,31 @@ The following is an example of these in action.
 \begin{docKey}{before read}{=\meta{code}}{initially empty}\end{docKey}
 \begin{docKey}{after read}{=\meta{code}}{initially empty}
 
-With a \com{localpreamble} command or \env{localpreambleenv}
-environment, these options specify \LaTeX\ code to run before or after
-\cmd{LocalPreambleWrite}, \cmd{LocalPreambleCompile}, or
-\cmd{LocalPreambleRead}.
-The following is an example of these in action.\marginpar{missing ``l''}
+These options specify code to run before or after
+\com{LocalPreambleWrite}, \com{LocalPreambleCompile}, or
+\com{LocalPreambleRead}.
+The following is an example of these in action.
 
 \begin{dispExample}
 \newcounter{baz}%
 \thebaz
-<\localpreamble[file=locpream-locpream-before-compile,
-           before read={\stepcounter{baz}}]{}>%
+<\localpreamble[file=locpream-locpream-before-read,
+                before read={\stepcounter{baz}}]{}>%
+\thebaz
+<\localpreamble[file=locpream-locpream-after-read,
+                after read={\stepcounter{baz}}]{}>%
 \thebaz
 <\localpreamble[file=locpream-locpream-before-compile,
-           after read={\stepcounter{baz}}]{}>%
+                before compile={\stepcounter{baz}}]{}>%
 \thebaz
-<\localpreamble[file=locpream-locpream-before-compile,
-           before compile={\stepcounter{baz}}]{}>%
+<\localpreamble[file=locpream-locpream-after-compile,
+                after compile={\stepcounter{baz}}]{}>%
 \thebaz
-<\localpreamble[file=locpream-locpream-before-compile,
-           after compile={\stepcounter{baz}}]{}>%
+<\localpreamble[file=locpream-locpream-before-write,
+                before write={\stepcounter{baz}}]{}>%
 \thebaz
-<\localpreamble[file=locpream-locpream-before-compile,
-           before write={\stepcounter{baz}}]{}>%
-\thebaz
-<\localpreamble[file=locpream-locpream-before-compile,
-           after write={\stepcounter{baz}}]{}>%
+<\localpreamble[file=locpream-locpream-after-write,
+                after write={\stepcounter{baz}}]{}>%
 \thebaz
 \end{dispExample}
 \end{docKey}
@@ -821,10 +820,10 @@ prevent them from overlapping the rest of the page.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{xcolor}},
-           before savebox={\newcommand{\p}[1]{(##1)}},
-           after savebox={\pagecolor{gray!50}},
-           margin/top=1pt, margin/bottom=1pt,
-           margin/left=0pt, margin/right=0pt]
+                before savebox={\newcommand{\p}[1]{(##1)}},
+                after savebox={\pagecolor{gray!50}},
+                margin/top=1pt, margin/bottom=1pt,
+                margin/left=0pt, margin/right=0pt]
   {\p{x}}>
 \end{dispExample}
 \end{docKey}
@@ -848,14 +847,14 @@ prevent them from overlapping the rest of the page.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{xcolor}},
-           before usebox={\pagecolor{gray!50}},
-           margin/top=1pt, margin/bottom=1pt,
-           margin/left=0pt, margin/right=0pt]
+                before usebox={\pagecolor{gray!50}},
+                margin/top=1pt, margin/bottom=1pt,
+                margin/left=0pt, margin/right=0pt]
    {ABC}>
 <\localpreamble[preamble={\usepackage{xcolor}},
-           after usebox={\pagecolor{gray!50}},
-           margin/top=1pt, margin/bottom=1pt,
-           margin/left=0pt, margin/right=0pt]
+                after usebox={\pagecolor{gray!50}},
+                margin/top=1pt, margin/bottom=1pt,
+                margin/left=0pt, margin/right=0pt]
    {DEF}>
 \end{dispExample}
 \end{docKey}
@@ -896,8 +895,8 @@ This can be specified as in the following.
 <\localpreamble[preamble={\usepackage{ifplatform}}]
    {\platformname}>
 <\localpreamble[preamble={\usepackage{ifplatform}},
-           latex/options={-shell-escape -halt-on-error
-                          -interaction=batchmode}]
+                latex/options={-shell-escape -halt-on-error
+                               -interaction=batchmode}]
    {\platformname}>
 \end{dispExample}
 
@@ -919,7 +918,7 @@ basename.
 
 \begin{dispExample}
 <\localpreamble[file=locpream-locpream-file,
-           preamble={\usepackage{amsmath}}]
+                preamble={\usepackage{amsmath}}]
    {$\iint xy\,dx\,dy$}>
 \end{dispExample}
 
@@ -1041,8 +1040,8 @@ instead of |#1|) as demonstrated in the following.
  \end{localpreambleenv}>
 \end{dispExample}
 
-This even applies in the body of an \com{localpreamble} or
-\env{localpreambleenv} as seen in the following.
+This even applies in the body of the command \com{localpreamble} and
+the environment \env{localpreambleenv} as seen in the following.
 
 \begin{dispExample}
 <\localpreamble{\newcommand{\p}[1]{(##1)}\p{x}}>
