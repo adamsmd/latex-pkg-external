@@ -1,0 +1,377 @@
+%% locpream.sty - Local preambles within a LaTeX document
+%%
+%% This file contains main code for the `locpream` package
+%%
+%% Copyright 2019 by Michael D. Adams
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Michael D. Adams.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{locpream}[2019/01/05 v0.1 Local preambles within a LaTeX document]
+
+\RequirePackage{locpream.code}
+
+\RequirePackage{graphicx}
+\RequirePackage{keyval}
+\RequirePackage{kvoptions}
+\RequirePackage{shellesc}
+\RequirePackage{ifpdf}
+\RequirePackage{ifxetex}
+\RequirePackage{ifluatex}
+\RequirePackage{environ}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\locpream@stringkey}[2]{%
+  \expandafter\def\csname locpream@#1\endcsname{#2}%
+  \define@key{locpream}{#1}{\expandafter\def\csname locpream@#1\endcsname{##1}}}
+
+\newcommand{\locpream@lengthkey}[2]{%
+  \expandafter\newlength\csname locpream@#1\endcsname%
+  \expandafter\setlength\csname locpream@#1\endcsname{#2}%
+  \define@key{locpream}{#1}{\expandafter\setlength\csname locpream@#1\endcsname{##1}}}
+
+\newcounter{locpream@number}
+
+\locpream@stringkey{before}{\stepcounter{locpream@number}}
+\locpream@stringkey{after}{}
+\locpream@stringkey{before write}{}
+\locpream@stringkey{after write}{}
+\locpream@stringkey{before compile}{}
+\locpream@stringkey{after compile}{}
+\locpream@stringkey{before read}{}
+\locpream@stringkey{after read}{}
+
+\locpream@stringkey{documentclass}{article} % empty = do not add the `\documentclass{...}` declaration
+\locpream@stringkey{documentclass/options}{}
+\locpream@stringkey{preamble}{}
+
+\locpream@stringkey{before savebox}{}
+\locpream@stringkey{after savebox}{}
+\locpream@stringkey{before usebox}{}
+\locpream@stringkey{after usebox}{}
+
+\locpream@stringkey{math}{false}
+\def\locpream@math@false{false}
+\def\locpream@math@inline{inline}
+\def\locpream@math@display{display}
+
+\locpream@stringkey{latex}{} % empty = auto-detect
+\locpream@stringkey{latex/options}{-halt-on-error -interaction=batchmode}
+
+\locpream@stringkey{file}{\jobname-locpream-\arabic{locpream@number}}
+\locpream@stringkey{file/tex}{.tex}
+\locpream@stringkey{file/dim}{.dim}
+\locpream@stringkey{file/out}{.pdf}
+
+\locpream@lengthkey{margin/top}{1in}
+\locpream@lengthkey{margin/bottom}{1in}
+\locpream@lengthkey{margin/left}{1in}
+\locpream@lengthkey{margin/right}{1in}
+
+\locpream@stringkey{includegraphics/options}{}
+
+\locpream@stringkey{debug}{false}
+\def\locpream@debug@false{false}
+\def\locpream@debug@true{true}
+
+\ProcessKeyvalOptions*
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Globals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newlength{\locpream@TOP}
+\newlength{\locpream@BOTTOM}
+\newlength{\locpream@LEFT}
+\newlength{\locpream@RIGHT}
+\newlength{\locpream@WIDTH}
+\newlength{\locpream@HEIGHT}
+\newlength{\locpream@DEPTH}
+
+\newwrite{\locpream@filehandle}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% High-level Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%% \locpreamkeys
+
+%% ARGS: options
+\newcommand{\locpreamkeys}[1]{\setkeys{locpream}{#1}}
+
+%%%%%%%% \localpreamble
+
+%% ARGS: [options] body
+\newcommand{\localpreamble}[2][]{{%
+  \locpreamkeys{#1}%
+  \csname locpream@before\endcsname%
+  \LocalPreambleWrite@{#2}%
+  \LocalPreambleCompile@%
+  \LocalPreambleRead@%
+  \csname locpream@after\endcsname}}
+
+%%%%%%%% localpreambleenv environment
+
+%% ARGS: [options]
+\NewEnviron{localpreambleenv}[1][]{%
+  % Use `\edef` to expand `\BODY` early (and exactly once)
+  \edef\locpream@code{%
+    \unexpanded{\localpreamble[#1]}{\expandafter\unexpanded\expandafter{\BODY}}}%
+  \locpream@code}
+
+%%%%%%%% \newlocalpreamble
+
+%% ARGS: [options] name
+\newcommand{\newlocalpreamble}[2][]{%
+  %% ARGS: [options] body
+  \newcommand{#2}[2][]{\localpreamble[#1,##1]{##2}}}
+
+%%%%%%%% newlocalpreamble environment
+
+%% ARGS: [options] name
+\newcommand{\newlocalpreambleenv}[2][]{%
+  %% ARGS: [options]
+  \NewEnviron{#2}[1][]{%
+    % Use `\edef` to expand `\BODY` early (and exactly once)
+    \edef\locpream@code{%
+      \unexpanded{\localpreamble[#1,##1]}{\expandafter\unexpanded\expandafter{\BODY}}}%
+    \locpream@code}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Low-level Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%% \LocalPreambleWrite
+
+%% ARGS: [options] body
+\newcommand{\LocalPreambleWrite}[2][]{{\locpreamkeys{#1}\LocalPreambleWrite@{#2}}}
+
+%% ARGS: body
+\newcommand{\LocalPreambleWrite@}[1]{%
+  % Run the `before write` option
+  \csname locpream@before write\endcsname%
+  % Debug code
+  \ifx     \locpream@debug@false\locpream@debug
+  \else\ifx\locpream@debug@true \locpream@debug
+    \typeout{**** Begin \noexpand\LocalPreambleWrite on {\locpream@file} with {\unexpanded{#1}}}%
+  \else\PackageError{locpream}{In \noexpand\LocalPreambleWrite,
+    unknown `debug` option (must be "false" or "true"):
+    \locpream@debug}
+  \fi\fi
+  % Error checking
+  \ifx\empty\locpream@file
+    \PackageError{locpream}{In \noexpand\LocalPreambleWrite, no output TeX file specified}{}%
+  \fi
+  % Handling `math` option
+  \ifx     \locpream@math@false  \locpream@math\def\locpream@body{#1}%
+  \else\ifx\locpream@math@inline \locpream@math\def\locpream@body{$#1$}%
+  \else\ifx\locpream@math@display\locpream@math\def\locpream@body{$\displaystyle#1$}%
+  \else\PackageError{locpream}{In \noexpand\LocalPreambleWrite,
+    unknown `math` option (must be "false", "inline", or "display"):
+    \locpream@math}{}%
+  \fi\fi\fi
+  % Use `\edef` to control what to expand in the arguments of `\LocalPreambleCode`
+  \edef\locpream@code{%
+    \unexpanded{\LocalPreambleCode}%
+    {\locpream@file\csname locpream@file/dim\endcsname}%
+    {\unexpanded{\expandafter\setlength\csname locpream@TOP\endcsname}{\the\csname locpream@margin/top\endcsname}%
+     \unexpanded{\expandafter\setlength\csname locpream@BOTTOM\endcsname}{\the\csname locpream@margin/bottom\endcsname}%
+     \unexpanded{\expandafter\setlength\csname locpream@LEFT\endcsname}{\the\csname locpream@margin/left\endcsname}%
+     \unexpanded{\expandafter\setlength\csname locpream@RIGHT\endcsname}{\the\csname locpream@margin/right\endcsname}%
+     \ifx\empty\locpream@documentclass
+     \else
+       \unexpanded{\documentclass}%
+       [\csname locpream@documentclass/options\endcsname]%
+       {\locpream@documentclass}%
+     \fi
+     \expandafter\unexpanded\expandafter{\locpream@preamble}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname locpream@before savebox\endcsname}}% TODO: explain expandafters (use \expandonce from \usepackage{etoolbox})
+    {\expandafter\unexpanded\expandafter{\locpream@body}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname locpream@after savebox\endcsname}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname locpream@before usebox\endcsname}}%
+    {\expandafter\expandafter\expandafter\unexpanded\expandafter\expandafter\expandafter{\csname locpream@after usebox\endcsname}}}%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%%   Core code   %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  \immediate\openout\locpream@filehandle="\locpream@file\csname locpream@file/tex\endcsname"%
+  \immediate\write\locpream@filehandle{\locpream@code}%
+  \immediate\closeout\locpream@filehandle
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%% End core code %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  % Sanity checking (warnings)
+  \IfFileExists{\locpream@file\csname locpream@file/tex\endcsname}
+    {}
+    {\PackageWarning{locpream}{In \noexpand\LocalPreambleWrite,
+        output TeX file does not exist:
+        \locpream@file\csname locpream@file/tex\endcsname}}%
+  % Debug code
+  \ifx\locpream@debug\locpream@debug@true
+    \typeout{**** End \noexpand\LocalPreambleWrite on {\locpream@file}}%
+  \fi
+  % Run the `after write` option
+  \csname locpream@after write\endcsname
+}
+
+%%%%%%%% \LocalPreambleCompile
+
+%% ARGS: [options]
+\newcommand{\LocalPreambleCompile}[1][]{{\locpreamkeys{#1}\LocalPreambleCompile@}}
+
+%% ARGS: (none)
+\newcommand{\LocalPreambleCompile@}{%
+  % Run the `before compile` option
+  \csname locpream@before compile\endcsname%
+  % Debug code
+  \ifx     \locpream@debug@false\locpream@debug
+  \else\ifx\locpream@debug@true \locpream@debug
+    \typeout{**** Begin \noexpand\LocalPreambleCompile on {\locpream@file}}%
+  \else\PackageError{locpream}{In \noexpand\LocalPreambleCompile,
+    unknown `debug` option (must be "false" or "true"): \locpream@debug}
+  \fi\fi
+  % Error checking
+  \ifx\empty\locpream@file
+    \PackageError{locpream}{In \noexpand\LocalPreambleCompile,
+      no input TeX file specified}{}%
+  \fi
+  \ifcase\pdf@shellescape
+    \PackageError{locpream}{In \noexpand\LocalPreambleCompile,
+      shell escape (i.e., \noexpand\write18) is not enabled.
+      Maybe add `-shell-escape` to the command-line options}{}%
+  \or
+  \or
+    \PackageError{locpream}{In \noexpand\LocalPreambleCompile,
+      shell escape (i.e., \noexpand\write18) is not enabled.
+      Maybe add `-shell-escape` to the command-line options}{}%
+  \fi
+  \IfFileExists{\locpream@file\csname locpream@file/tex\endcsname}
+    {}
+    {\PackageError{locpream}{In \noexpand\LocalPreambleCompile,
+        input TeX file does not exist:
+        \locpream@file\csname locpream@file/tex\endcsname}{}}%
+  % Determine what latex command to use
+  \ifx\empty\locpream@latex
+    \ifluatex     \def\locpream@latexcmd{lualatex}%
+    \else\ifxetex \def\locpream@latexcmd{xelatex}%
+    \else\ifpdf   \def\locpream@latexcmd{pdflatex}%
+    \else\PackageError{locpream}{In \noexpand\LocalPreambleCompile,
+      could not detect the latex command to use.
+      Use the `latex` option to explicitly specify it}{}%
+    \fi\fi\fi
+  \else
+    \let\locpream@latexcmd\locpream@latex%
+  \fi
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%%   Core code   %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  \ShellEscape{\locpream@latexcmd\space
+    \csname locpream@latex/options\endcsname\space
+    \locpream@file\csname locpream@file/tex\endcsname}%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%% End core code %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  % Sanity checking (warnings)
+  \IfFileExists{\locpream@file\csname locpream@file/out\endcsname}
+    {}
+    {\PackageWarning{locpream}{In \noexpand\LocalPreambleCompile,
+        output file does not exist:
+        \locpream@file\csname locpream@file/out\endcsname}}%
+  \IfFileExists{\locpream@file\csname locpream@file/dim\endcsname}
+    {}
+    {\PackageWarning{locpream}{In \noexpand\LocalPreambleCompile,
+        output dimension file does not exist:
+        \locpream@file\csname locpream@file/dim\endcsname}}%
+  % Debug code
+  \ifx\locpream@debug\locpream@debug@true
+    \typeout{**** End \noexpand\LocalPreambleCompile on {\locpream@file}}%
+  \fi
+  % Run the `after compile` option
+  \csname locpream@after compile\endcsname
+}
+
+%%%%%%%% \LocalPreambleRead
+
+%% ARGS: [options]
+\newcommand{\LocalPreambleRead}[1][]{{\locpreamkeys{#1}\LocalPreambleRead@}}
+
+%% ARGS: (none)
+\newcommand{\LocalPreambleRead@}{%
+  % Run the `before read` option
+  \csname locpream@before read\endcsname
+  % Debug code
+  \ifx     \locpream@debug@false\locpream@debug
+  \else\ifx\locpream@debug@true \locpream@debug
+    \typeout{**** Begin \noexpand\LocalPreambleRead on {\locpream@file}}%
+  \else\PackageError{locpream}{In \noexpand\LocalPreambleRead,
+    unknown `debug` option (must be "false" or "true"):
+    \locpream@debug}
+  \fi\fi
+  % Handling the `math` option
+  \ifx     \locpream@math@false  \locpream@math\LocalPreambleRead@@
+  \else\ifx\locpream@math@inline \locpream@math\LocalPreambleRead@@
+  \else\ifx\locpream@math@display\locpream@math\[\LocalPreambleRead@@\]%
+  \else\PackageError{locpream}{In \noexpand\LocalPreambleRead,
+    unknown `math` option (must be "false", "inline", or "display"):
+    \locpream@math}{}%
+  \fi\fi\fi
+  % Debug code
+  \ifx\locpream@debug\locpream@debug@true
+    \typeout{**** End \noexpand\LocalPreambleRead on {\locpream@file}}%
+  \fi
+  % Run the `after read` option
+  \csname locpream@after read\endcsname
+}
+
+%% ARGS: (none)
+\newcommand{\LocalPreambleRead@@}{%
+  % Error checking
+  \ifx\empty\locpream@file
+    \PackageError{locpream}{In \LocalPreambleRead,
+      no file to be read specified}{}%
+  \fi
+  \IfFileExists{\locpream@file\csname locpream@file/out\endcsname}
+    {}
+    {\PackageError{locpream}{In \noexpand\LocalPreambleRead,
+        file to be read does not exist
+        (maybe compilation of the LaTeX file failed):
+        \locpream@file\csname locpream@file/out\endcsname}{}}%
+  \IfFileExists{\locpream@file\csname locpream@file/dim\endcsname}
+    {}
+    {\PackageError{locpream}{In \noexpand\LocalPreambleRead,
+        input dimension file does not exist
+        (maybe compilation of the LaTeX file failed):
+        \locpream@file\csname locpream@file/dim\endcsname}{}}%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%%   Core code   %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  \input{\locpream@file\csname locpream@file/dim\endcsname}% Load the dimensions of the symbol
+  \raisebox{-\locpream@DEPTH}{% Use `\raisebox` to model the symbol's depth.
+    % Define filename since the following \edef doesn't play nice with \csname...\endcsname
+    \edef\locpream@filename{\locpream@file\csname locpream@file/out\endcsname}% 
+    % Use `\edef` to expand `\locpream@includegraphics/options` before
+    % `\includegraphics` parses its argument.
+    \edef\locpream@code{%
+      \unexpanded{\includegraphics}
+      [trim={{\the\locpream@LEFT} {\the\locpream@BOTTOM} {\the\locpream@RIGHT} {\the\locpream@TOP}},%
+        \csname locpream@includegraphics/options\endcsname]
+      {\unexpanded{\locpream@filename}}}%
+    \locpream@code}%
+  %%%%%%%%%%%%%%%%%%%%%%%
+  %%%% End core code %%%%
+  %%%%%%%%%%%%%%%%%%%%%%%
+}
+\endinput
+%%
+%% End of file `locpream.sty'.

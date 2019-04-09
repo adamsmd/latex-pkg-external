@@ -1,11 +1,10 @@
-# The `external` package: A package for including into a document separately compiled LaTeX
+# The `locpream` package: Local preambles within a LaTeX document
 
-The `external` package allows you to include the result of rendering
-LaTeX code in a separate document that has its own preamble.  This is
-useful when you want to use symbols from a package that you do not want
-to load into your main document.  For example, your main document may
-use symbols from multiple packages that conflict or otherwise cannot be
-loaded together.
+The `locpream` package allows the use of a preamble that is local to a
+specific part of the document.  This is useful for using symbols from a
+package without loading it into the main document.  For example, the
+main document may use symbols from multiple packages that conflict or
+otherwise cannot be loaded together.
 
 ## Status
 
@@ -13,13 +12,13 @@ This package is pre-alpha and its interface may change without notice.
 
 ## Download
 
-You can download the latest copy at:
+The latest copy can be downloaded at:
 
-https://github.com/adamsmd/latex-pkg-external
+https://github.com/adamsmd/tex-pkg-locpream
 
 ## Installing
 
-To install, copy `external.sty` and `external.code.sty` to somewhere in
+To install, copy `locpream.sty` and `locpream.code.sty` to somewhere in
 the style-file search path for LaTeX.
 
 ## Example Usages
@@ -28,36 +27,36 @@ Using `\textbeta` without having to load the `textgreek` package in the
 main document:
 
     An atom undergoing
-    \external[preamble={\usepackage{textgreek}}]{\textbeta-decay}
+    \localpreamble[preamble={\usepackage{textgreek}}]{\textbeta-decay}
     can emit an electron.
 
 The same but as an environment:
 
     An atom undergoing
-    \begin{externalenv}[preamble={\usepackage{textgreek}}]
+    \begin{localpreambleenv}[preamble={\usepackage{textgreek}}]
     \textbeta-decay
-    \end{externalenv}
+    \end{localpreambleenv}
     ~can emit an electron.
 
-Typesetting external code as display math:
+Typesetting code as display math:
 
     The solution to the two dimensional integral
-    \external[preamble={\usepackage{amsmath}}, math=display]
+    \localpreamble[preamble={\usepackage{amsmath}}, math=display]
     {\iint xy\,dx\,dy}
     is involves $x^2$ and $y^2$.
 
-For more details, see the documentation in `external.pdf`.
+For more details, see the documentation in `locpream.pdf`.
 
 ## Building Documentation
 
 To build the documentation for this package, run `make`.  This will
-produce a documentation file named `external.pdf`.
+produce a documentation file named `locpream.pdf`.
 
 ### Warning
 
 This also produces a large number (~200) of temporary files in the
 current directory.  They all have filenames of the form
-`external-external-*`.  You can delete these files by running the
+`locpream-locpream-*`.  These files can be deleted by running the
 command `make clean`.
 
 ## Contributing
@@ -65,10 +64,11 @@ command `make clean`.
 I am not an expert on LaTeX programming, so suggestions about better
 ways to write or package the code are welcome.
 
-My spare time is very limited and this is not my primary project, so
-bug reports that include pull requests are more likely to be fixed.
+My spare time is also very limited and this is not my primary project,
+so bug reports that include pull requests are more likely to be fixed.
 
-I am also looking for someone to take over maintenance of this package.
+I would be happy to hand over maintenance of this package to anyone
+with more experience and time than I.
 
 ### Desired Feature
 
@@ -78,16 +78,17 @@ interested in pull requests that add this feature.
 ### Bug Reports
 
 Bugs should be submitted to the issue tracker at
-https://github.com/adamsmd/latex-pkg-external/issues
+https://github.com/adamsmd/tex-pkg-locpream/issues
 
 ### Patches
 
 Patches should be submitted via pull requests at
-https://github.com/adamsmd/latex-pkg-external/pulls
+https://github.com/adamsmd/tex-pkg-locpream/pulls
 
 Patches are expected to work under all of `pdflatex`, `xelatex`, and
 `lualatex`.  This can be tested by running `make docs-pdf`, `make
-docs-xe`, and `make docs-lua`, respectively.
+docs-xe`, and `make docs-lua`, respectively, each from a clean
+repository.
 
 ## License
 
@@ -102,3 +103,5 @@ version 2005/12/01 or later.
 This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Michael D. Adams.
+
+TODO: csname
