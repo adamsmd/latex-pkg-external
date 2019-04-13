@@ -1,4 +1,4 @@
-%% locpream.tex - Local preambles within a LaTeX document
+%% locpream.tex - Local preambles within LaTeX documents
 %%
 %% This file contains the documentation for the `locpream` package
 %%
@@ -47,7 +47,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\texttt{\textbackslash#1}}
+\newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\cs{#1}}
 \newcommand{\env}[1]{\refEnv{#1}}\newcommand{\Env}[1]{\texttt{#1}}
 \newcommand{\key}[1]{\refKey{#1}}\newcommand{\Key}[1]{\texttt{#1}}
 
@@ -106,8 +106,8 @@
 
 \GetFileInfo{locpream.sty}
 
-\title{The \textsf{locpream} package:
-  Local preambles within a \LaTeX\ document%
+\title{The \textsf{locpream} package:\\
+  Local preambles within \LaTeX\ documents%
     \thanks{This document corresponds to
       \textsf{locpream}~\fileversion, dated \filedate.}}
 \author{Michael D. Adams\\\url{https://michaeldadams.org}}
@@ -115,12 +115,14 @@
 \maketitle
 
 \begin{abstract}
-The \Pkg{locpream} package allows the use of a preamble that is local
-to a specific part of the document.
-This is useful for using symbols from a package without loading it into
-the main document.
-For example, the main document may use symbols from multiple packages
-that conflict or otherwise cannot be loaded together.
+\noindent
+The \Pkg{locpream} package allows the use of preambles that are local
+to specific parts of a document.
+This is useful for using symbols from packages without loading those
+packages into the main document.
+For example, \Pkg{locpream} allows the simultaneous use of symbols from
+packages that conflict with each other or otherwise cannot be loaded
+together.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,33 +132,38 @@ that conflict or otherwise cannot be loaded together.
 \section{Introduction}%
 \label{sec:Introduction}
 
-The \Pkg{locpream} package allows the use of a preamble that is local
-to a specific part of the document.
+The \Pkg{locpream} package allows the use of preambles that are local
+to specific parts of a document.
 For example, you may want to use symbols from packages that cannot be
 loaded at the same time.
-By compiling them in separate documents and then including their
-compiled results in a master document, this allows you to use both
-symbols without conflicts.
+By compiling them in separate documents and then inserting their
+compiled results into a master document, \Pkg{locpream} allows you to
+use these symbols without conflicts.
 
 This document serves as both the documentation and test suite for the
-\Pkg{locpream} package, so some of the examples in this document are
-more for testing than documentation.
+\Pkg{locpream} package, so some examples in this document are for
+testing not just documentation.
 
 \begin{tcolorbox}[title=Warning,colback=red!5!white,colframe=red!75!black]
-This package is pre-alpha and its interface may change without notice.
+This package is pre-alpha, and its interface may change without notice.
 \end{tcolorbox}
+
+TODO:\marginpar{TODO}
+See Section~\ref{sec:Options} more details about options and
+Section~\ref{sec:Issues and Workarounds} for common issues and their
+workarounds.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quick Start}%
 \label{subsec:Quick Start}
 
 Suppose you want to use the \Com{textbeta} symbol from the
-\pkg{textgreek} package, but you do do not want to load the
-\pkg{textgreek} package into your master document.
+\pkg{textgreek} package, but you do not want to load the
+\pkg{textgreek} package into your document.
 Maybe it is incompatible with some other package that you use or maybe
 \LaTeX\ has run out of space for declaring new fonts.
 You can render \Com{textbeta} using the \com{localpreamble} command as
-in the following.
+follows.
 
 \begin{dispExample}
 An atom undergoing
@@ -164,8 +171,9 @@ An atom undergoing
 can emit an electron.
 \end{dispExample}
 
+\noindent
 If you prefer, you can also use the environment \env{localpreambleenv}
-as in the following.
+as follows.
 
 \begin{dispExample}
 An atom undergoing
@@ -175,15 +183,16 @@ An atom undergoing
 ~can emit an electron.
 \end{dispExample}
 
-The only difference between the command \com{localpreamble} and the
-environment \env{localpreambleenv} is that one is a command and the
-other is an environment.
+\noindent
+The only difference between \com{localpreamble} and
+\env{localpreambleenv} is that one is a command and the other is an
+environment.
 
 If you want to format the \LaTeX\ code as ``display'' math, use the
-|math=display| option as in the following example.
+|math=display| option as follows.
 
 \begin{dispExample}
-The solution to the two dimensional integral
+The solution to the two-dimensional integral
 \localpreamble[preamble={\usepackage{amsmath}}, math=display]
   {\iint xy\,dx\,dy}
 involves $x^2$ and $y^2$.
@@ -193,7 +202,7 @@ Note that even though these examples are compiled as separate
 \LaTeX\ documents, they are automatically properly spaced relative to
 the surrounding text.
 In the resulting PDF, they even behave properly with regard to
-copy-and-paste.
+search, text selection, and copy-and-paste.
 
 For example, in the following, it is impossible to tell the difference
 between the ``y'' generated from \com{localpreamble} and the one that
@@ -201,42 +210,38 @@ is not.
 (This even handles the descender on the ``y''.)
 
 \begin{dispExample}
-xyz x\localpreamble{y}z
+x\localpreamble{y}z xyz
 \end{dispExample}
 
 However, there is a limitation to this when it comes to kerning and
 ligatures.
 For example, in the following, due to kerning, ``T'' and ``e'' have a
 different amount of space between them when using \com{localpreamble}
-and when not, and putting the second ``f'' in an \com{localpreamble}
-command breaks up the ``ffi'' ligature.
+and when not, and putting the second ``f'' in \com{localpreamble}
+breaks up the ``ffi'' ligature.
 
 \begin{dispExample}
 Teffi T\localpreamble{e}f\localpreamble{f}i
 \end{dispExample}
 
-See Section~\ref{sec:Options} more details about options and
-Section~\ref{sec:Issues and Workarounds} for common issues and their
-workarounds.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notation}%
 \label{subsec:Notation}
 
-For debugging purposes, this documentation surrounds most examples with
+For testing purposes, this documentation surrounds most examples with
 |<| and |>|, which are customized to render as < and >.
-These are used as a gauge or registration mark.
-This makes it easy to see whether there is extra space to the left or
+These are used as gauges/registration marks.
+They make it easy to see whether there is extra space to the left or
 right of a symbol and whether parts of the symbol extend below the
 baseline.
 The bottom of the bottom bar is at the baseline.
-The top of the top, middle and bottom bars are at the font size (10
-points), where the top of an ``M'' would occur, and where the top of an
-``x'' would occur, respectively.
+The top of the top, middle and bottom bars are at the font
+size~(10~points), the top of an ``M''~(7~points), and the top of an
+``x''~(4.5~points), respectively.
 This is demonstrated in the following example.
 
 \begin{dispExample}
-< \rule{2pt}{10pt} > <M> <x> <>
+<\rule{2pt}{10pt}> <\rule{2pt}{7pt}> <\rule{2pt}{4.5pt}> <M> <x> <>
 \end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,9 +250,8 @@ This is demonstrated in the following example.
 
 There are a number of packages that provide similar functionality to
 that of \Pkg{locpream}.
-The main distinguishing features of \Pkg{locpream} is that it allows
-locally specified preambles and that it does exact sizing and spacing
-when the compiled code is included.
+The main distinguishing features of \Pkg{locpream} are that it allows
+locally specified preambles and that it does exact spacing and sizing.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Externalization}
@@ -255,7 +259,7 @@ when the compiled code is included.
 A number of packages allow specified parts of a document to be
 ``externalized'' by compiling those parts as a separate
 \LaTeX\ documents and then including the result in the master document.
-However, none of these allow those document parts to have a separate
+However, none of these allow those document parts to have a local
 preamble.
 
 \paragraph{\pkg{tikz}}
@@ -276,7 +280,7 @@ Allows extracting certain environments from \LaTeX\ sources as
 graphics.
 Intended for rendering ``preview'' versions of parts of a document and
 used as part of \pkg{preview-latex} and AUC\TeX.
-Does not support custom preambles or exact sizing.
+Does not support custom preambles or exact spacing.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Miniature Documents}
@@ -293,17 +297,17 @@ spacing.
 \subsubsection{Ignoring Preambles}%
 \label{subsec:Ignoring Preambles}
 
-Several packages allow sub-documents to be included into a master
+Several packages allow sub-documents to be included in a master
 document.
-These sub-documents are full fledged \LaTeX\ documents that can be
-compiled on their own, but when they are included into the master
+These sub-documents are full-fledged \LaTeX\ documents that can be
+compiled on their own, but when they are included in the master
 document, either their preamble or specified parts are ignored.
 These packages are geared towards helping authors manage large
-documents that otherwise take a long time to compile (e.g., a book with
+documents that otherwise take a long time to compile~(e.g.,~a book with
 each chapter as a sub-document).
 When compiling the master document, these packages do not compile the
 sub-documents separately.
-Thus, they do not support separate preambles when compiling the master
+Thus, they do not support local preambles when compiling the master
 document.
 
 \paragraph{\pkg{docmute}}
@@ -318,29 +322,30 @@ included document.
 Not only can it ignore everything between \Com{documentclass} and
 \Com{begin\{document\}}, but it also allows ignoring anything outside
 specified environments.
-This package is currently unsupported.
+The documentation for this package says that it is currently
+unsupported.
 
 \paragraph{\pkg{newclude}}
 
 Adds various features to the \LaTeX\ inclusion system.
 One of those features is the ability to ignore anything outside
 specified environments.
-This package is intended to subsume the features of \pkg{includex}, but
-these features are marked as in development.
+The documentation for this package says that it is intended to subsume
+the features of \pkg{includex}, but it also marks these features as in
+development.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Copying Preambles from Master Files}
 
-Another approach to including sub-documents that can be independently
-compiled is to have those sub-documents automatically copy the preamble
-in the master file.
+Another approach to sub-documents is to have those sub-documents
+automatically copy the preamble of the master file.
 As with the packages in Section~\ref{subsec:Ignoring Preambles}, these
 packages are geared towards helping authors manage large documents that
 otherwise take a long time to compile (e.g., a book with each chapter
 as a sub-document).
 When compiling the master document, these packages do not compile the
 sub-documents separately.
-Thus, they do not support separate preambles when compiling the master
+Thus, they do not support local preambles when compiling the master
 document.
 
 \paragraph{\pkg{subfiles}}
@@ -356,15 +361,14 @@ Defines commands to be put in sub-documents instead of the standard
 \Com{documentclass} and preamble.
 When the sub-document is separately compiled, this automatically copies
 the preamble of the master document, but when the master document is
-compiled, the commands used instead of the standard \Com{documentclass}
-and preamble are ignored.
+compiled, the commands are ignored.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Including Entire Pages}
 
 Some packages are designed to allow completely separate documents to be
-combined into one document.
-For example, combining multiple articles into a proceedings.
+combined into one document (e.g., combining multiple articles into a
+proceedings).
 Each document has its own preamble, but documents are included a whole
 page at a time.
 
@@ -373,7 +377,7 @@ page at a time.
 Allows assembling a group of individual \LaTeX\ documents into a single
 document.
 Also includes the \Pkg{combinet} and \Pkg{combnat} package to allow
-documents to share things like table of contents.
+documents to share things like the table of contents.
 
 \paragraph{\pkg{subdocs}}
 
@@ -390,7 +394,7 @@ contents can be kept in common.
 These packages all provide environments that display their content as
 source code next to the result of rendering that code.
 None of these involve separate compilation or allow for specifying a
-separate preamble.
+local preamble.
 
 %%%%%%%%%%%%%%%%%%%%
 \subsubsection{Minimal Page Layouts}
@@ -400,7 +404,7 @@ separate preamble.
 Provides the document class |standalone| that produces a page with
 minimal layout that is sized to fit its contents.
 Does not support automatic extraction of standalone documents, and has
-no support for exact sizing or including the results of compiling a
+no support for exact spacing or including the results of compiling a
 standalone document.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -417,9 +421,9 @@ The main commands of this package are \Com{localpreamble} and
 \begin{docCommand}{localpreamble}{\oarg{options}\marg{code}}
 
 Externally compiles the \LaTeX\ code in \meta{code} and then includes
-the result with exact sizing.
-This a allows \meta{code} to be compiled with its own preamble.
-An examples of its usage is the following.
+the result with exact spacing.
+This allows \meta{code} to have its own preamble.
+An example of this is the following.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{amsmath}}, math=inline]
@@ -432,7 +436,7 @@ An examples of its usage is the following.
 The same as \com{localpreamble}.
 The only difference between the two is that \com{localpreamble} is a
 command and \Env{localpreambleenv} is an environment.
-An example of its usage is the following.
+An example of this is the following.
 
 \begin{dispExample}
 <\begin{localpreambleenv}[preamble={\usepackage{amsmath}}, math=inline]
@@ -448,15 +452,16 @@ An example of its usage is the following.
 It is sometimes useful to define versions of the \com{localpreamble}
 command and the \env{localpreambleenv} environment that have customized
 default values for their options.
-These can be created with \Com{newlocalpreamble} and
-\Com{newlocalpreambleenv}.
 For example, you might want to define versions that load the
 \pkg{amsmath} package by default.
+These can be created with \Com{newlocalpreamble} and
+\Com{newlocalpreambleenv}.
 
 \begin{docCommand}{newlocalpreamble}{\oarg{options}\marg{command name}}
 
 With \Com{newlocalpreamble}, one can define a version of
-\com{localpreamble} that has customized default values for its options.
+\com{localpreamble} that has customized default values for its options
+as seen in the following example.
 
 \begin{dispExample}
 <\newlocalpreamble[preamble={\usepackage{amsmath}}, math=inline]{\ams}>
@@ -469,7 +474,7 @@ With \Com{newlocalpreamble}, one can define a version of
 
 With \Com{newlocalpreambleenv}, one can define a version of
 \env{localpreambleenv} that has customized default values for its
-options.
+options as seen in the following example.
 
 \begin{dispExample}
 <\newlocalpreambleenv[preamble={\usepackage{amsmath}}, math=inline]
@@ -490,14 +495,14 @@ options.
 \begin{docCommand}{LocalPreambleRead}{\oarg{options}}
 
 Both the \com{localpreamble} command and the \env{localpreambleenv}
-environment are broken up into three phases:
+environment contain three phases:
 \begin{enumerate}
 \item writing the intermediate \LaTeX\ file,
 \item compiling the intermediate \LaTeX\ file, and
-\item reading the file that results from that compilation (which is
-  probably a PDF file).
+\item reading the file (typically a PDF) that results from that
+  compilation.
 \end{enumerate}
-These are handled with \Com{LocalPreambleWrite},
+These are handled by \Com{LocalPreambleWrite},
 \Com{LocalPreambleCompile}, and \Com{LocalPreambleRead}, respectively.
 For example, instead of using the command \com{localpreamble}, you
 could explicitly call each of these as in the following.
@@ -528,24 +533,25 @@ the master \LaTeX\ file.
 
 The \meta{dimension file} is the full filename of the dimension file to
 be generated.
-The \meta{preamble}, \meta{before savebox}, and \meta{before usebox}
-are the same as the corresponding options in Section~\ref{sec:Options}.
 The \meta{body} is the \LaTeX\ code to be compiled.
+The \meta{preamble}, \meta{before savebox}, \meta{after savebox},
+\meta{before usebox}, and \meta{after usebox} are the same as the
+corresponding options in Section~\ref{sec:Options}.
 
-For example, you might write the following standalone file.
+For example, you might write the following file.
 
 \showfile{locpream-standalone-simple.tex}
 
-Then in your master file you can compile and read that standalone file
-with the following commands.
+Then, in your master file you can compile and read that file with the
+following commands.
 
 \begin{dispExample}
 <\LocalPreambleCompile[file=locpream-standalone-simple]>
 <\LocalPreambleRead[file=locpream-standalone-simple]>
 \end{dispExample}
 
-Be careful if you rename a standalone file, as you will need to change
-the \meta{dimension file} argument to match.
+Be careful if you rename such a file, as you will need to change the
+\meta{dimension file} argument to match.
 Otherwise, you will get an error along the lines of:
 
 |In \LocalPreambleRead, input dimension file does not exist|
@@ -553,7 +559,7 @@ Otherwise, you will get an error along the lines of:
 Also note that \Com{LocalPreambleCode} is defined in the
 \Pkg{locpream.code} package.
 This package is imported by the main \Pkg{locpream} package, so you do
-not necessarily need to import it separately.
+not need to import it separately.
 However, \Pkg{locpream.code} is designed be minimal and has no
 dependencies.
 Thus in the previous example, using the command
@@ -562,8 +568,8 @@ Thus in the previous example, using the command
 When there are a large number of standalone files, this difference can
 amount to a significant amount of time.
 
-If you wanted to reuse compiled results between compilations of the
-master \LaTeX\ file, you would want to manually run the following
+If you want to reuse compiled results between compilations of the
+master \LaTeX\ file, you will want to manually run the following
 command.
 
 \begin{dispListing}
@@ -584,15 +590,15 @@ call \com{LocalPreambleRead} as in the following.
 
 Options that are passed to commands are parsed using the \pkg{keyval}
 package.
-Their syntax is of the form:
-\[|[|\meta{key$_1$}|=|\meta{value$_1$}|,|
-     \meta{key$_2$}|=|\meta{value$_2$}|, |\cdots|,|
-     \meta{key$_n$}|=|\meta{value$_n$}|]|\]
+Their syntax is
+$|[|  \meta{key$_1$}|=|\meta{value$_1$}
+ |,|\ \meta{key$_2$}|=|\meta{value$_2$}|,|\ \cdots
+ |,|\ \meta{key$_n$}|=|\meta{value$_n$}|]|$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{docCommand}{locpreamkeys}{\marg{options}}
 
-You can set the default value for options with the \Com{locpreamkeys}
+You can set the default values for options with the \Com{locpreamkeys}
 command.
 For example, if want to default to use |mypdflatex| instead of
 |pdflatex| to compile \LaTeX\ code, you could use the following
@@ -601,6 +607,7 @@ command.
 \begin{dispListing}
 \locpreamkeys{latex=mylatex}
 \end{dispListing}
+\marginpar{TEST}
 
 You can also specify this by passing the option when the \Pkg{locpream}
 package is loaded as seen in the following example.
@@ -608,18 +615,19 @@ package is loaded as seen in the following example.
 \begin{dispListing}
 \usepackage[latex=mylatex]{locpream}
 \end{dispListing}
+\marginpar{TEST}
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{High-level Options}%
-\label{subsec:High-level Options}
+\subsection{Commonly Used Options}%
+\label{subsec:Commonly Used Options}
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{documentclass}{=\meta{class}}{initially |article|}
 
-This option specifies the document class to be used by the intermediate
-\LaTeX\ file (by way of \Com{documentclass}) that is generated for each
-piece of code with a local preamble.
+This option specifies the document class used (by way of
+\Com{documentclass}) by the intermediate \LaTeX\ file that is generated
+for each piece of code with a local preamble.
 For example, the following uses the \pkg{proc} class, which (unlike
 \pkg{article}) contains the \Com{pagename} macro.
 
@@ -632,7 +640,7 @@ not added to the intermediate file.
 In this case, you will likely want to put a \Com{documentclass}
 declaration in the \key{preamble} option as in the following example.
 (This could also be achieved with |documentclass=prog|, so doing it
-this way is gratuitous and solely for the sake of an example.)
+this way is gratuitous and solely for the sake of example.)
 
 \begin{dispExample}
 <\localpreamble[documentclass={}, preamble={\documentclass{proc}}]
@@ -671,7 +679,7 @@ For example, you might want to load packages as in the following.
 This option controls whether the code in the body of
 \com{localpreamble} or \env{localpreambleenv} is treated as math, and
 if so, whether it is inline math or display math.
-The following demonstrate each value possible for this option.
+The following examples demonstrate the possible values for this option.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{amsmath}}, math=false]
@@ -688,8 +696,9 @@ The following demonstrate each value possible for this option.
    {\iint xy\,dx\,dy}>
 \end{dispExample}
 
-Note that |math=display|, as seen in the following example, is
-equivalent to the incantation |\[\localpreamble{$\displaystyle...$}\]|.
+Note that, as seen in the following example, |math=display| is
+equivalent to the incantation
+|\[\localpreamble{$\displaystyle|\meta{code}|$}\]|.
 
 \begin{dispExample}
 <\[\localpreamble[preamble={\usepackage{amsmath}}]
@@ -704,7 +713,7 @@ equivalent to the incantation |\[\localpreamble{$\displaystyle...$}\]|.
 \begin{docKey}{margin/right}{=\meta{length}}{initially |1in|}
 
 These options specify the margin to place around the \LaTeX\ code being
-compiled externally.
+separately compiled.
 This is useful if the \LaTeX\ code draws outside its bounding box.
 If there is not enough margin to contain the drawn portions, the result
 may be clipped.
@@ -720,14 +729,15 @@ but are not clipped when 3-inch margins are used.
    \llap{\rule[3pt]{2in}{1pt}}%
    \smash{\rule[-2in]{1pt}{4in}}%
  \end{localpreambleenv}>
-\vspace{2in}
+\vspace{2.2in}
 \end{dispExample}
 
 \begin{dispExample}
 \vspace{2in}
 \hspace{2in}
 <\begin{localpreambleenv}[
-   margin/top=3in, margin/bottom=3in, margin/left=3in, margin/right=3in]
+   margin/top=3in, margin/bottom=3in,
+   margin/left=3in, margin/right=3in]
    \rlap{\rule[3pt]{2in}{1pt}}%
    \llap{\rule[3pt]{2in}{1pt}}%
    \smash{\rule[-2in]{1pt}{4in}}%
@@ -736,9 +746,35 @@ but are not clipped when 3-inch margins are used.
 \end{dispExample}
 \end{docKey}
 
+%%%%%%%%%%%%%%%%%%%%
+\begin{docKey}{debug}{=\docValue{true} or \docValue{false}}{initially \docValue{false}}
+
+Whether to print tracing information to standard out.
+This is helpful in determining exactly what part of a command failed.
+
+For example, consider the following call to \com{localpreamble}.
+
+\begin{dispExample}
+<\localpreamble[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
+\end{dispExample}
+
+When the \Key{debug} option is |true|, lines like the following will be
+printed to the standard output.
+
+\begin{dispListing}
+**** Begin \LocalPreambleWrite on {locpream-locpream-21}
+       with {$\iint xy\,dx\,dy$}
+**** End \LocalPreambleWrite on {locpream-locpream-21}
+**** Begin \LocalPreambleCompile on {locpream-locpream-21}
+**** End \LocalPreambleCompile on {locpream-locpream-21}
+**** Begin \LocalPreambleRead on {locpream-locpream-21}
+**** End \LocalPreambleRead on {locpream-locpream-21}
+\end{dispListing}
+\end{docKey}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Low-level Options}%
-\label{subsec:Low-level Options}
+\subsection{Uncommonly Used Options}%
+\label{subsec:Uncommonly Used Options}
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{before}{=\meta{code}}{%
@@ -746,7 +782,7 @@ but are not clipped when 3-inch margins are used.
 \begin{docKey}{after}{=\meta{code}}{initially empty}
 
 These options specify \LaTeX\ code to run before or after the rest of
-the code in a \com{localpreamble} command or \env{localpreambleenv}
+the code in a \com{localpreamble} command or a \env{localpreambleenv}
 environment.
 This is particularly useful for incrementing any counters used in the
 \key{file} option.
@@ -813,10 +849,10 @@ These options correspond to the \meta{before savebox} and \meta{after
 These options are rarely needed.
 
 The following example demonstrates the use of these options, though
-since there are other ways to accomplish this effect, doing it this way
-is gratuitous and solely for the sake of an example.
+since there are other ways to accomplish this effect, doing it in this
+way is gratuitous and solely for the sake of example.
 Note that we have to set the margins to small or zero lengths to
-prevent them from overlapping the rest of the page.
+prevent the gray area from overlapping the rest of the page.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{xcolor}},
@@ -832,18 +868,18 @@ prevent them from overlapping the rest of the page.
 \begin{docKey}{before usebox}{=\meta{code}}{initially empty}\end{docKey}
 \begin{docKey}{after usebox}{=\meta{code}}{initially empty}
 
-This option specifies code to be put before the \Com{usebox} that is
-used in the intermediate \LaTeX\ file.
-This option corresponds to the \meta{before usebox} argument of
-\com{LocalPreambleCode}.
+These options specify code to be put before or after the \Com{usebox}
+that is used in the intermediate \LaTeX\ file.
+These options correspond to the \meta{before usebox} and \meta{after
+  usebox} arguments of \com{LocalPreambleCode}.
 
-This option is rarely needed.
+These options are rarely needed.
 
-The following example demonstrates the use of this option, though since
-there are other ways to accomplish this effect, using \Key{before
-  usebox} is gratuitous and solely for the sake of an example.
+The following example demonstrates the use of these options, though
+since there are other ways to accomplish this effect, doing it this
+way is gratuitous and solely for the sake of example.
 Note that we have to set the margins to small or zero lengths to
-prevent them from overlapping the rest of the page.
+prevent the gray area from overlapping the rest of the page.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{xcolor}},
@@ -862,17 +898,16 @@ prevent them from overlapping the rest of the page.
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{latex}{=\meta{program name}}{initially empty}
 
-This option specifies the program to use to compile the intermediate
+This option specifies the program used to compile the intermediate
 \LaTeX\ file.
-
 Blank means to autodetect between |pdflatex|, |xelatex|, or |lualatex|
 to match whatever the master document is being compiled with.
-
-For example, if you wanted to force certain code to run under
-|pdflatex|, you could do the following.
+For example, if you want to force certain code to run under |pdflatex|
+or |lualatex|, you can do the following.
 
 \begin{dispExample}
 <\localpreamble[latex=pdflatex]{\pdfescapehex{ABC}}>
+<\localpreamble[latex=lualatex]{\directlua{tex.print("ABC")}}>
 \end{dispExample}
 \end{docKey}
 
@@ -888,8 +923,8 @@ the |-halt-on-error| and |-interaction=batchmode| options in whatever
 you change it to.
 
 For example, the \pkg{ifplatform} package needs the |-shell-escape|
-option in order to give precise platform information.
-This can be specified as in the following.
+option in order to give precise platform information as seen in the
+following.
 
 \begin{dispExample}
 <\localpreamble[preamble={\usepackage{ifplatform}}]
@@ -900,9 +935,11 @@ This can be specified as in the following.
    {\platformname}>
 \end{dispExample}
 
-Note that if this document was compiled on Windows, then the two calls
-to \com{localpreamble} in this example will produce the same results as
-each other, but on any other platform they will be different.
+Note that if the documentation (i.e., the document you are reading) is
+compiled on Windows, then the two calls to \com{localpreamble} in this
+example produce the same results as each other, but on any other
+platform they are different.
+\marginpar{TEST}
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%
@@ -912,7 +949,6 @@ each other, but on any other platform they will be different.
 
 This option specifies the basename of the intermediate files that are
 generated.
-
 For example, the following uses |locpream-locpream-file| as the
 basename.
 
@@ -923,7 +959,7 @@ basename.
 \end{dispExample}
 
 Be careful not to use the same filename for two different pieces of
-code as that can lead to unexpected results.
+code as this can lead to unexpected results.
 \end{docKey}
 
 %%%%%%%%%%
@@ -949,6 +985,11 @@ An example of using them is the following.
 \end{dispExample}
 \end{docKey}
 
+\begin{docKey}{file/tex file}{=\meta{TODO}}{TODO}
+TODO
+\marginpar{TODO}
+\end{docKey}
+
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{includegraphics/options}{=\meta{key-value sequence}}{initially empty}
 
@@ -963,32 +1004,6 @@ For example, the following uses \Key{angle} to rotate the image read by
 \end{dispExample}
 \end{docKey}
 
-%%%%%%%%%%%%%%%%%%%%
-\begin{docKey}{debug}{=\docValue{true} or \docValue{false}}{initially \docValue{false}}
-
-Whether to print tracing information to standard out.
-This is helpful in determining exactly what part of a command failed.
-
-For example, consider the following call to \com{localpreamble}.
-
-\begin{dispExample}
-<\localpreamble[preamble={\usepackage{amsmath}}]{$\iint xy\,dx\,dy$}>
-\end{dispExample}
-
-When the \Key{debug} option is |true|, lines like the following will be
-printed to the standard output.
-
-\begin{dispListing}
-**** Begin \LocalPreambleWrite on {locpream-locpream-21}
-       with {$\iint xy\,dx\,dy$}
-**** End \LocalPreambleWrite on {locpream-locpream-21}
-**** Begin \LocalPreambleCompile on {locpream-locpream-21}
-**** End \LocalPreambleCompile on {locpream-locpream-21}
-**** Begin \LocalPreambleRead on {locpream-locpream-21}
-**** End \LocalPreambleRead on {locpream-locpream-21}
-\end{dispListing}
-\end{docKey}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Issues and Workarounds}%
 \label{sec:Issues and Workarounds}
@@ -997,16 +1012,13 @@ printed to the standard output.
 \subsection{Document Not Updating}%
 \label{subsec:Document Not Updating}
 
-A common issue is when changing the \LaTeX\ code in a
-\com{localpreamble} or \env{localpreambleenv}, but those changes not
-being reflected in the master document after re-compiling the master
-document.
+A common issue is changing the \LaTeX\ code in a \com{localpreamble} or
+\env{localpreambleenv} but those changes not being reflected in the
+master document after re-compiling the master document.
 The cause of this is that \Pkg{locpream} has no way to detect whether
 compiling the intermediate \LaTeX\ file succeeded or failed.
-A failure can happen for example if the code contains an error that
-causes the compilation of the intermediate \LaTeX\ file to fail.
 If compilation of the intermediate \LaTeX\ file fails, the dimension
-file and the resulting PDF file from previous a compilation will not be
+file and the resulting PDF file from a previous compilation will not be
 overwritten.
 
 To fix this, delete the PDF and dimension files.
@@ -1019,16 +1031,16 @@ have fixed that \LaTeX\ code.
 \subsection{Hash Symbols and Command Arguments}%
 \label{subsec:Hash Symbols and Command Arguments}
 
-The use of hash symbols, such as used when referencing a command
-argument (e.g., |#1|), can lead to problems.
+Using hash symbols, such as when referencing a command
+argument~(e.g.,~|#1|), can lead to problems.
 For example, the following would lead to an error.
 
 \begin{dispListing}
 <\localpreamble[preamble={\newcommand{\p}[1]{(#1)}}]{\p{x}}>
 \end{dispListing}
 
-The solution to this is to use double hashes (for example, |##1|
-instead of |#1|) as demonstrated in the following.
+The solution to this is to use double hashes~(e.g,~|##1| instead of
+|#1|) as demonstrated in the following.
 
 \begin{dispExample}
 <\localpreamble[preamble={\newcommand{\p}[1]{(##1)}}]{\p{x}}>
@@ -1077,7 +1089,7 @@ them as demonstrated in the following examples.
 <\begin{paren}\p{x}\end{paren}>
 \end{dispExample}
 
-However, in their bodies this does not apply and only two hashes should
+However, in their bodies this does not apply, and only two hashes should
 be used as demonstrated in the following.
 
 \begin{dispExample}
@@ -1097,8 +1109,8 @@ be used as demonstrated in the following.
 \subsection{Category Codes}%
 \label{subsec:Category Codes}
 
-Some commands change the category codes of many characters.
-These pose a problem for use with commands from this \Pkg{locpream}
+Some commands change the category codes of characters.
+These pose a problem for use with commands from the \Pkg{locpream}
 package as the arguments to commands are parsed before those category
 codes have changed.
 The way to work around this is to use the \Com{scantokens} macro to
@@ -1106,7 +1118,7 @@ cause parts of those arguments to be re-parsed.
 
 For example, the \Com{DeclareFontShape} macro redefines category codes
 for characters used in its argument.
-Thus to use it one must insert a call to \Com{scantokens} as in the
+Thus, to use it one must insert a call to \Com{scantokens} as in the
 following.
 
 \begin{dispExample}
@@ -1120,9 +1132,9 @@ following.
    {\Pisymbol{msa}{15}}>
 \end{dispExample}
 
-The \Com{relax} before the end of the argument to \Com{scantokens}
-ensures that \Com{scantokens} does not insert an extra space at the
-end.
+Note that the \Com{relax} before the end of the argument to
+\Com{scantokens} ensures that \Com{scantokens} does not insert an extra
+space at the end.
 See
 \url{https://tex.stackexchange.com/questions/117906/use-of-everyeof-and-endlinechar-with-scantokens}
 for details.

@@ -1,14 +1,14 @@
-# The `locpream` package: Local preambles within a LaTeX document
+# The `locpream` package: Local preambles within LaTeX documents
 
-The `locpream` package allows the use of a preamble that is local to a
-specific part of the document.  This is useful for using symbols from a
-package without loading it into the main document.  For example, the
-main document may use symbols from multiple packages that conflict or
-otherwise cannot be loaded together.
+The `locpream` package allows the use of preambles that are local to
+specific parts of a document.  This is useful for using symbols from
+packages without loading those packages into the main document.  For
+example, `locpream` allow the simultaneous use of symbols from packages
+that conflict with each other or otherwise cannot be loaded together.
 
-## Status
+## Warning
 
-This package is pre-alpha and its interface may change without notice.
+This package is pre-alpha, and its interface may change without notice.
 
 ## Download
 
@@ -42,7 +42,7 @@ Typesetting code as display math:
 
     The solution to the two dimensional integral
     \localpreamble[preamble={\usepackage{amsmath}}, math=display]
-    {\iint xy\,dx\,dy}
+      {\iint xy\,dx\,dy}
     is involves $x^2$ and $y^2$.
 
 For more details, see the documentation in `locpream.pdf`.
@@ -61,19 +61,23 @@ command `make clean`.
 
 ## Contributing
 
-I am not an expert on LaTeX programming, so suggestions about better
-ways to write or package the code are welcome.
+I am not an expert at LaTeX programming, so suggestions about better
+ways to write or package this package are welcome.
 
-My spare time is also very limited and this is not my primary project,
-so bug reports that include pull requests are more likely to be fixed.
+My spare time is very limited, and this is not my primary project, so
+bug reports that include pull requests are more likely to be fixed.
 
-I would be happy to hand over maintenance of this package to anyone
-with more experience and time than I.
+I would be happy to hand over maintenance of this package to someone
+with more free time and experience than I.
 
 ### Desired Feature
 
 A notably missing feature is caching.  I would be particularly
 interested in pull requests that add this feature.
+
+TODO: detecting file compiles of sub-documents
+
+TODO: copy master preamble using `subfiles` or `childdoc`
 
 ### Bug Reports
 
@@ -86,8 +90,8 @@ Patches should be submitted via pull requests at
 https://github.com/adamsmd/tex-pkg-locpream/pulls
 
 Patches are expected to work under all of `pdflatex`, `xelatex`, and
-`lualatex`.  This can be tested by running `make docs-pdf`, `make
-docs-xe`, and `make docs-lua`, respectively, each from a clean
+`lualatex`.  This can be tested by running `make docs-pdf`,
+`make docs-xe`, and `make docs-lua`, respectively, each from a clean
 repository.
 
 ## License
@@ -100,6 +104,6 @@ The latest version of this license is in
 and version 1.3 or later is part of all distributions of LaTeX
 version 2005/12/01 or later.
 
-This work has the LPPL maintenance status `maintained'.
+This work has the LPPL maintenance status 'maintained'.
 
 The Current Maintainer of this work is Michael D. Adams.
