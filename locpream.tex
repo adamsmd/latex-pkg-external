@@ -511,7 +511,7 @@ See the \com{LocalPreambleCode} command for an example of this.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{docCommand}{LocalPreambleCode}{%
   \marg{dimension~file}\marg{preamble}\marg{before~savebox}\marg{body}\\
-  \phantom{\texttt{\textbackslash LocalPreambleCode}}%
+  \phantom{\cs{LocalPreambleCode}}%
   \marg{after~savebox}\marg{before~usebox}\marg{after~usebox}}
 
 This command expands to the code used in the intermediate \LaTeX\ file.
@@ -581,7 +581,8 @@ package.
 Their syntax is
 $|[|  \meta{key$_1$}|=|\meta{value$_1$}
  |,|\ \meta{key$_2$}|=|\meta{value$_2$}|,|\ \cdots
- |,|\ \meta{key$_n$}|=|\meta{value$_n$}|]|$.
+ |,|\ \meta{key$_n$}|=|\meta{value$_n$}|]|$,
+where white space around `|,|' and `|=|' is ignored.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{docCommand}{locpreamkeys}{\marg{options}}
@@ -766,7 +767,7 @@ printed to the standard output.
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{before}{=\meta{code}}{%
-  initially |\textbackslash{}stepcounter\{locpream@number\}|}\end{docKey}
+  initially |\cs{stepcounter}\{locpream@number\}|}\end{docKey}
 \begin{docKey}{after}{=\meta{code}}{initially empty}
 
 These options specify \LaTeX\ code to run before or after the rest of
@@ -932,14 +933,14 @@ platform they are different.
 
 %%%%%%%%%%%%%%%%%%%%
 \begin{docKey}{file}{=\meta{basename}}{%
-  initially |\textbackslash{}jobname-locpream-%
-             \textbackslash{}arabic\{locpream@number\}|}
+  initially |\cs{jobname}-locpream-%
+             \cs{arabic}\{locpream@number\}|}
 
-This option specifies the basename of the intermediate files that are
-generated.
+This option is used by the default values of \key{file/tex file},
+\key{file/dim file}, and \key{file/out file} to specify the basename of
+the intermediate files that are generated.
 For example, the following uses |locpream-locpream-file| as the
 basename.
-\marginpar{TODO}
 
 \begin{dispExample}
 <\localpreamble[file=locpream-locpream-file,
@@ -956,9 +957,10 @@ code as this can lead to unexpected results.
 \begin{docKey}{file/dim extension}{=\meta{extension}}{initially |.dim|}\end{docKey}
 \begin{docKey}{file/out extension}{=\meta{extension}}{initially |.pdf|}
 
-These options specify the extensions to use for the intermediate
-\LaTeX, dimension, and compiled files, respectively.
-\marginpar{TODO}
+These options are used by the default values of \key{file/tex file},
+\key{file/dim file}, and \key{file/out file} to specify the filename
+extensions of the intermediate \LaTeX, dimension, and compiled files,
+respectively.
 
 These options are rarely needed.
 
@@ -977,9 +979,34 @@ An example of using them is the following.
 \end{dispExample}
 \end{docKey}
 
-\begin{docKey}{file/tex file}{=\meta{TODO}}{TODO}
-TODO
-\marginpar{TODO}
+\begin{docKey}{file/tex file}{=\meta{filename}}{initially\\|\cs{locpream@file}\cs{csname} locpream@file/tex extension\cs{endcsname}|}\end{docKey}
+\begin{docKey}{file/dim file}{=\meta{filename}}{initially\\|\cs{locpream@file}\cs{csname} locpream@file/dim extension\cs{endcsname}|}\end{docKey}
+\begin{docKey}{file/out file}{=\meta{filename}}{initially\\|\cs{locpream@file}\cs{csname} locpream@file/out extension\cs{endcsname}|}
+
+These options specify the filenames of the intermediate \LaTeX,
+dimension, and compiled files, respectively.
+The default values for these concatenate \key{file} with \key{file/tex
+  extension}, \key{file/dim extension}, and \key{file/out extension},
+respectively.
+
+These options are rarely needed.
+For most uses, it is better to use \key{file}.
+
+An example of using these options is the following.
+
+\begin{dispExample}
+\DeclareGraphicsRule{.mypdf}{pdf}{.mypdf}{}%
+<\localpreamble[
+   file/tex file=locpream-locpream-full-file.mytex,
+   file/dim file=locpream-locpream-full-file.mydim,
+   file/out file=locpream-locpream-full-file.mypdf,
+   before read={\ShellEscape{mv locpream-locpream-full-file.pdf
+                                locpream-locpream-full-file.mypdf}}]
+   {XYZ}>
+\end{dispExample}
+
+Be careful not to use the same filename for two different pieces of
+code as this can lead to unexpected results.
 \end{docKey}
 
 %%%%%%%%%%%%%%%%%%%%

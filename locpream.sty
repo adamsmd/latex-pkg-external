@@ -74,6 +74,9 @@
 \locpream@stringkey{file/tex extension}{.tex}
 \locpream@stringkey{file/dim extension}{.dim}
 \locpream@stringkey{file/out extension}{.pdf}
+\locpream@stringkey{file/tex file}{\locpream@file\csname locpream@file/tex extension\endcsname}
+\locpream@stringkey{file/dim file}{\locpream@file\csname locpream@file/dim extension\endcsname}
+\locpream@stringkey{file/out file}{\locpream@file\csname locpream@file/out extension\endcsname}
 
 \locpream@lengthkey{margin/top}{1in}
 \locpream@lengthkey{margin/bottom}{1in}
@@ -185,7 +188,7 @@
   % Use `\edef` to control what to expand in the arguments of `\LocalPreambleCode`
   \edef\locpream@code{%
     \unexpanded{\LocalPreambleCode}%
-    {\locpream@file\csname locpream@file/dim extension\endcsname}%
+    {\csname locpream@file/dim file\endcsname}%
     {\unexpanded{\expandafter\setlength\csname locpream@TOP\endcsname}{\the\csname locpream@margin/top\endcsname}%
      \unexpanded{\expandafter\setlength\csname locpream@BOTTOM\endcsname}{\the\csname locpream@margin/bottom\endcsname}%
      \unexpanded{\expandafter\setlength\csname locpream@LEFT\endcsname}{\the\csname locpream@margin/left\endcsname}%
@@ -205,18 +208,18 @@
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%%   Core code   %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
-  \immediate\openout\locpream@filehandle="\locpream@file\csname locpream@file/tex extension\endcsname"%
+  \immediate\openout\locpream@filehandle="\csname locpream@file/tex file\endcsname"%
   \immediate\write\locpream@filehandle{\locpream@code}%
   \immediate\closeout\locpream@filehandle
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%% End core code %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
   % Sanity checking (warnings)
-  \IfFileExists{\locpream@file\csname locpream@file/tex extension\endcsname}
+  \IfFileExists{\csname locpream@file/tex file\endcsname}
     {}
     {\PackageWarning{locpream}{In \noexpand\LocalPreambleWrite,
         output TeX file does not exist:
-        \locpream@file\csname locpream@file/tex extension\endcsname}}%
+        \csname locpream@file/tex file\endcsname}}%
   % Debug code
   \ifx\locpream@debug\locpream@debug@true
     \typeout{**** End \noexpand\LocalPreambleWrite on {\locpream@file}}%
@@ -256,11 +259,11 @@
       shell escape (i.e., \noexpand\write18) is not enabled.
       Maybe add `-shell-escape` to the command-line options}{}%
   \fi
-  \IfFileExists{\locpream@file\csname locpream@file/tex extension\endcsname}
+  \IfFileExists{\csname locpream@file/tex file\endcsname}
     {}
     {\PackageError{locpream}{In \noexpand\LocalPreambleCompile,
         input TeX file does not exist:
-        \locpream@file\csname locpream@file/tex extension\endcsname}{}}%
+        \csname locpream@file/tex file\endcsname}{}}%
   % Determine what latex command to use
   \ifx\empty\locpream@latex
     \ifluatex     \def\locpream@latexcmd{lualatex}%
@@ -278,21 +281,21 @@
   %%%%%%%%%%%%%%%%%%%%%%%
   \ShellEscape{\locpream@latexcmd\space
     \csname locpream@latex/options\endcsname\space
-    \locpream@file\csname locpream@file/tex extension\endcsname}%
+    \csname locpream@file/tex file\endcsname}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%% End core code %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
   % Sanity checking (warnings)
-  \IfFileExists{\locpream@file\csname locpream@file/out extension\endcsname}
+  \IfFileExists{\csname locpream@file/out file\endcsname}
     {}
     {\PackageWarning{locpream}{In \noexpand\LocalPreambleCompile,
         output file does not exist:
-        \locpream@file\csname locpream@file/out extension\endcsname}}%
-  \IfFileExists{\locpream@file\csname locpream@file/dim extension\endcsname}
+        \csname locpream@file/out file\endcsname}}%
+  \IfFileExists{\csname locpream@file/dim file\endcsname}
     {}
     {\PackageWarning{locpream}{In \noexpand\LocalPreambleCompile,
         output dimension file does not exist:
-        \locpream@file\csname locpream@file/dim extension\endcsname}}%
+        \csname locpream@file/dim file\endcsname}}%
   % Debug code
   \ifx\locpream@debug\locpream@debug@true
     \typeout{**** End \noexpand\LocalPreambleCompile on {\locpream@file}}%
@@ -341,25 +344,25 @@
     \PackageError{locpream}{In \LocalPreambleRead,
       no file to be read specified}{}%
   \fi
-  \IfFileExists{\locpream@file\csname locpream@file/out extension\endcsname}
+  \IfFileExists{\csname locpream@file/out file\endcsname}
     {}
     {\PackageError{locpream}{In \noexpand\LocalPreambleRead,
         file to be read does not exist
         (maybe compilation of the LaTeX file failed):
-        \locpream@file\csname locpream@file/out extension\endcsname}{}}%
-  \IfFileExists{\locpream@file\csname locpream@file/dim extension\endcsname}
+        \csname locpream@file/out file\endcsname}{}}%
+  \IfFileExists{\csname locpream@file/dim file\endcsname}
     {}
     {\PackageError{locpream}{In \noexpand\LocalPreambleRead,
         input dimension file does not exist
         (maybe compilation of the LaTeX file failed):
-        \locpream@file\csname locpream@file/dim extension\endcsname}{}}%
+        \csname locpream@file/dim file\endcsname}{}}%
   %%%%%%%%%%%%%%%%%%%%%%%
   %%%%   Core code   %%%%
   %%%%%%%%%%%%%%%%%%%%%%%
-  \input{\locpream@file\csname locpream@file/dim extension\endcsname}% Load the dimensions of the symbol
+  \input{\csname locpream@file/dim file\endcsname}% Load the dimensions of the symbol
   \raisebox{-\locpream@DEPTH}{% Use `\raisebox` to model the symbol's depth.
     % Define filename since the following \edef doesn't play nice with \csname...\endcsname
-    \edef\locpream@filename{\locpream@file\csname locpream@file/out extension\endcsname}% 
+    \edef\locpream@filename{\csname locpream@file/out file\endcsname}% 
     % Use `\edef` to expand `\locpream@includegraphics/options` before
     % `\includegraphics` parses its argument.
     \edef\locpream@code{%
