@@ -19,19 +19,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass[10pt]{ltxdoc}
 
-% TODO: figure these out
-%\EnableCrossrefs
-%\CodelineIndex
-%\RecordChanges
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages and package settings
 
-\usepackage{noindentafter} % make the \NoIndentAfterThis command available
+\usepackage{xkeyval} % Required by `changelog`
+\usepackage{xparse} % Required by `changelog`
+\usepackage[color]{changelog} % For the `changelog` environment
 
-\usepackage{xurl} % Allow url to line break anywhere
-
-\usepackage{locpream}
-%\locpreamkeys{debug=true}
+\usepackage{noindentafter} % For the `\NoIndentAfterThis` command
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
@@ -43,9 +38,27 @@
   docexample/.style={colframe=ExampleFrame,colback=ExampleBack,
     before skip=\medskipamount,after skip=\medskipamount}}
 
+\usepackage{xurl} % Allow url to line break anywhere
+
+%%%%%%%%%%%%%%%%%%%%
+% The current package
+\usepackage{locpream}
+%\locpreamkeys{debug=true}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Customization
+
+% Use alternate symbols for list items
+\def\labelitemi{\normalfont\bfseries{--}}
+\def\labelitemii{\(\ast\)}
+\def\labelitemiii{\(\cdot\)}
+\def\labelitemiv{\(\bullet\)}
+
+% Enable creating the index
 \makeindex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Command definitions
 
 \newcommand{\com}[1]{\refCom{#1}}\newcommand{\Com}[1]{\cs{#1}}
 \newcommand{\env}[1]{\refEnv{#1}}\newcommand{\Env}[1]{\texttt{#1}}
@@ -76,35 +89,10 @@
   \rlap{\sx}%
   \rule[5.5pt]{4pt}{1.5pt}}
 
-% TODO: error tests.  Maybe in directory and can use relative directory to use package?
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-% TODO: figure these out
-%
-% \CheckSum{0}
-%
-% \CharacterTable
-%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%   Digits        \0\1\2\3\4\5\6\7\8\9
-%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%   Dollar        \$     Percent       \%     Ampersand     \&
-%   Acute accent  \'     Left paren    \(     Right paren   \)
-%   Asterisk      \*     Plus          \+     Comma         \,
-%   Minus         \-     Point         \.     Solidus       \/
-%   Colon         \:     Semicolon     \;     Less than     \<
-%   Equals        \=     Greater than  \>     Question mark \?
-%   Commercial at \@     Left bracket  \[     Backslash     \\
-%   Right bracket \]     Circumflex    \^     Underscore    \_
-%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%   Right brace   \}     Tilde         \~}
-%
-%
-% \changes{v0.1}{2019/01/05}{Initial version}
-
-\GetFileInfo{locpream.sty}
+\GetFileInfo{locpream.sty} % For `\fileversion` and `\filedate`
 
 \title{The \textsf{locpream} package:\\
   Local preambles within \LaTeX\ documents%
@@ -1148,6 +1136,46 @@ This trick also works when using a standalone file as in the following.
 <\LocalPreambleRead[file=locpream-standalone-catcode]>
 \end{dispExample}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Changelog}
+All notable changes to this project will be documented here.
+
+The format is based on \href{https://keepachangelog.com/en/1.0.0/}{Keep a Changelog}
+and this project adheres to \href{https://semver.org/spec/v2.0.0.html}{Semantic Versioning}.
+
+% Commands:
+%  \added      added features
+%  \changed    changed features
+%  \deprecated deprecated features
+%  \removed    features which have been removed
+%  \fixed      bug fixes
+%  \security   security-fixes and closed security holes
+%
+% Options:
+%  yanked:
+%    Indicates that the release was revoked due to a "serious bug or
+%    security issue"; prints a visible notice next to the version
+%    number
+%  simple:
+%     Indicates this version isn't split up into \added, \changed, etc.
+%     categories; if this option is given, a version environment acts
+%     like a plain itemize
+
+% TODO: add links to github, ctan and personal homepage
+% TODO: error tests.  Maybe in directory and can use relative directory to use package?
+% TODO: fix: Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding): removing `\char' on input line 442.
+
+\begin{changelog}
+%\begin{version} % Unreleased
+%  \added
+%    \item TODO
+%\end{version}
+\begin{version}[version=0.1.0, date=2019-01-05, author=Michael D. Adams, simple]
+  \item Initial version
+\end{version}
+\end{changelog}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printindex
 
 \end{document}
