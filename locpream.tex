@@ -939,6 +939,7 @@ This option specifies the basename of the intermediate files that are
 generated.
 For example, the following uses |locpream-locpream-file| as the
 basename.
+\marginpar{TODO}
 
 \begin{dispExample}
 <\localpreamble[file=locpream-locpream-file,
@@ -951,12 +952,13 @@ code as this can lead to unexpected results.
 \end{docKey}
 
 %%%%%%%%%%
-\begin{docKey}{file/tex}{=\meta{extension}}{initially |.tex|}\end{docKey}
-\begin{docKey}{file/dim}{=\meta{extension}}{initially |.dim|}\end{docKey}
-\begin{docKey}{file/out}{=\meta{extension}}{initially |.pdf|}
+\begin{docKey}{file/tex extension}{=\meta{extension}}{initially |.tex|}\end{docKey}
+\begin{docKey}{file/dim extension}{=\meta{extension}}{initially |.dim|}\end{docKey}
+\begin{docKey}{file/out extension}{=\meta{extension}}{initially |.pdf|}
 
 These options specify the extensions to use for the intermediate
 \LaTeX, dimension, and compiled files, respectively.
+\marginpar{TODO}
 
 These options are rarely needed.
 
@@ -965,7 +967,9 @@ An example of using them is the following.
 \begin{dispExample}
 \DeclareGraphicsRule{.mypdf}{pdf}{.mypdf}{}%
 <\localpreamble[
-   file/tex=.mytex, file/dim=.mydim, file/out=.mypdf,
+   file/tex extension=.mytex,
+   file/dim extension=.mydim,
+   file/out extension=.mypdf,
    file=locpream-locpream-extension,
    before read={\ShellEscape{mv locpream-locpream-extension.pdf
                                 locpream-locpream-extension.mypdf}}]
