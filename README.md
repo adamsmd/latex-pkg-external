@@ -1,7 +1,7 @@
 # The `locpream` package: Local preambles within LaTeX documents
 
-The `locpream` package allows the use of preambles that are local to
-specific parts of a document.  This is useful for using symbols from
+The `locpream` LaTeX package allows the use of preambles that are local
+to specific parts of a document.  This is useful for using symbols from
 packages without loading those packages into the main document.  For
 example, `locpream` allow the simultaneous use of symbols from packages
 that conflict with each other or otherwise cannot be loaded together.
@@ -12,9 +12,12 @@ This package is pre-alpha, and its interface may change without notice.
 
 ## Download
 
-The latest copy can be downloaded at:
+The most-recently released version of this package can be downloaded at
+<https://www.ctan.org/pkg/locpream>. (TODO: Link not active, yet.  Will
+upload when out of pre-alpha.)
 
-https://github.com/adamsmd/tex-pkg-locpream
+For the development version of this package see the "Source Code"
+section of this `README.md` file.
 
 ## Installing
 
@@ -47,17 +50,67 @@ Typesetting code as display math:
 
 For more details, see the documentation in `locpream.pdf`.
 
-## Building Documentation
+## Source Code
 
-To build the documentation for this package, run `make`.  This will
-produce a documentation file named `locpream.pdf`.
+The source-code repository for this package is at
+<https://github.com/adamsmd/tex-pkg-locpream/>.
 
-### Warning
+### Source-Code Structure
 
-This also produces a large number (~200) of temporary files in the
-current directory.  They all have filenames of the form
+* Meta-files
+  - `README.md`: The document you are currently reading.
+  - `Makefile`: Builds the documentation for this package.
+
+* Style files
+  - `locpream.sty`:
+      The main style file that implements this package.
+  - `locpream.code.sty`:
+      A style file containing just the code for `\LocalPreambleCode`.
+      Used by `locpream.sty`.  Able to be loaded separately and
+      designed to load quickly in order to improve compilation times on
+      documents with many pieces of LaTeX code with local preambles.
+
+* Documentation
+  - `locpream.tex`:
+      LaTeX for the documentation for this package.
+  - `locpream.pdf`:
+      PDF for the documentation for this package.
+  - `locpream-standalone-catcode.tex`:
+      Helper file used by the documentation for this pacakge.
+  - `locpream-standalone-hash.tex`:
+      Helper file used by the documentation for this pacakge.
+  - `locpream-standalone-simple.tex`:
+      Helper file used by the documentation for this pacakge.
+
+### Building Documentation
+
+To build the documentation for this package, run `make`, `make all`, or
+`make docs`.  This will produce a documentation file named
+`locpream.pdf`.
+
+You can remove the temporary files generated during building with
+`make clean`.
+
+You can build the documentation for this package with specifically
+`pdflatex`, `xelatex`, and `lualatex` using `make docs-pdf`,
+`make docs-xe`, and `make docs-lua`, respectively.
+
+#### Warning
+
+Building the documentation produces a large number (~200) of temporary
+files in the current directory.  They all have filenames of the form
 `locpream-locpream-*`.  These files can be deleted by running the
 command `make clean`.
+
+#### Warning
+
+The documentation for this package uses the `changelog` package, which
+is relatively new and may not be part of your TeX distribution yet.
+
+If this is the case, download `changelog.sty` from
+<http://mirrors.ctan.org/macros/latex/contrib/changelog/changelog.sty>
+and place it either in the directory containing `locpream.tex` or a
+directory in the style-file search path for LaTeX.
 
 ## Contributing
 
@@ -70,29 +123,37 @@ bug reports that include pull requests are more likely to be fixed.
 I would be happy to hand over maintenance of this package to someone
 with more free time and experience than I.
 
-### Desired Feature
+### Desired Features
 
-A notably missing feature is caching.  I would be particularly
-interested in pull requests that add this feature.
+I would be particularly interested in pull requests that add the
+following features.
 
-TODO: detecting file compiles of sub-documents
+* Caching so that compilation can be skipped when a piece of code with
+  a local preamble has not changed.
 
-TODO: copy master preamble using `subfiles` or `childdoc`
+* Detecting when the compilation in `\LocalPreambleCompile` fails and
+  reporting that error to the user.  (See "Issues and Workarounds:
+  Document Not Updating" in the documentation for more about this
+  issue.)
+
+* It may be possible to use the `subfiles` or `childdoc` packages to
+  copy the preamble of the master document into code with local
+  preambles.  This would not be enabled by default, but it would be
+  nice for it to be option that a user can select.
 
 ### Bug Reports
 
 Bugs should be submitted to the issue tracker at
-https://github.com/adamsmd/tex-pkg-locpream/issues
+<https://github.com/adamsmd/tex-pkg-locpream/issues>.
 
 ### Patches
 
 Patches should be submitted via pull requests at
-https://github.com/adamsmd/tex-pkg-locpream/pulls
+<https://github.com/adamsmd/tex-pkg-locpream/pulls>.
 
 Patches are expected to work under all of `pdflatex`, `xelatex`, and
-`lualatex`.  This can be tested by running `make docs-pdf`,
-`make docs-xe`, and `make docs-lua`, respectively, each from a clean
-repository.
+`lualatex`.  This can be tested by running `make clean docs-pdf`,
+`make clean docs-xe`, and `make clean docs-lua`, respectively.
 
 ## License
 
