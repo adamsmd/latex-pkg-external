@@ -26,6 +26,8 @@
 \usepackage{xparse} % Required by `changelog`
 \usepackage[color]{changelog} % For the `changelog` environment
 
+\usepackage{nameref}
+
 \usepackage{noindentafter} % For the `\NoIndentAfterThis` command
 
 \usepackage{tcolorbox}
@@ -136,10 +138,44 @@ testing not just documentation.
 This package is pre-alpha, and its interface may change without notice.
 \end{tcolorbox}
 
-TODO:\marginpar{TODO}
-See Section~\ref{sec:Options} more details about options and
-Section~\ref{sec:Issues and Workarounds} for common issues and their
-workarounds.
+This document is organized as follows.
+
+\begin{itemize}
+\item Section~\ref{sec:Introduction}~(\nameref{sec:Introduction}) contains:
+  \begin{itemize}
+  \item an introduction to using this package~(Section~\ref{subsec:Quick Start}: \nameref{subsec:Quick Start}),
+  \item an explanation of the notation used in this document~(Section~\ref{subsec:Notation}: \nameref{subsec:Notation}), and
+  \item a comparison of this package to other, similar packages~(Section~\ref{subsec:Related Packages}: \nameref{subsec:Related Packages}).
+  \end{itemize}
+
+\item Section~\ref{sec:High-level Commands}~(\nameref{sec:High-level Commands}) contains
+  documentation for the high-level commands and environments of this package, namely:
+  \begin{itemize}
+  \item \com{localpreamble},
+  \item \env{localpreambleenv},
+  \item \com{newlocalpreamble}, and
+  \item \com{newlocalpreambleenv}.
+  \end{itemize}
+
+\item Section~\ref{sec:Low-level Commands}~(\nameref{sec:Low-level Commands}) contains
+  documentation for the low-level commands of this package, namely,
+  \begin{itemize}
+  \item \com{LocalPreambleWrite},
+  \item \com{LocalPreambleCompile},
+  \item \com{LocalPreambleRead}, and
+  \item \com{LocalPreambleCode}.
+  \end{itemize}
+
+\item Section~\ref{sec:Options}~(\nameref{sec:Options}) contains
+  documentation for the options that can be passed to the commands and
+  environments of this package.
+
+\item Section~\ref{sec:Issues and Workarounds}~(\nameref{sec:Issues and Workarounds})
+  contains common issues and how to fix or work around them.
+
+\item Section~\ref{sec:Changelog}~(\nameref{sec:Changelog}) contains a
+  list of the notable changes for each version of this package.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quick Start}%
@@ -1168,7 +1204,8 @@ This trick also works when using a standalone file as in the following.
 \end{dispExample}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Changelog}
+\section{Changelog}%
+\label{sec:Changelog}
 All notable changes to this project will be documented here.
 
 The format is based on \href{https://keepachangelog.com/en/1.0.0/}{Keep a Changelog}
