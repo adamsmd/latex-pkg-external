@@ -57,7 +57,7 @@ The source-code repository for this package is at
 
 ### Source-Code Structure
 
-* Meta-files
+* Meta-information
   - `README.md`: The document you are currently reading.
   - `Makefile`: Builds the documentation for this package.
 
