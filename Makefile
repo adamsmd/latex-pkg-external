@@ -1,4 +1,12 @@
+.PHONY: all clean
+.PHONY: docs docs-pdf docs-xe docs-lua
+.PHONY: standalone standalone-pdf standalone-xe standalone-lua
+
 all: docs
+
+clean:
+	rm -f *.aux *.dim *.glo *.idx *.ilg *.ind *.log *.out *.tcbtemp *.toc
+	rm -f locpream-locpream-* locpream-standalone-*.pdf
 
 docs: docs-pdf
 docs-pdf: standalone-pdf
@@ -37,7 +45,3 @@ standalone-lua:
 	lualatex locpream-standalone-simple.tex
 	lualatex locpream-standalone-catcode.tex
 	lualatex locpream-standalone-hash.tex
-
-clean:
-	rm -f *.aux *.dim *.glo *.idx *.ilg *.ind *.log *.out *.tcbtemp *.toc
-	rm -f locpream-locpream-* locpream-standalone-*.pdf
