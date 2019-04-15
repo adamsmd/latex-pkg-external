@@ -28,15 +28,15 @@
     % We keep a (default one inch) margin (that we then trim) to allow
     % symbols to draw outsize their box.  The user can use `#2` to set
     % it to something else.
-    \expandafter\newlength\csname locpream@TOP\endcsname
-    \expandafter\newlength\csname locpream@BOTTOM\endcsname
-    \expandafter\newlength\csname locpream@LEFT\endcsname
-    \expandafter\newlength\csname locpream@RIGHT\endcsname
+    \expandafter\newlength\csname locpream@top\endcsname
+    \expandafter\newlength\csname locpream@bottom\endcsname
+    \expandafter\newlength\csname locpream@left\endcsname
+    \expandafter\newlength\csname locpream@right\endcsname
 
-    \expandafter\setlength\csname locpream@TOP\endcsname{1in}
-    \expandafter\setlength\csname locpream@BOTTOM\endcsname{1in}
-    \expandafter\setlength\csname locpream@LEFT\endcsname{1in}
-    \expandafter\setlength\csname locpream@RIGHT\endcsname{1in}
+    \expandafter\setlength\csname locpream@top\endcsname{1in}
+    \expandafter\setlength\csname locpream@bottom\endcsname{1in}
+    \expandafter\setlength\csname locpream@left\endcsname{1in}
+    \expandafter\setlength\csname locpream@right\endcsname{1in}
 
     % Note that the use of `\unexpanded` might double any hashes (`#`)
     % (e.g., `#1` becomes `##1`) in `#2` or `#3`, so we eliminate the
@@ -84,11 +84,11 @@
 
     % Note that `\hoffset` and `\voffset` automatically add a one inch
     % offset that we have to subtract out.
-    \hoffset=\dimexpr\locpream@LEFT-1in
-    \voffset=\dimexpr\locpream@TOP-1in
+    \hoffset=\dimexpr\locpream@left-1in
+    \voffset=\dimexpr\locpream@top-1in
 
-    \paperwidth=\dimexpr\locpream@LEFT+\wd\locpream@box+\locpream@RIGHT
-    \paperheight=\dimexpr\locpream@TOP+\ht\locpream@box+\dp\locpream@box+\locpream@BOTTOM
+    \paperwidth=\dimexpr\locpream@left+\wd\locpream@box+\locpream@right
+    \paperheight=\dimexpr\locpream@top+\ht\locpream@box+\dp\locpream@box+\locpream@bottom
     \ifdefined\pdfpagewidth
       \pdfpagewidth=\paperwidth
       \pdfpageheight=\paperheight
@@ -126,13 +126,13 @@
     % Also, we terminate each line with `\relax` so that reading the
     % `.dim` file does not add extra spaces.
     \immediate\write\locpream@dimfile{%
-      \noexpand\setlength{\noexpand\csname locpream@TOP\endcsname}{\the\locpream@TOP}\relax}
+      \noexpand\setlength{\noexpand\csname locpream@TOP\endcsname}{\the\locpream@top}\relax}
     \immediate\write\locpream@dimfile{%
-      \noexpand\setlength{\noexpand\csname locpream@BOTTOM\endcsname}{\the\locpream@BOTTOM}\relax}
+      \noexpand\setlength{\noexpand\csname locpream@BOTTOM\endcsname}{\the\locpream@bottom}\relax}
     \immediate\write\locpream@dimfile{%
-      \noexpand\setlength{\noexpand\csname locpream@LEFT\endcsname}{\the\locpream@LEFT}\relax}
+      \noexpand\setlength{\noexpand\csname locpream@LEFT\endcsname}{\the\locpream@left}\relax}
     \immediate\write\locpream@dimfile{%
-      \noexpand\setlength{\noexpand\csname locpream@RIGHT\endcsname}{\the\locpream@RIGHT}\relax}
+      \noexpand\setlength{\noexpand\csname locpream@RIGHT\endcsname}{\the\locpream@right}\relax}
     \immediate\write\locpream@dimfile{%
       \noexpand\setlength{\noexpand\csname locpream@WIDTH\endcsname}{\the\wd\locpream@box}\relax}
     \immediate\write\locpream@dimfile{%

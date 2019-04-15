@@ -189,10 +189,10 @@
   \edef\locpream@code{%
     \unexpanded{\LocalPreambleCode}%
     {\csname locpream@file/dim file\endcsname}%
-    {\unexpanded{\expandafter\setlength\csname locpream@TOP\endcsname}{\the\csname locpream@margin/top\endcsname}%
-     \unexpanded{\expandafter\setlength\csname locpream@BOTTOM\endcsname}{\the\csname locpream@margin/bottom\endcsname}%
-     \unexpanded{\expandafter\setlength\csname locpream@LEFT\endcsname}{\the\csname locpream@margin/left\endcsname}%
-     \unexpanded{\expandafter\setlength\csname locpream@RIGHT\endcsname}{\the\csname locpream@margin/right\endcsname}%
+    {\unexpanded{\expandafter\setlength\csname locpream@top\endcsname}{\the\csname locpream@margin/top\endcsname}%
+     \unexpanded{\expandafter\setlength\csname locpream@bottom\endcsname}{\the\csname locpream@margin/bottom\endcsname}%
+     \unexpanded{\expandafter\setlength\csname locpream@left\endcsname}{\the\csname locpream@margin/left\endcsname}%
+     \unexpanded{\expandafter\setlength\csname locpream@right\endcsname}{\the\csname locpream@margin/right\endcsname}%
      \ifx\empty\locpream@documentclass
      \else
        \unexpanded{\documentclass}%
