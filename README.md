@@ -141,6 +141,17 @@ following features.
   preambles.  This would not be enabled by default, but it would be
   nice for it to be option that a user can select.
 
+* The ability to pass default options when loading the package.  That
+  is to say, `\usepackage[...]{locpream}` would be the same as
+  `\usepackage{locpream}\locpreamkeys{...}`.  I attempted to use the
+  `kvoptions` package to do this but ran into trouble with the example:
+
+      \documentclass{article}
+      \usepackage[preamble={\usepackage{amsmath}}]{locpream}
+      \begin{document}
+      \locpream{$\iint$}
+      \end{document}
+
 ### Bug Reports
 
 Bugs should be submitted to the issue tracker at

@@ -625,22 +625,14 @@ where white space around `|,|' and `|=|' is ignored.
 
 You can set the default values for options with the \Com{locpreamkeys}
 command.
-For example, if want to default to use |mypdflatex| instead of
-|pdflatex| to compile \LaTeX\ code, you could use the following
-command.
+For example, if want to default to load the \pkg{amsmath} package, you
+could use something like the following.
 
-\begin{dispListing}
-\locpreamkeys{latex=mylatex}
-\end{dispListing}
-\marginpar{TEST}
-
-You can also specify this by passing the option when the \Pkg{locpream}
-package is loaded as seen in the following example.
-
-\begin{dispListing}
-\usepackage[latex=mylatex]{locpream}
-\end{dispListing}
-\marginpar{TEST}
+\begin{dispExample}
+<\locpreamkeys{preamble={\usepackage{amsmath}}}>
+<\localpreamble{$\iint xy\,dx\,dy$}>
+<\locpreamkeys{preamble={}}>
+\end{dispExample}
 \end{docCommand}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
