@@ -131,10 +131,9 @@ following features.
 * Caching so that compilation can be skipped when a piece of code with
   a local preamble has not changed.
 
-* Detecting when the compilation in `\LocalPreambleCompile` fails and
-  reporting that error to the user.  (See "Issues and Workarounds:
-  Document Not Updating" in the documentation for more about this
-  issue.)
+* Better solutions to the issues in the "Issues and Workarounds"
+  section of the documentation.  Ideally these solutions would be
+  automatic and require no effort on the part of the user.
 
 * It may be possible to use the `subfiles` or `childdoc` packages to
   copy the preamble of the master document into code with local
